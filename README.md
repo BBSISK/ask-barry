@@ -36,7 +36,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7a | Nightly index refresh (GitHub Action) and a check for true-but-uncited answers | Done |
 | 7b | Model card, architecture diagram, AI disclosure | Done: [model card](docs/model-card.md) |
 | 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
-| 7d | Answer quality compared across model providers | Next |
+| 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Planned |
 
 ## Architecture
@@ -242,6 +242,20 @@ python -m scripts.ask --provider gemini "<any question>"            # try one qu
 - **Measured:** passing questions, faithfulness, true-but-uncited claims, regression checks, trap questions, errors, latency and tokens. A provider error on a question is recorded as a failure, never a pass.
 - **Judge bias check:** the judge is one fixed model for all providers, and `--judge anthropic` or `--judge gemini` re-scores with a different judge.
 - The live app stays on Azure OpenAI. The other keys live only in local `.env`.
+
+**Result (27 September 2026, 46 questions, the same retrieved sections for every model, judge gpt-4.1-mini):**
+
+| Model | Passing | Faithful | True-but-uncited | Trap questions | Median latency | Tokens out per answer | Cost per answer |
+|---|---|---|---|---|---|---|---|
+| Azure OpenAI `gpt-4.1-mini` (live) | 43 of 46 | 92% | 3 | 8 of 8 | 1.2s | 72 | ≈ $0.001 |
+| Anthropic `claude-haiku-4-5` | 45 of 46 | 97% | 1 | 8 of 8 | 2.0s | 111 | ≈ $0.003 |
+| Google `gemini-3.5-flash` | 46 of 46 | 100% | 0 | 8 of 8 | 3.4s | 704 (mostly hidden "thinking") | depends on thinking tokens |
+
+What I take from it:
+- **All three are close, and every failure was "true but uncited"**: no invented claims, no regressions and no trap failures. With single runs, a gap of one to three questions is within run-to-run noise. The judge itself was inconsistent: it failed one model's "used Docker in multiple projects" as uncited and passed the same claim from the other two.
+- **Trap questions differ in style, not score.** Claude and Gemini refused all eight outright. The live model answered two with a hedged "no", and one of those described what related work "indicates", which is the speculation pattern listed in the model card.
+- **No sign of judge self-preference.** The judge is the same family as the live model, yet the live model scored lowest.
+- **The live app stays on Azure OpenAI.** It is the fastest and cheapest, it answers from exactly the same evidence, and its failures were citation completeness rather than accuracy. Gemini's quality came with about 10 times the output tokens, because of its internal reasoning.
 
 ## Keeping the index fresh (Stage 7)
 

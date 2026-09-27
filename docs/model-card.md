@@ -59,19 +59,21 @@ The golden set has 46 questions. 38 are answerable, each with the file and evide
 
 **Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
-**Answers** (27 September 2026, full pipeline):
+**Answers** (27 September 2026, live model gpt-4.1-mini, full pipeline, 46 questions):
 
 | Metric | Result |
 |---|---|
 | Answered (answerable questions) | 100% |
 | Answer cites a section containing the answer | 100% |
-| Faithful to cited sources (LLM judge) | 95% |
-| Answers with a true-but-uncited claim | 1 |
+| Faithful to cited sources (LLM judge) | 92% |
+| Answers with a true-but-uncited claim | 3 |
 | Regression checks failed | 0 |
-| Trap questions: no false claim | 88% (7 of 8) |
-| Passing every check | 42 of 45 (one failure was a checker error, since fixed) |
+| Trap questions: no false claim | 100% (8 of 8) |
+| Passing every check | 43 of 46 (all 3 failures were true-but-uncited, not invented) |
 
 **How faithfulness is judged:** an LLM judge splits each answer into claims and quotes the supporting passage for each one. Code then checks that every quote really appears in the sources, so the judge can't invent evidence. Citation accuracy and regression checks are deterministic and don't depend on the judge. Every answer is published in the report for human review.
+
+**Other models, same evidence** (27 September 2026, 46 questions, identical retrieved sections and rules): Azure OpenAI gpt-4.1-mini (live) 43/46, Claude Haiku 4.5 45/46, Gemini 3.5 Flash 46/46. Every failure was "true but uncited", and every model passed all eight trap questions. The gaps are within run-to-run noise. The live app stays on Azure OpenAI because it is the fastest and cheapest. Details are in the README.
 
 ## Known limitations
 
