@@ -8,7 +8,7 @@ def test_health_ok(client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["status"] == "ok"
-    assert data["stage"] == "1-ingestion"
+    assert data["stage"] == "2-keyword-baseline"
 
 
 def test_health_reports_no_ai_features_yet(client):

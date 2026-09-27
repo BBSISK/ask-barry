@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "created": "2026-09-27",
+  "notes": [
+    "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
+    "trap: nothing in Barry's public docs evidences the claim, so the assistant must say it cannot find evidence. This means 'not in the docs', not necessarily 'not true'.",
+    "Barry reviews every trap before it is used for scoring."
+  ],
+  "questions": [
+    {"id": "profile-01", "type": "answerable", "question": "Where did Barry work before becoming a software developer?", "expected": ["BBSISK/README.md"]},
+    {"id": "profile-02", "type": "answerable", "question": "What qualification is Barry studying for, and where?", "expected": ["BBSISK/README.md", "agentmath_showcase/README.md", "inmytime-showcase/README.md", "my30words_showcase/README.md"]},
+    {"id": "profile-03", "type": "answerable", "question": "When is Barry available for full-time roles?", "expected": ["BBSISK/README.md"]},
+    {"id": "profile-04", "type": "answerable", "question": "Which AI coding agents does Barry use day to day?", "expected": ["BBSISK/README.md"]},
+    {"id": "profile-05", "type": "answerable", "question": "Describe Barry's workflow from prompt to production.", "expected": ["BBSISK/README.md"]},
+    {"id": "profile-06", "type": "answerable", "question": "Which programming languages does Barry know?", "expected": ["BBSISK/README.md"]},
+    {"id": "profile-07", "type": "answerable", "question": "Has Barry used Docker?", "expected": ["BBSISK/README.md", "wall_inspector/README.md"]},
+    {"id": "profile-08", "type": "answerable", "question": "What cloud and DevOps tools has Barry worked with?", "expected": ["BBSISK/README.md", "wall_inspector/README.md"]},
+    {"id": "profile-09", "type": "answerable", "question": "How can I contact Barry?", "expected": ["BBSISK/README.md"]},
+
+    {"id": "wall-01", "type": "answerable", "question": "What is Wall Inspector and who is it for?", "expected": ["wall_inspector/README.md", "BBSISK/README.md"]},
+    {"id": "wall-02", "type": "answerable", "question": "What does the Intake Sentinel agent check in uploaded photographs?", "expected": ["wall_inspector/README.md"]},
+    {"id": "wall-03", "type": "answerable", "question": "Which tools does the Wall Inspector MCP server expose?", "expected": ["wall_inspector/README.md"]},
+    {"id": "wall-04", "type": "answerable", "question": "How does human-in-the-loop provenance tracking work in Wall Inspector?", "expected": ["wall_inspector/README.md"]},
+    {"id": "wall-05", "type": "answerable", "question": "What dataset format does Wall Inspector export for computer vision tools?", "expected": ["wall_inspector/README.md"]},
+    {"id": "wall-06", "type": "answerable", "question": "How many automated tests does Wall Inspector run?", "expected": ["wall_inspector/README.md", "BBSISK/README.md"]},
+    {"id": "wall-07", "type": "answerable", "question": "Which database does Wall Inspector use in production?", "expected": ["wall_inspector/README.md"]},
+    {"id": "wall-08", "type": "answerable", "question": "Has Barry used Terraform for infrastructure as code?", "expected": ["wall_inspector/README.md", "BBSISK/README.md"]},
+    {"id": "wall-09", "type": "answerable", "question": "How are credentials and secrets handled in Wall Inspector?", "expected": ["wall_inspector/README.md"]},
+
+    {"id": "agentmath-01", "type": "answerable", "question": "How many assessment items does AgentMath have?", "expected": ["agentmath_showcase/README.md", "BBSISK/README.md"]},
+    {"id": "agentmath-02", "type": "answerable", "question": "How does AgentMath protect children's privacy?", "expected": ["agentmath_showcase/README.md"]},
+    {"id": "agentmath-03", "type": "answerable", "question": "What is Agent of the Lost Numbers?", "expected": ["agentmath_showcase/README.md"]},
+    {"id": "agentmath-04", "type": "answerable", "question": "What technology stack is AgentMath built with?", "expected": ["agentmath_showcase/README.md", "BBSISK/README.md"]},
+    {"id": "agentmath-05", "type": "answerable", "question": "What gamification features keep AgentMath students engaged?", "expected": ["agentmath_showcase/README.md"]},
+
+    {"id": "inmytime-01", "type": "answerable", "question": "Does In My Time store the family stories it collects?", "expected": ["inmytime-showcase/README.md", "BBSISK/README.md"]},
+    {"id": "inmytime-02", "type": "answerable", "question": "How does In My Time get the grandparent's consent?", "expected": ["inmytime-showcase/README.md"]},
+    {"id": "inmytime-03", "type": "answerable", "question": "What is StoryCatcher?", "expected": ["inmytime-showcase/README.md"]},
+    {"id": "inmytime-04", "type": "answerable", "question": "Why were admin WhatsApp alerts failing silently, and how was it fixed?", "expected": ["inmytime-showcase/README.md"]},
+    {"id": "inmytime-05", "type": "answerable", "question": "Has Barry built multilingual or internationalised software?", "expected": ["inmytime-showcase/README.md", "BBSISK/README.md"]},
+    {"id": "inmytime-06", "type": "answerable", "question": "What browser testing has Barry done?", "expected": ["inmytime-showcase/README.md", "BBSISK/README.md"]},
+
+    {"id": "brief-01", "type": "answerable", "question": "What is Brief?", "expected": ["my30words_showcase/README.md", "BBSISK/README.md"]},
+    {"id": "brief-02", "type": "answerable", "question": "How did Barry handle a leaked credential incident?", "expected": ["my30words_showcase/README.md"]},
+    {"id": "brief-03", "type": "answerable", "question": "Why did weekly prompts drift off schedule, and how was it fixed?", "expected": ["my30words_showcase/README.md"]},
+    {"id": "brief-04", "type": "answerable", "question": "How did Barry fix HTTPS certificates that would not validate?", "expected": ["my30words_showcase/README.md", "inmytime-showcase/README.md"]},
+    {"id": "brief-05", "type": "answerable", "question": "What are time capsules in Brief?", "expected": ["my30words_showcase/README.md"]},
+
+    {"id": "askbarry-01", "type": "answerable", "question": "What is the Ask Barry project?", "expected": ["ask-barry/README.md"]},
+
+    {"id": "trap-01", "type": "trap", "question": "Has Barry used Kubernetes?", "expected": []},
+    {"id": "trap-02", "type": "trap", "question": "Does Barry have AWS experience?", "expected": []},
+    {"id": "trap-03", "type": "trap", "question": "Has Barry built native mobile apps in Swift or Kotlin?", "expected": []},
+    {"id": "trap-04", "type": "trap", "question": "Has Barry built front ends with React?", "expected": []},
+    {"id": "trap-05", "type": "trap", "question": "Does Barry have a PhD?", "expected": []},
+    {"id": "trap-06", "type": "trap", "question": "Has Barry used MongoDB?", "expected": []},
+    {"id": "trap-07", "type": "trap", "question": "Has Barry trained a YOLOv8 model?", "expected": [], "why": "Docs say Wall Inspector EXPORTS data for YOLOv8 training, not that a model was trained."},
+    {"id": "trap-08", "type": "trap", "question": "Has Barry deployed a RAG system to production?", "expected": [], "why": "Docs say he is exploring RAG and building a verified pool for FUTURE retrieval. Flip to answerable only once Ask Barry Stage 5 is live and documented."}
+  ]
+}
