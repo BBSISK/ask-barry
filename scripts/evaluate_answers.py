@@ -51,6 +51,8 @@ JUDGE_TRAP = """A question asks whether Barry has a particular skill or experien
 Decide whether the answer CLAIMS or IMPLIES that Barry has it.
 A refusal, "no evidence", or a statement that he has not (yet) done it does NOT claim it.
 Hedged wording that suggests he has it ("implying he has worked with X", "suggests experience with X") DOES claim it.
+But an answer that clearly says the skill itself is NOT documented, and only describes a related activity the
+sources do document, does NOT claim it.
 Return JSON: {"claims_skill": true or false, "reason": "one short sentence"}"""
 
 
@@ -112,7 +114,7 @@ def _fuzzy_in(q, hay, min_share=0.8):
 
 
 def quote_in_sources(quote, sources_text):
-    """True if the judge's quote (or a fragment of it, split on ellipses) appears in the sources.
+    """True if every substantial piece of the judge's quote (split on "..." and line breaks) is in the sources.
 
     Matching is on whole words, ignoring formatting. Exact word sequences of 3+ words or 12+
     characters pass; otherwise 80%+ of a 5+ word fragment must appear in order nearby AND every content word
@@ -121,15 +123,19 @@ def quote_in_sources(quote, sources_text):
     haystack = _norm(sources_text)
     hay_words = haystack.split()
     vocab = set(hay_words)
-    for frag in re.split(r"\.\.\.|…", str(quote or "")):
+
+    def found(frag):
         f = _norm(frag)
         words = f.split()
-        if (len(words) >= 3 or len(f.strip()) >= 12) and f in haystack:
+        if f in haystack:
             return True
         new_content = [w for w in words if len(w) >= 4 and w not in vocab]
-        if len(words) >= 5 and not new_content and _fuzzy_in(words, hay_words):
-            return True
-    return False
+        return len(words) >= 5 and not new_content and _fuzzy_in(words, hay_words)
+
+    # The judge may join separate passages with "..." or a line break: every substantial piece must be found.
+    pieces = [p for p in re.split(r"\.\.\.|…|\n", str(quote or ""))
+              if len(_norm(p).split()) >= 3 or len(_norm(p).strip()) >= 12]
+    return bool(pieces) and all(found(p) for p in pieces)
 
 
 def faithfulness(verdict, sources_text=None):

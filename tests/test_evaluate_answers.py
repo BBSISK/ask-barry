@@ -192,3 +192,15 @@ def test_light_rewording_by_judge_passes_but_new_content_does_not():
     assert not quote_in_sources("Render auto-deploys Kubernetes pods to AWS", src)        # new content words
     assert not quote_in_sources("The code accepts any answer with a citation", src)       # meaning changed
     assert not quote_in_sources("Render deploys", src)                                    # too short to fuzzy-match
+
+
+def test_joined_passages_must_each_be_found():
+    from scripts.evaluate_answers import quote_in_sources
+    src = ('D -- fail --> F["🛑 Deploy blocked<br/>live site untouched"]\n E --> G["🌐 Live"]\n'
+           '1. Describe the change to an agent.\n2. Review it.\n'
+           '**Result:** a reviewed, tested change goes from idea to live in about two minutes.')
+    # two real passages joined by a line break (and an emoji the judge mangled)
+    assert quote_in_sources('D -- fail --> F["6d1 Deploy blocked<br/>live site untouched"]\n\n'
+                            '**Result:** a reviewed, tested change goes from idea to live in about two minutes', src)
+    # one real passage joined to an invented one fails
+    assert not quote_in_sources("Deploy blocked, live site untouched ... rolled back automatically by Kubernetes", src)
