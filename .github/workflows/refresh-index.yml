@@ -1,0 +1,44 @@
+name: Refresh search index
+
+# Keeps answers in step with the READMEs: re-fetches the public docs every night and
+# syncs Azure AI Search. Only new or changed sections are re-embedded, so a quiet night
+# costs nothing. It can also be run by hand from the Actions tab.
+on:
+  schedule:
+    - cron: "17 3 * * *"        # 03:17 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-index
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Fetch, chunk, sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Fetch public repo docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # this repo's own read-only token (higher rate limit); only public repos are listed
+        run: python -m scripts.fetch_docs
+      - name: Chunk
+        run: python -m scripts.chunk_corpus
+      - name: Sync Azure AI Search (refuses to delete more than 30% of the index)
+        env:
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_ADMIN_KEY }}      # admin key: this job writes to the index
+        run: python -m scripts.ingest

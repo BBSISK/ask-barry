@@ -117,6 +117,7 @@ def test_answerer_end_to_end_with_fakes():
     assert answer.answer == "Barry used Terraform [1]."
     assert chat.last["model"] == "gpt-4.1-mini" and chat.last["temperature"] == 0
     assert chat.last["response_format"] == {"type": "json_object"}
+    assert len(answer.cited_texts) == 1 and len(answer.uncited_texts) == 7   # the other 7 retrieved sections
 
 
 def test_answerer_refuses_without_calling_model_when_nothing_retrieved():

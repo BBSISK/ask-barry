@@ -31,7 +31,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
 | 5 | Grounded answers with citations (RAG), live | Done |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Done |
-| 7 | Extras: switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | Planned |
+| 7 | Extras: nightly index refresh, switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | In progress |
 
 ## Sources
 
@@ -161,6 +161,15 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 ## Deployment
 
 `render.yaml` defines the Render web service (free plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+
+## Keeping the index fresh (Stage 7)
+
+A GitHub Action (`.github/workflows/refresh-index.yml`) runs every night and on demand. It fetches the public docs, chunks them and syncs Azure AI Search, so answers keep up with README changes without a manual step.
+- **Cheap when nothing changed:** only new or changed sections are re-embedded.
+- **Safe when unattended:** the sync refuses to run on an empty corpus, or if it would delete more than 30% of the index (for example after a rate-limited fetch). A deliberate large removal needs `--allow-large-delete` run by hand.
+- **Secrets:** Azure settings come from GitHub Actions secrets. The Search admin key lives only there, because this job writes to the index. The live app uses a read-only query key.
+
+The evaluation also checks citation completeness. The judge sees the retrieved sections the answer did *not* cite, so a claim supported only by one of those is reported as **"true but uncited"**, separately from an invented claim. Both count as failures, because a reader can only check what is cited.
 
 ## Security
 

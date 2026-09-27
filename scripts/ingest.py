@@ -18,6 +18,11 @@ from app.embeddings import AzureOpenAIEmbedder
 from app.retrieval import load_chunks
 
 UPLOAD_BATCH = 100
+MAX_DELETE_SHARE = 0.3   # refuse to delete more than 30% of the index in one run unless told to
+
+
+class UnsafeSync(RuntimeError):
+    """The planned change looks like a bad fetch rather than a real docs change."""
 
 
 def load_env():
@@ -47,12 +52,23 @@ def check_upload(results):
         raise RuntimeError(f"{len(failed)} document(s) failed to upload, e.g. {failed[0].key}: {failed[0].error_message}")
 
 
-def sync(chunks, search_client, embedder, dry_run=False, log=print):
+def check_safe(n_chunks, n_existing, n_delete, allow_large_delete=False):
+    """Guard for unattended runs: an empty or partial fetch (API error, rate limit) must not wipe the index."""
+    if n_chunks == 0:
+        raise UnsafeSync("The corpus is empty; refusing to sync (was the fetch rate-limited?).")
+    if not allow_large_delete and n_existing and n_delete > MAX_DELETE_SHARE * n_existing:
+        raise UnsafeSync(
+            f"This run would delete {n_delete} of {n_existing} indexed sections. If a repo really went private "
+            "or was removed, re-run with --allow-large-delete.")
+
+
+def sync(chunks, search_client, embedder, dry_run=False, log=print, allow_large_delete=False):
     """Bring the index in line with `chunks`. Returns a summary dict."""
     existing = existing_hashes(search_client)
     to_embed, unchanged, to_delete = plan_sync(chunks, existing)
     log(f"Index has {len(existing)} docs · corpus has {len(chunks)} chunks")
     log(f"  embed + upload: {len(to_embed)} · unchanged: {len(unchanged)} · delete: {len(to_delete)}")
+    check_safe(len(chunks), len(existing), len(to_delete), allow_large_delete)
     if dry_run:
         return {"embedded": 0, "unchanged": len(unchanged), "deleted": 0, "planned_embed": len(to_embed), "planned_delete": len(to_delete)}
 
@@ -70,6 +86,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Sync chunks into Azure AI Search")
     parser.add_argument("--chunks", default="corpus/chunks.jsonl")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--allow-large-delete", action="store_true",
+                        help=f"allow deleting more than {MAX_DELETE_SHARE:.0%} of the index (e.g. a repo went private)")
     args = parser.parse_args(argv)
 
     load_env()
@@ -80,6 +98,8 @@ def main(argv=None):
 
     index_name = os.getenv("AZURE_SEARCH_INDEX", "ask-barry-chunks")
     chunks = load_chunks(args.chunks)
+    if not chunks:
+        sys.exit("Stopped: corpus/chunks.jsonl is empty; refusing to sync (was the fetch rate-limited?).")
     ids = [doc_key(c["chunk_id"]) for c in chunks]
     if len(ids) != len(set(ids)):
         sys.exit("Duplicate chunk_ids in chunks.jsonl; re-run python -m scripts.chunk_corpus")
@@ -88,7 +108,11 @@ def main(argv=None):
         index_client_from_env().create_or_update_index(build_index(index_name))
         print(f"Index '{index_name}' ready")
     embedder = AzureOpenAIEmbedder()
-    summary = sync(chunks, search_client_from_env(index_name), embedder, dry_run=args.dry_run)
+    try:
+        summary = sync(chunks, search_client_from_env(index_name), embedder, dry_run=args.dry_run,
+                       allow_large_delete=args.allow_large_delete)
+    except UnsafeSync as err:
+        sys.exit(f"Stopped: {err}")
     print(f"Done: {summary} · embedding API calls: {embedder.calls}")
 
 

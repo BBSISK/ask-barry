@@ -24,7 +24,7 @@ SYSTEM_PROMPT = """You answer questions about Barry Sisk's software projects for
 
 Rules:
 1. Use ONLY the numbered sources provided. They are excerpts from Barry's public GitHub documentation. Do not use outside knowledge about Barry, his projects or technologies.
-2. Every factual claim must be supported by a source. Cite sources by their numbers.
+2. Every factual claim must be supported by a source. Cite the number of EVERY source you took information from, not only the main one.
 3. If the sources do not clearly support an answer, set "supported" to false. Do not guess, infer skills from related tools, or generalise (for example, exporting data for a model is not training a model; exploring a technology is not having deployed it). If the sources show only a related activity, say what they show and that the thing asked about is not documented; do not speculate about what it implies.
 4. Sources can describe plans or roadmaps ("planned", "next stage"). Present planned work as planned, and name the project it belongs to. A plan in one project never cancels evidence that Barry has already used something in another project: if any source shows it in use, say so.
 5. Combine evidence across projects, and say which project each point comes from.
@@ -54,10 +54,14 @@ class Answer:
     model: str = ""
     # Full text of the cited chunks, for evaluation only. Not sent to the browser.
     cited_texts: list = field(default_factory=list, repr=False)
+    # Retrieved sections the answer did NOT cite (labelled), so the evaluation can spot
+    # "true but uncited" claims. Evaluation only; not sent to the browser.
+    uncited_texts: list = field(default_factory=list, repr=False)
 
     def to_dict(self):
         data = asdict(self)
         data.pop("cited_texts", None)
+        data.pop("uncited_texts", None)
         return data
 
 
@@ -147,7 +151,11 @@ class Answerer:
             c = results[original - 1].chunk
             sources.append(Source(number, c.get("repo", ""), c.get("path", ""), c.get("heading", ""), c.get("url", "")))
             cited_texts.append(c.get("text", ""))
-        return Answer(question, text, supported, sources, len(results), self.deployment, cited_texts)
+        cited_set = {original for original, _ in renumbered}
+        uncited_texts = [
+            f"{r.chunk.get('repo', '')}/{r.chunk.get('path', '')} (section: {r.chunk.get('heading', '')})\n{r.chunk.get('text', '')}"
+            for i, r in enumerate(results, start=1) if i not in cited_set]
+        return Answer(question, text, supported, sources, len(results), self.deployment, cited_texts, uncited_texts)
 
 
 AZURE_SETTINGS = (

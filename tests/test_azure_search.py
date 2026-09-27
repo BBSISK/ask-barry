@@ -251,3 +251,17 @@ def test_caching_embedder_embeds_each_text_once():
     assert first == inner.embed(["c d", "a b"])
     cache.embed(["new text"])
     assert cache.calls == 3
+
+
+def test_sync_refuses_a_run_that_would_wipe_most_of_the_index():
+    from scripts.ingest import UnsafeSync
+    client, emb = FakeSearchClient(), FakeEmbedder(dims=8)
+    chunks = [make_chunk(i) for i in range(10)]
+    sync(chunks, client, emb, log=lambda *_: None)
+    with pytest.raises(UnsafeSync):                                    # partial fetch: 7 of 10 would go
+        sync(chunks[:3], client, emb, log=lambda *_: None)
+    assert len(client.docs) == 10                                      # nothing deleted
+    with pytest.raises(UnsafeSync):
+        sync([], client, emb, log=lambda *_: None)                     # empty fetch
+    done = sync(chunks[:3], client, emb, log=lambda *_: None, allow_large_delete=True)
+    assert done["deleted"] == 7                                        # explicit override works

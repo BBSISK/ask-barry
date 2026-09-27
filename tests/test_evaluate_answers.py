@@ -16,7 +16,7 @@ def answer(text, supported=True, sources=(("BBSISK", "README.md", "Toolbox", "Cl
 def judge_says(**verdict):
     calls = []
 
-    def judge(kind, question, answer_text, sources_text):
+    def judge(kind, question, answer_text, sources_text, other_text=""):
         calls.append(kind)
         return verdict
     judge.calls = calls
@@ -119,7 +119,9 @@ def test_summary_and_report():
 
 
 def test_api_payload_never_includes_cited_texts():
-    assert "cited_texts" not in answer("x").to_dict()
+    a = answer("x")
+    a.uncited_texts = ["wall_inspector/README.md (section: X)\nsome text"]
+    assert "cited_texts" not in a.to_dict() and "uncited_texts" not in a.to_dict()
 
 
 # --- evidence-based judge verdicts -----------------------------------------
@@ -204,3 +206,25 @@ def test_joined_passages_must_each_be_found():
                             '**Result:** a reviewed, tested change goes from idea to live in about two minutes', src)
     # one real passage joined to an invented one fails
     assert not quote_in_sources("Deploy blocked, live site untouched ... rolled back automatically by Kubernetes", src)
+
+
+def test_true_but_uncited_is_a_labelled_failure():
+    from scripts.evaluate_answers import UNCITED, faithfulness
+    cited = "[1] Brief > Features\nTime capsules: seal an entry for 1, 5 or 10 years"
+    other = "[other 1] Brief > Private by default\nExport your full history as a text file at any time"
+    verdict = {"claims": [{"claim": "time capsules", "support": "seal an entry for 1, 5 or 10 years"},
+                          {"claim": "can export history", "support": "Export your full history as a text file"},
+                          {"claim": "has an iOS app", "support": "native iOS app in the App Store"}]}
+    ok, unsupported = faithfulness(verdict, cited, other)
+    assert not ok and len(unsupported) == 2
+    assert UNCITED in unsupported[0] and "not found in sources" in unsupported[1]
+
+
+def test_score_counts_uncited_answers():
+    a = answer("Barry used Terraform and GitHub Actions [1].")
+    a.uncited_texts = ["BBSISK/README.md (section: Toolbox)\nGitHub Actions · Render · Cloudflare"]
+    verdict = {"claims": [{"claim": "Terraform", "support": "Docker · Terraform"},
+                          {"claim": "GitHub Actions", "support": "GitHub Actions · Render · Cloudflare"}]}
+    row = score_question(CLOUD_Q, a, judge_says(**verdict))
+    assert not row["passed"] and row["uncited"] == 1
+    assert summarise([row])["answers_with_uncited"] == 1

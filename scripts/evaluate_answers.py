@@ -33,8 +33,10 @@ from scripts.evaluate_retrieval import load_golden
 JUDGE_FAITHFUL = """You check whether an answer is supported by its sources.
 Sources are excerpts from Barry Sisk's public GitHub documentation.
 
-Split the answer into its factual claims. For each claim, give the shortest passage from
-the sources that supports it, or null if nothing does.
+The sources come in two groups: CITED sources (the ones the answer cites) and OTHER retrieved
+sources the answer saw but did not cite.
+Split the answer into its factual claims. For each claim, give the shortest passage that supports it,
+from a CITED source if possible, otherwise from an OTHER source, or null if nothing supports it.
 - "support" must be copied word for word from the sources (at most 25 words; use "..." to
   join two separate pieces). Never reword it: it is checked against the sources automatically.
 - The CLAIM may paraphrase: paraphrases and synonyms count as support ("daily" = "every day"; "uses X in VS Code" is
@@ -138,12 +140,17 @@ def quote_in_sources(quote, sources_text):
     return bool(pieces) and all(found(p) for p in pieces)
 
 
-def faithfulness(verdict, sources_text=None):
+UNCITED = "true but uncited"
+
+
+def faithfulness(verdict, sources_text=None, other_text=None):
     """Decide faithfulness from the judge's per-claim evidence, not from a bare yes/no.
 
     Returns (faithful, unsupported_claims). A claim counts as supported only if the
     judge quoted a supporting passage AND (when sources_text is given) that quote
     really appears in the sources, so the judge can't invent evidence.
+    A quote found only in the retrieved-but-uncited sections (other_text) is still a failure,
+    because readers can't check it, but it is labelled "true but uncited", not invented.
     Simple verdicts with a boolean 'faithful' key are still accepted (unit tests).
     """
     if "error" in verdict:
@@ -159,6 +166,9 @@ def faithfulness(verdict, sources_text=None):
             if not support or support.lower() == "null":
                 unsupported.append(c.get("claim", "?"))
             elif sources_text is not None and not quote_in_sources(support, sources_text):
+                if other_text and quote_in_sources(support, other_text):
+                    unsupported.append(f"{c.get('claim', '?')} ({UNCITED}: support is in a retrieved section the answer didn't cite)")
+                    continue
                 unsupported.append(f"{c.get('claim', '?')} (judge quoted \"{support[:150]}\", not found in sources)")
         return not unsupported, unsupported
     if "faithful" in verdict:
@@ -184,8 +194,13 @@ def judge_sources(answer):
         for s, t in zip(answer.sources, answer.cited_texts))
 
 
+def other_sources(answer):
+    """Retrieved sections the answer didn't cite, labelled for the judge."""
+    return "\n\n---\n\n".join(f"[other {i}] {t}" for i, t in enumerate(getattr(answer, "uncited_texts", []) or [], start=1))
+
+
 def score_question(q, answer, judge):
-    """Score one question. `judge(kind, question, answer_text, sources_text)` returns a dict."""
+    """Score one question. `judge(kind, question, answer_text, sources_text, other_text="")` returns a dict."""
     row = {"id": q["id"], "type": q["type"], "question": q["question"], "answer": answer.answer,
            "supported": answer.supported,
            "sources": [f"{s.repo}/{s.path} ({s.heading})" for s in answer.sources]}
@@ -205,11 +220,13 @@ def score_question(q, answer, judge):
     row["cited_answer"] = answer.supported and cited_answer_ok(answer, q["expected"], q.get("evidence", []))
     row["check_failures"] = run_checks(answer.answer, q.get("checks")) if answer.supported else []
     if answer.supported:
-        verdict = judge("faithful", q["question"], answer.answer, sources_text)
-        row["faithful"], row["unsupported"] = faithfulness(verdict, sources_text)
+        other_text = other_sources(answer)
+        verdict = judge("faithful", q["question"], answer.answer, sources_text, other_text)
+        row["faithful"], row["unsupported"] = faithfulness(verdict, sources_text, other_text)
     else:
         row["faithful"] = None
         row["unsupported"] = []
+    row["uncited"] = sum(1 for u in row["unsupported"] if UNCITED in str(u))
     if q.get("checks") and not answer.supported:
         row["check_failures"] = ["did not answer"]
     row["passed"] = bool(row["answered"] and row["cited_answer"] and row["faithful"] and not row["check_failures"])
@@ -231,6 +248,7 @@ def summarise(rows):
         "cited_answer": rate(ans, "cited_answer"),
         "faithful_of_answered": rate(answered, "faithful"),
         "checks_failed": sum(1 for r in ans if r.get("check_failures")),
+        "answers_with_uncited": sum(1 for r in ans if r.get("uncited")),
         "trap_no_false_claim": rate(traps, "no_false_claim"),
         "passed": sum(1 for r in rows if r["passed"]),
         "total": len(rows),
@@ -240,7 +258,7 @@ def summarise(rows):
 def render_report(rows, summary, model, when=None):
     when = when or date.today().isoformat()
     lines = [
-        "# Answer evaluation (Stage 6)",
+        "# Answer evaluation",
         "",
         f"Date: {when} · Model: {model} · Retrieval: Azure hybrid, top 8 · "
         f"Answerable: {summary['n_answerable']} · Traps: {summary['n_traps']}",
@@ -250,6 +268,7 @@ def render_report(rows, summary, model, when=None):
         f"| Answered (answerable questions) | {summary['answered']:.0%} |",
         f"| Answer cites a section containing the answer | {summary['cited_answer']:.0%} |",
         f"| Faithful to cited sources (LLM judge, of answered) | {summary['faithful_of_answered']:.0%} |",
+        f"| Answers with a true-but-uncited claim | {summary.get('answers_with_uncited', 0)} |",
         f"| Regression checks failed | {summary['checks_failed']} |",
         f"| **Traps: no false claim** | **{summary['trap_no_false_claim']:.0%}** |",
         f"| Questions passing every check | {summary['passed']} of {summary['total']} |",
@@ -292,9 +311,11 @@ def render_report(rows, summary, model, when=None):
 # ---------------------------------------------------------------------------
 
 def make_judge(client, deployment):
-    def judge(kind, question, answer_text, sources_text):
+    def judge(kind, question, answer_text, sources_text, other_text=""):
         system = JUDGE_TRAP if kind == "trap" else JUDGE_FAITHFUL
-        user = f"Question: {question}\n\nAnswer: {answer_text}\n\nSources:\n{sources_text or '(none)'}"
+        user = f"Question: {question}\n\nAnswer: {answer_text}\n\nCITED sources:\n{sources_text or '(none)'}"
+        if kind != "trap":
+            user += f"\n\n===\n\nOTHER retrieved sources (not cited by the answer):\n{other_text or '(none)'}"
         resp = client.chat.completions.create(
             model=deployment, temperature=0, max_completion_tokens=1500,
             response_format={"type": "json_object"},
