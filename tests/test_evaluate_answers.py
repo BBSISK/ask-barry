@@ -159,7 +159,7 @@ def test_invented_evidence_is_rejected():
     verdict = {"claims": [{"claim": "uses Docker", "support": "Docker · Terraform"},
                           {"claim": "uses Kubernetes", "support": "Kubernetes clusters on AKS"}]}
     ok, unsupported = faithfulness(verdict, sources)
-    assert not ok and unsupported == ["uses Kubernetes (quoted evidence not found in sources)"]
+    assert not ok and unsupported == ['uses Kubernetes (judge quoted "Kubernetes clusters on AKS", not found in sources)']
 
 
 def test_quote_matching_ignores_formatting_but_not_wording():
@@ -180,3 +180,15 @@ def test_judge_sees_repo_and_section_labels_like_the_answerer():
     assert text.startswith("[1] ask-barry/README.md (section: Current status")
     assert quote_in_sources("Stage 5 complete (RAG live in production)", text)
     assert quote_in_sources("ask-barry/README.md", text)
+
+
+def test_light_rewording_by_judge_passes_but_new_content_does_not():
+    from scripts.evaluate_answers import quote_in_sources
+    src = ('E["🚀 Render<br/>auto-deploys<br/>Docker container"] ... - Azure OpenAI (`gpt-4.1-mini`) writes a short '
+           'answer that must cite the retrieved sections.\n- The code refuses any answer without a valid citation.')
+    assert quote_in_sources("Render auto-deploys the Docker container", src)              # one added word
+    assert quote_in_sources("The code refuses any answer without a valid citation", src)
+    assert quote_in_sources("Azure OpenAI gpt-4.1-mini writes a short answer that must cite", src)
+    assert not quote_in_sources("Render auto-deploys Kubernetes pods to AWS", src)        # new content words
+    assert not quote_in_sources("The code accepts any answer with a citation", src)       # meaning changed
+    assert not quote_in_sources("Render deploys", src)                                    # too short to fuzzy-match

@@ -86,15 +86,50 @@ def _norm(text):
     return " " + " ".join(re.findall(r"\w+", text)) + " "
 
 
-def quote_in_sources(quote, sources_text):
-    """True if the judge's quote (or any fragment of 3+ words or 12+ characters, split on ellipses) appears in the sources.
+def _fuzzy_in(q, hay, min_share=0.8):
+    """True if at least min_share of the quote's words appear, in order, within a short window of the sources.
 
-    Matching is on whole words in order, so formatting differences don't matter but invented
-    or reworded evidence still fails.
+    Tolerates small rewordings by the judge ("Render auto-deploys the Docker container" vs
+    "Render auto-deploys Docker container") but not invented content words.
+    """
+    need = max(3, int(len(q) * min_share + 0.999))
+    window = len(q) * 2 + 2
+    for start, word in enumerate(hay):
+        if word not in q[:len(q) - need + 1]:
+            continue
+        matched, qi = 0, q.index(word, 0, len(q) - need + 1)
+        for w in hay[start:start + window]:
+            if qi < len(q) and w == q[qi]:
+                matched, qi = matched + 1, qi + 1
+            else:
+                while qi < len(q) and w != q[qi] and w in q[qi + 1:]:
+                    qi += 1                       # the judge added a word the sources don't have
+                if qi < len(q) and w == q[qi]:
+                    matched, qi = matched + 1, qi + 1
+        if matched >= need:
+            return True
+    return False
+
+
+def quote_in_sources(quote, sources_text):
+    """True if the judge's quote (or a fragment of it, split on ellipses) appears in the sources.
+
+    Matching is on whole words, ignoring formatting. Exact word sequences of 3+ words or 12+
+    characters pass; otherwise 80%+ of a 5+ word fragment must appear in order nearby AND every content word
+    (4+ letters) must occur in the sources, so a light rewording passes but new content doesn't.
     """
     haystack = _norm(sources_text)
-    fragments = [_norm(f) for f in re.split(r"\.\.\.|…", str(quote or ""))]
-    return any((len(f.split()) >= 3 or len(f.strip()) >= 12) and f in haystack for f in fragments)
+    hay_words = haystack.split()
+    vocab = set(hay_words)
+    for frag in re.split(r"\.\.\.|…", str(quote or "")):
+        f = _norm(frag)
+        words = f.split()
+        if (len(words) >= 3 or len(f.strip()) >= 12) and f in haystack:
+            return True
+        new_content = [w for w in words if len(w) >= 4 and w not in vocab]
+        if len(words) >= 5 and not new_content and _fuzzy_in(words, hay_words):
+            return True
+    return False
 
 
 def faithfulness(verdict, sources_text=None):
@@ -118,7 +153,7 @@ def faithfulness(verdict, sources_text=None):
             if not support or support.lower() == "null":
                 unsupported.append(c.get("claim", "?"))
             elif sources_text is not None and not quote_in_sources(support, sources_text):
-                unsupported.append(f"{c.get('claim', '?')} (quoted evidence not found in sources)")
+                unsupported.append(f"{c.get('claim', '?')} (judge quoted \"{support[:150]}\", not found in sources)")
         return not unsupported, unsupported
     if "faithful" in verdict:
         return verdict["faithful"] is True, list(verdict.get("unsupported") or [])
@@ -230,7 +265,7 @@ def render_report(rows, summary, model, when=None):
         else:
             lines.append(f"- answered={r['answered']} · cited_answer={r['cited_answer']} · faithful={r['faithful']}")
             if r.get("unsupported"):
-                lines.append(f"- Unsupported claims: {'; '.join(map(str, r['unsupported']))[:400]}")
+                lines.append(f"- Unsupported claims: {'; '.join(map(str, r['unsupported']))[:900]}")
             if r.get("check_failures"):
                 lines.append(f"- Check failures: {', '.join(r['check_failures'])}")
         lines.append(f"- Sources: {'; '.join(r['sources']) or 'none'}")
