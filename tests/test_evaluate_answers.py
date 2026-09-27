@@ -228,3 +228,12 @@ def test_score_counts_uncited_answers():
     row = score_question(CLOUD_Q, a, judge_says(**verdict))
     assert not row["passed"] and row["uncited"] == 1
     assert summarise([row])["answers_with_uncited"] == 1
+
+
+def test_ansi_codes_in_judge_quotes_are_ignored():
+    """Real case (profile-07): the judge wrapped emoji and line breaks in terminal colour codes."""
+    from scripts.evaluate_answers import quote_in_sources
+    src = 'D -- pass --> E["🚀 Render<br/>auto-deploys<br/>Docker container"]'
+    quote = 'D -- pass --> E["\x1b[1m\x1b[22m\x1b[39m\x1b[0mRender\x1b[0m\n\x1b[1m\x1b[22m\x1b[39mauto-deploys\nDocker container"]'
+    assert quote_in_sources(quote, src)
+    assert not quote_in_sources('\x1b[1mRender auto-deploys Kubernetes pods\x1b[0m', src)

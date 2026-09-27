@@ -85,8 +85,10 @@ def run_checks(answer_text, checks):
 
 
 def _norm(text):
-    """Lowercase word tokens only: ignores markdown, HTML tags, punctuation, emoji and spacing."""
-    text = re.sub(r"<[^>]{0,40}>", " ", str(text or "").lower())
+    """Lowercase word tokens only: ignores markdown, HTML tags, ANSI codes, punctuation, emoji and spacing."""
+    text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", " ", str(text or ""))       # ANSI colour codes the model sometimes emits
+    text = re.sub(r"[\x00-\x08\x0b-\x1f\x7f]", " ", text)                 # other control characters
+    text = re.sub(r"<[^>]{0,40}>", " ", text.lower())
     return " " + " ".join(re.findall(r"\w+", text)) + " "
 
 
