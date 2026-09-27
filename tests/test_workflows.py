@@ -26,3 +26,9 @@ def test_ingest_requires_exactly_these_settings():
     src = inspect.getsource(ingest.main)
     for name in INGEST_SETTINGS:
         assert f'"{name}"' in src
+
+
+def test_refresh_workflow_checks_retrieval_with_the_production_retriever():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "--retriever azure-hybrid-noname --min-section-recall" in text
+    assert text.index("python -m scripts.ingest") < text.index("python -m scripts.evaluate_retrieval")

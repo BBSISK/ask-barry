@@ -60,6 +60,8 @@
     {"id": "trap-07", "type": "trap", "question": "Has Barry trained a YOLOv8 model?", "expected": [], "why": "Docs say Wall Inspector EXPORTS data for YOLOv8 training, not that a model was trained."},
     {"id": "trap-09", "type": "trap", "question": "Has Barry worked with Apache Kafka?", "expected": []},
 
+    {"id": "mcp-01", "type": "answerable", "question": "Which of Barry's projects include an MCP server?", "expected": ["wall_inspector/README.md", "ask-barry/README.md", "BBSISK/README.md"], "evidence": ["mcp_server.py", "ask_barry_mcp.py", "MCP self-test"], "checks": {"must_include": ["Wall Inspector", "Ask Barry"]}, "history": "Added 27 Sep 2026: after the first nightly refresh, Ask Barry's own MCP docs crowded out Wall Inspector's MCP server."},
+
     {"id": "askbarry-02", "type": "answerable", "question": "Has Barry deployed a RAG system to production?", "expected": ["ask-barry/README.md"], "evidence": ["Retrieval-augmented generation is live in production"], "checks": {"must_not_include": ["not yet deployed", "has not deployed"]}, "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."}
   ]
 }

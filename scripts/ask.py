@@ -2,7 +2,8 @@
 
 Usage (with AZURE_* values in .env, including AZURE_OPENAI_CHAT_DEPLOYMENT):
     python -m scripts.ask "How does Wall Inspector deploy to production?"
-    python -m scripts.ask --show-context "Has Barry used Kubernetes?"
+    python -m scripts.ask --show-context "<any question>"
+    python -m scripts.ask --provider anthropic "<any question>"     # same retrieval, another model
 """
 import argparse
 import sys
@@ -12,6 +13,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Ask Barry from the command line")
     parser.add_argument("question")
     parser.add_argument("--show-context", action="store_true", help="also list the retrieved sections")
+    parser.add_argument("--provider", default="azure-openai", help="azure-openai (default), anthropic or gemini")
     args = parser.parse_args(argv)
 
     try:
@@ -24,6 +26,13 @@ def main(argv=None):
         sys.exit("Azure settings missing in .env (run python -m scripts.check_azure)")
 
     answerer = answerer_from_env()
+    if args.provider != "azure-openai":
+        from app.answering import Answerer
+        from app.providers import ProviderError, provider_from_env
+        try:
+            answerer = Answerer(answerer.retriever, provider=provider_from_env(args.provider))
+        except ProviderError as err:
+            sys.exit(f"{err} (run python -m scripts.check_providers)")
     if args.show_context:
         for r in answerer.retriever.search(args.question, k=answerer.k):
             print(f"  [{r.rank}] {r.chunk['repo']}/{r.chunk['path']} :: {r.chunk['heading'][:70]}")

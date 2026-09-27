@@ -13,6 +13,7 @@ score threshold could separate "no evidence" from "evidence" (it usually can't).
 """
 import argparse
 import json
+import sys
 import statistics
 from datetime import date
 from pathlib import Path
@@ -173,6 +174,14 @@ def render_report(retriever_name, rows, summary, n_chunks, sources=""):
 
 
 RETRIEVERS = ("bm25", "azure-keyword", "azure-vector", "azure-hybrid")
+# Stage 7d fixes for the self-crowding regression, compared against plain hybrid:
+HYBRID_VARIANTS = {
+    "azure-hybrid": {},
+    "azure-hybrid-noname": {"name_free_vector": True},             # embed the question without "Barry"
+    "azure-hybrid-cap3": {"per_repo_cap": 3},                      # at most 3 sections per repo in the top 8
+    "azure-hybrid-noname-cap3": {"name_free_vector": True, "per_repo_cap": 3},
+    "azure-hybrid-noname-cap4": {"name_free_vector": True, "per_repo_cap": 4},
+}
 
 
 def make_retriever(name, chunks, embedder=None):
@@ -183,15 +192,20 @@ def make_retriever(name, chunks, embedder=None):
     if name == "bm25":
         return BM25Retriever(chunks)
     from app.azure_search import AzureSearchRetriever, search_client_from_env
-    mode = name.split("-", 1)[1]
+    mode = name.split("-")[1]
     if mode in ("vector", "hybrid") and embedder is None:
         from app.embeddings import AzureOpenAIEmbedder, CachingEmbedder
         embedder = CachingEmbedder(AzureOpenAIEmbedder())
-    return AzureSearchRetriever(search_client_from_env(), embedder if mode != "keyword" else None, mode=mode)
+    options = HYBRID_VARIANTS.get(name, {})
+    retriever = AzureSearchRetriever(search_client_from_env(), embedder if mode != "keyword" else None, mode=mode,
+                                     **options)
+    retriever.name = name
+    return retriever
 
 
 def render_comparison(results, n_chunks, sources):
     """One table comparing retrievers on the same questions."""
+    n = next(iter(results.values()))[1]["n_answerable"] if results else 0
     lines = [
         "# Retrieval comparison",
         "",
@@ -228,7 +242,8 @@ def render_comparison(results, n_chunks, sources):
         )
     lines += [
         "",
-        "Sample: 35 answerable questions, so one question moves recall by about 0.03. Treat small gaps as noise.",
+        f"Sample: {n} answerable questions, so one question moves recall by about {1 / max(n, 1):.2f}. "
+        "Treat small gaps as noise.",
         "",
         "Scores are not comparable across retrievers (BM25 scores vs Azure RRF scores), "
         "so trap questions are judged in Stage 5/6 by the answering step, not by a score threshold here.",
@@ -240,8 +255,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Evaluate retrieval against the golden set")
     parser.add_argument("--chunks", default="corpus/chunks.jsonl")
     parser.add_argument("--golden", default="eval/golden_set.json")
-    parser.add_argument("--retriever", choices=RETRIEVERS + ("all",), default="bm25")
+    parser.add_argument("--retriever", choices=RETRIEVERS + tuple(HYBRID_VARIANTS) + ("all", "hybrid-variants"),
+                        default="bm25", help="'hybrid-variants' compares the self-crowding fixes")
     parser.add_argument("--save", action="store_true", help="write reports to docs/eval/")
+    parser.add_argument("--min-section-recall", type=float, default=None,
+                        help="exit with an error if section-level recall@8 is below this (nightly guardrail)")
     args = parser.parse_args(argv)
 
     if args.retriever != "bm25":
@@ -258,10 +276,15 @@ def main(argv=None):
     if stale:
         print(f"WARNING: evidence phrases not found in the corpus for {', '.join(stale)}: "
               "the docs changed, so update eval/golden_set.json before trusting section-level scores.\n")
-    names = RETRIEVERS if args.retriever == "all" else (args.retriever,)
+    if args.retriever == "all":
+        names = RETRIEVERS
+    elif args.retriever == "hybrid-variants":
+        names = tuple(HYBRID_VARIANTS)
+    else:
+        names = (args.retriever,)
 
     embedder = None
-    if any(n in ("azure-vector", "azure-hybrid") for n in names):
+    if any(n.startswith(("azure-vector", "azure-hybrid")) for n in names):
         from app.embeddings import AzureOpenAIEmbedder, CachingEmbedder
         embedder = CachingEmbedder(AzureOpenAIEmbedder())
         embedder.prewarm([q["question"] for q in questions])      # one batched request for all questions
@@ -288,6 +311,22 @@ def main(argv=None):
         print(f"Embedding API calls for queries: {embedder.calls}")
     if args.save:
         print(f"Saved reports to {out_dir}/")
+    if args.min_section_recall is not None:
+        failures = below_threshold(results, args.min_section_recall)
+        if failures:
+            sys.exit("Retrieval quality check FAILED: " + "; ".join(failures))
+        print(f"Retrieval quality check passed (section recall@8 >= {args.min_section_recall:.2f}).")
+
+
+def below_threshold(results, minimum):
+    """Retrievers whose section-level recall@8 is below `minimum`, with the questions they missed."""
+    failures = []
+    for name, (rows, summary) in results.items():
+        if summary["section_recall@8"] < minimum:
+            misses = [r["id"] for r in rows if r["type"] == "answerable" and not r.get("section_rank")]
+            failures.append(f"{name} section recall@8 {summary['section_recall@8']:.2f} < {minimum:.2f} "
+                            f"(missed: {', '.join(misses)})")
+    return failures
 
 
 if __name__ == "__main__":

@@ -265,3 +265,84 @@ def test_sync_refuses_a_run_that_would_wipe_most_of_the_index():
         sync([], client, emb, log=lambda *_: None)                     # empty fetch
     done = sync(chunks[:3], client, emb, log=lambda *_: None, allow_large_delete=True)
     assert done["deleted"] == 7                                        # explicit override works
+
+
+# --- Stage 7d: self-crowding fixes -------------------------------------------
+
+@pytest.mark.parametrize("question,expected", [
+    ("How can I contact Barry?", "How can I contact ?"),
+    ("Which programming languages does Barry know?", "Which programming languages does know?"),
+    ("What is Barry's workflow?", "What is workflow?"),
+    ("What is the Ask Barry project?", "What is the Ask Barry project?"),     # the project name is kept
+    ("Does ask barry have a model card?", "Does ask barry have a model card?"),
+    ("Barry", "Barry"),                                                        # never embed an empty string
+])
+def test_vector_query_drops_name_but_keeps_project_name(question, expected):
+    from app.azure_search import vector_query
+    assert vector_query(question) == expected
+
+
+def _results(repos):
+    from app.retrieval import SearchResult
+    return [SearchResult({"repo": r, "chunk_id": f"{r}{i}"}, 1.0 / (i + 1), i + 1) for i, r in enumerate(repos)]
+
+
+def test_diversify_caps_each_repo_and_keeps_rank_order():
+    from app.azure_search import diversify
+    ranked = _results(["ask-barry"] * 6 + ["BBSISK", "ask-barry", "BBSISK", "wall_inspector"])
+    top = diversify(ranked, k=5, per_repo_cap=3)
+    assert [r.chunk["repo"] for r in top] == ["ask-barry"] * 3 + ["BBSISK", "BBSISK"]
+    assert [r.rank for r in top] == [1, 2, 3, 4, 5]
+
+
+def test_diversify_tops_up_when_few_repos_match():
+    from app.azure_search import diversify
+    top = diversify(_results(["ask-barry"] * 6), k=5, per_repo_cap=3)
+    assert len(top) == 5                                  # never returns fewer than k if results exist
+
+
+def test_retriever_options_widen_pool_and_embed_name_free_text():
+    seen = []
+
+    class RecordingEmbedder(FakeEmbedder):
+        def embed(self, texts):
+            seen.extend(texts)
+            return super().embed(texts)
+
+    hits = [{"id": str(i), "chunk_id": f"c{i}", "repo": "ask-barry" if i < 6 else "BBSISK", "path": "README.md",
+             "heading": "h", "url": "u", "text": "t", "@search.score": 1.0 / (i + 1)} for i in range(10)]
+    client = FakeSearchClient(hits=hits)
+    r = AzureSearchRetriever(client, RecordingEmbedder(dims=8), mode="hybrid", per_repo_cap=3, name_free_vector=True)
+    out = r.search("How can I contact Barry?", k=5)
+    assert seen == ["How can I contact ?"] and client.last_search["top"] == 30
+    assert [x.chunk["repo"] for x in out].count("ask-barry") == 3
+
+
+def test_default_retriever_behaviour_is_unchanged():
+    client = FakeSearchClient(hits=HITS)
+    AzureSearchRetriever(client, FakeEmbedder(dims=8), mode="hybrid").search("Has Barry used Docker?", k=8)
+    assert client.last_search["top"] == 8
+
+
+def test_hybrid_variants_are_selectable_for_evaluation(monkeypatch):
+    import scripts.evaluate_retrieval as er
+    monkeypatch.setattr("app.azure_search.search_client_from_env", lambda: FakeSearchClient(hits=HITS))
+    r = er.make_retriever("azure-hybrid-noname-cap3", [], embedder=FakeEmbedder(dims=8))
+    assert r.name == "azure-hybrid-noname-cap3" and r.per_repo_cap == 3 and r.name_free_vector
+
+
+def test_below_threshold_names_the_missed_questions():
+    from scripts.evaluate_retrieval import below_threshold
+    rows = [{"id": "profile-09", "type": "answerable", "section_rank": None},
+            {"id": "wall-01", "type": "answerable", "section_rank": 1}]
+    results = {"azure-hybrid-noname": (rows, {"section_recall@8": 0.5})}
+    assert below_threshold(results, 0.95) == ["azure-hybrid-noname section recall@8 0.50 < 0.95 (missed: profile-09)"]
+    assert below_threshold({"x": (rows, {"section_recall@8": 1.0})}, 0.95) == []
+
+
+def test_production_answerer_uses_the_name_free_vector(monkeypatch):
+    import app.answering as answering
+    monkeypatch.setattr("app.azure_search.search_client_from_env", lambda: FakeSearchClient(hits=HITS))
+    monkeypatch.setenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4.1-mini")
+    a = answering.answerer_from_env(client=object(), embedder=FakeEmbedder(dims=8))
+    assert a.retriever.name_free_vector is True and a.retriever.per_repo_cap is None

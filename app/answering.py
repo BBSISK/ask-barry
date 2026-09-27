@@ -126,10 +126,12 @@ def renumber_citations(text, cited):
 class Answerer:
     """Retrieve, prompt, generate, verify."""
 
-    def __init__(self, retriever, chat_client, deployment, k=CONTEXT_K):
+    def __init__(self, retriever, chat_client=None, deployment=None, k=CONTEXT_K, provider=None):
+        """Use `provider` (see app.providers), or an Azure OpenAI client + deployment name."""
+        from app.providers import AzureOpenAIProvider
         self.retriever = retriever
-        self.client = chat_client
-        self.deployment = deployment
+        self.provider = provider or AzureOpenAIProvider(chat_client, deployment)
+        self.deployment = self.provider.model
         self.k = k
 
     def ask(self, question):
@@ -137,14 +139,7 @@ class Answerer:
         results = self.retriever.search(question, k=self.k)
         if not results:
             return Answer(question, NO_EVIDENCE, False, [], 0, self.deployment)
-        resp = self.client.chat.completions.create(
-            model=self.deployment,
-            messages=build_messages(question, results),
-            temperature=0,
-            max_completion_tokens=400,
-            response_format={"type": "json_object"},
-        )
-        raw = resp.choices[0].message.content
+        raw = self.provider.generate(build_messages(question, results), max_tokens=400)
         supported, text, cited = parse_model_output(raw, len(results))
         text, renumbered = renumber_citations(text, cited)
         sources, cited_texts = [], []
@@ -187,5 +182,6 @@ def answerer_from_env(client=None, embedder=None):
 
     client = client or azure_chat_client()
     embedder = embedder or AzureOpenAIEmbedder(client=client)
-    retriever = AzureSearchRetriever(search_client_from_env(), embedder, mode="hybrid")
+    # name_free_vector: chosen in Stage 7d (section recall@8 0.89 -> 1.00 after this repo's own docs were indexed)
+    retriever = AzureSearchRetriever(search_client_from_env(), embedder, mode="hybrid", name_free_vector=True)
     return Answerer(retriever, client, os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"])

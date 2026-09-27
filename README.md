@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 6 complete (RAG live in production, answer quality evaluated)
+## Current status: Stage 7 in progress (RAG live in production, answer quality evaluated)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -82,7 +82,7 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 37 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **Golden set:** `eval/golden_set.json` holds 38 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
 - **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
 - **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
 
@@ -109,6 +109,16 @@ python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyw
   | **Azure hybrid** | **0.80** | **0.94** | **1.00** | **0.86** |
 
 - **Decision:** hybrid search, passing the top **8** chunks to the answering step (Stage 5), because it's the only setting that retrieved the answer for every question. With 35 questions, one question moves recall by about 0.03, so small gaps are noise. Full reports: [`docs/eval/`](docs/eval/).
+- **Update (Stage 7d): the vector side now ignores my name too.** When the nightly job first indexed this repo's own model card and new README sections, they made up 36 of 75 sections and were full of "Ask Barry". The vector half embedded the whole question, name included, so questions mentioning me landed next to those sections. For contact and languages questions, all 8 retrieved sections came from this repo. I compared fixes on the golden set (38 questions, section level):
+
+  | Retriever | Recall@1 | Recall@8 | MRR |
+  |---|---|---|---|
+  | Hybrid, full question embedded (before) | 0.68 | 0.89 | 0.78 |
+  | **Hybrid, name-free embedding (now live)** | **0.82** | **1.00** | **0.88** |
+  | Hybrid, max 3 sections per repo | 0.68 | 1.00 | 0.80 |
+  | Name-free + max 3 or 4 per repo | 0.82 | 0.97 | 0.88 |
+
+  The simplest fix won, and the per-repo cap stays off. The nightly job now re-runs this check after every refresh and **fails, emailing me, if section recall@8 drops below 0.95**, so a README change that hurts search can't go unnoticed again.
 
 ## Grounded answers (Stage 5)
 
@@ -217,6 +227,21 @@ Claude Desktop (`claude_desktop_config.json`):
   }
 }
 ```
+
+## Compare model providers (Stage 7d)
+
+The answering step sits behind one small interface (`app/providers.py`) with three implementations: Azure OpenAI (the live app), Anthropic Claude and Google Gemini. Claude and Gemini are called over plain HTTPS, so there are no extra SDKs.
+
+```bash
+python -m scripts.check_providers                                   # one tiny request per provider
+python -m scripts.evaluate_answers --providers azure-openai anthropic gemini --save
+python -m scripts.ask --provider gemini "<any question>"            # try one question
+```
+
+- **A fair comparison:** every provider answers from exactly the same retrieved sections (retrieval runs once per question and is cached), with the same prompt, citation checks and scoring. Only the model changes.
+- **Measured:** passing questions, faithfulness, true-but-uncited claims, regression checks, trap questions, errors, latency and tokens. A provider error on a question is recorded as a failure, never a pass.
+- **Judge bias check:** the judge is one fixed model for all providers, and `--judge anthropic` or `--judge gemini` re-scores with a different judge.
+- The live app stays on Azure OpenAI. The other keys live only in local `.env`.
 
 ## Keeping the index fresh (Stage 7)
 

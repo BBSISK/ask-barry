@@ -1,7 +1,8 @@
 name: Refresh search index
 
-# Keeps answers in step with the READMEs: re-fetches the public docs every night and
-# syncs Azure AI Search. Only new or changed sections are re-embedded, so a quiet night
+# Keeps answers in step with the READMEs: re-fetches the public docs every night,
+# syncs Azure AI Search, then checks retrieval against the golden set so a README change
+# that hurts search (as happened on 27 Sep 2026) turns into a failed run and an email. Only new or changed sections are re-embedded, so a quiet night
 # costs nothing. It can also be run by hand from the Actions tab.
 on:
   schedule:
@@ -42,3 +43,11 @@ jobs:
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_ADMIN_KEY }}      # admin key: this job writes to the index
         run: python -m scripts.ingest
+      - name: Check retrieval quality on the golden set (fails, and emails you, if recall drops)
+        env:
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_ADMIN_KEY }}
+        run: python -m scripts.evaluate_retrieval --retriever azure-hybrid-noname --min-section-recall 0.95

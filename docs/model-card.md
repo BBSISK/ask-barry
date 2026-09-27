@@ -55,9 +55,9 @@ The architecture diagram is in the [README](../README.md#architecture).
 
 ## Evaluation
 
-The golden set has 45 questions. 37 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
+The golden set has 46 questions. 38 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
 
-**Retrieval** (Stage 4, section level: the retrieved section must contain the answer): hybrid search found the answer in the top 8 for 100% of questions, and in first place for 80%.
+**Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
 **Answers** (27 September 2026, full pipeline):
 
@@ -80,7 +80,7 @@ The golden set has 45 questions. 37 are answerable, each with the file and evide
 - **True but uncited.** An answer occasionally includes a correct fact from a retrieved section it didn't cite, so the reader can't check it from the links. The evaluation counts these separately from invented claims.
 - **Run-to-run variation.** Even at temperature 0, results vary by a few questions between runs.
 - **Same-family judge.** The judge is the same model family as the answering model. The deterministic checks and published answers are there so the headline numbers don't rest on the judge alone.
-- **Small test set, English only.** With 45 questions, one question moves a percentage by 2–3 points.
+- **Small test set, English only.** With 46 questions, one question moves a percentage by 2–3 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **Cold starts.** The free hosting tier sleeps when idle, so the first question can take about 30 seconds.
 

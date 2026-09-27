@@ -29,10 +29,41 @@ def keyword_query(query):
     carries no information for ranking; worse, the project's own name
     ("Ask Barry") made keyword search favour this repo's README. BM25
     already ignores it as a stopword; this keeps Azure keyword/hybrid
-    consistent. The vector part still embeds the full question.
+    consistent. The vector part uses vector_query() for the same reason (Stage 7d).
     """
     cleaned = _SUBJECT_NAME.sub(" ", query)
     return re.sub(r"\s+", " ", cleaned).strip()
+
+
+_NAME_EXCEPT_PROJECT = re.compile(r"(?<!ask )\bbarry(?:'s|s)?\b", re.IGNORECASE)
+
+
+def vector_query(query):
+    """Drop the subject's name before embedding, but keep the project name "Ask Barry".
+
+    Added after the first nightly refresh (27 Sep 2026) indexed this repo's own model card and
+    README sections: they are saturated with "Ask Barry", so the embedding of any question
+    containing "Barry" landed near them and they filled the top 8 (contact and languages
+    questions retrieved nothing else).
+    """
+    cleaned = _NAME_EXCEPT_PROJECT.sub(" ", query)
+    return re.sub(r"\s+", " ", cleaned).strip() or query
+
+
+def diversify(results, k, per_repo_cap):
+    """Keep rank order but allow at most `per_repo_cap` results per repo; top up from the rest if short."""
+    picked, overflow, counts = [], [], {}
+    for r in results:
+        repo = r.chunk.get("repo", "")
+        if counts.get(repo, 0) < per_repo_cap:
+            picked.append(r)
+            counts[repo] = counts.get(repo, 0) + 1
+        else:
+            overflow.append(r)
+        if len(picked) == k:
+            break
+    picked += overflow[: k - len(picked)]
+    return [SearchResult(r.chunk, r.score, rank) for rank, r in enumerate(picked, start=1)]
 
 
 def doc_key(chunk_id):
@@ -145,7 +176,9 @@ def index_client_from_env():
 class AzureSearchRetriever:
     """Same interface as BM25Retriever: search(query, k) -> list[SearchResult]."""
 
-    def __init__(self, search_client, embedder=None, mode="hybrid"):
+    CANDIDATES = 30                       # pool to diversify from when a per-repo cap is set
+
+    def __init__(self, search_client, embedder=None, mode="hybrid", per_repo_cap=None, name_free_vector=False):
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
         if mode in ("vector", "hybrid") and embedder is None:
@@ -153,22 +186,26 @@ class AzureSearchRetriever:
         self.client = search_client
         self.embedder = embedder
         self.mode = mode
+        self.per_repo_cap = per_repo_cap
+        self.name_free_vector = name_free_vector
         self.name = f"azure-{mode}"
 
     def search(self, query, k=5):
         if not query.strip():
             return []
-        kwargs = {"top": k, "select": RETURN_FIELDS}
+        top = max(k, self.CANDIDATES) if self.per_repo_cap else k
+        kwargs = {"top": top, "select": RETURN_FIELDS}
         if self.mode in ("vector", "hybrid"):
             from azure.search.documents.models import VectorizedQuery
-            vector = self.embedder.embed([query])[0]
+            vector = self.embedder.embed([vector_query(query) if self.name_free_vector else query])[0]
             # Ask the vector side for a wider candidate pool than k, so RRF has
             # enough overlap with the keyword results to fuse sensibly.
-            knn = max(k, 20)
+            knn = max(top, 20)
             kwargs["vector_queries"] = [VectorizedQuery(vector=vector, k_nearest_neighbors=knn, fields=VECTOR_FIELD)]
         search_text = None if self.mode == "vector" else (keyword_query(query) or query)
         hits = self.client.search(search_text=search_text, **kwargs)
-        return [
-            SearchResult(document_to_chunk(h), float(h.get("@search.score", 0.0)), rank)
-            for rank, h in enumerate(list(hits)[:k], start=1)
-        ]
+        results = [SearchResult(document_to_chunk(h), float(h.get("@search.score", 0.0)), rank)
+                   for rank, h in enumerate(list(hits)[:top], start=1)]
+        if self.per_repo_cap:
+            return diversify(results, k, self.per_repo_cap)
+        return results[:k]

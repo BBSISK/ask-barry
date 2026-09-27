@@ -4,6 +4,8 @@ Usage (with AZURE_* values in .env; the index must be up to date):
     python -m scripts.evaluate_answers                 # all questions, print report
     python -m scripts.evaluate_answers --save          # also write docs/eval/<date>-answers.md
     python -m scripts.evaluate_answers --ids trap-01 profile-10   # a subset
+    python -m scripts.evaluate_answers --providers azure-openai anthropic gemini --save   # Stage 7d comparison
+    python -m scripts.evaluate_answers --judge anthropic     # cross-check the judge's own bias
 
 What is measured per question:
   Answerable questions
@@ -312,25 +314,131 @@ def render_report(rows, summary, model, when=None):
 # Live run
 # ---------------------------------------------------------------------------
 
-def make_judge(client, deployment):
+def make_judge(provider):
+    """LLM judge on any provider (app.providers): same prompts and scoring code for all of them."""
     def judge(kind, question, answer_text, sources_text, other_text=""):
         system = JUDGE_TRAP if kind == "trap" else JUDGE_FAITHFUL
         user = f"Question: {question}\n\nAnswer: {answer_text}\n\nCITED sources:\n{sources_text or '(none)'}"
         if kind != "trap":
             user += f"\n\n===\n\nOTHER retrieved sources (not cited by the answer):\n{other_text or '(none)'}"
-        resp = client.chat.completions.create(
-            model=deployment, temperature=0, max_completion_tokens=1500,
-            response_format={"type": "json_object"},
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-        )
-        return parse_judge(resp.choices[0].message.content)
+        raw = provider.generate([{"role": "system", "content": system}, {"role": "user", "content": user}],
+                                max_tokens=1500)
+        return parse_judge(raw)
     return judge
 
 
+class CachingRetriever:
+    """Retrieve once per question, so every provider answers from exactly the same sections."""
+
+    def __init__(self, retriever):
+        self.retriever = retriever
+        self.cache = {}
+
+    def search(self, query, k=8):
+        if (query, k) not in self.cache:
+            self.cache[(query, k)] = self.retriever.search(query, k=k)
+        return self.cache[(query, k)]
+
+
+def error_row(q, message):
+    """A question the provider failed on (API error, unparseable output). Counts as a failure, never a pass."""
+    row = {"id": q["id"], "type": q["type"], "question": q["question"], "answer": f"(error) {message}",
+           "supported": False, "sources": [], "passed": False, "error": message}
+    if q["type"] == "trap":
+        row.update(no_false_claim=False, reason=f"error: {message}")
+    else:
+        row.update(answered=False, cited_answer=False, faithful=None, unsupported=[], uncited=0,
+                   check_failures=[f"error: {message}"])
+    return row
+
+
+MAX_CONSECUTIVE_ERRORS = 3
+
+
+def run_provider(answerer, questions, judge, log=print, max_consecutive_errors=MAX_CONSECUTIVE_ERRORS):
+    """Answer and score every question with one provider. Returns (rows, stats).
+
+    After several errors in a row (bad key, wrong model, quota), the provider is skipped for the
+    remaining questions instead of retrying each one: those count as errors, never as passes.
+    """
+    rows, seconds, tokens_in, tokens_out = [], [], [], []
+    streak = 0
+    for i, q in enumerate(questions, 1):
+        if streak >= max_consecutive_errors:
+            rows.append(error_row(q, "skipped: provider failed on the previous questions"))
+            continue
+        try:
+            answer = answerer.ask(q["question"])
+            usage = getattr(answerer.provider, "usage", None)
+            if usage and answer.retrieved:
+                seconds.append(usage.seconds)
+                tokens_in.append(usage.input_tokens)
+                tokens_out.append(usage.output_tokens)
+            row = score_question(q, answer, judge)
+        except Exception as err:                        # one bad call shouldn't sink the whole comparison
+            row = error_row(q, f"{type(err).__name__}: {err}"[:200])
+        rows.append(row)
+        streak = streak + 1 if row.get("error") else 0
+        if streak == max_consecutive_errors:
+            log(f"Stopping {getattr(answerer.provider, 'name', 'provider')}: {streak} errors in a row "
+                f"(last: {row['error']}). Remaining questions are recorded as errors.")
+        log(f"[{i:>2}/{len(questions)}] {'PASS' if row['passed'] else 'FAIL'}  {q['id']}"
+            + (f"  ({row['error']})" if row.get("error") else ""))
+
+    def median(xs):
+        xs = sorted(xs)
+        return xs[len(xs) // 2] if xs else 0
+
+    stats = {"errors": sum(1 for r in rows if r.get("error")), "median_seconds": median(seconds),
+             "avg_tokens_in": sum(tokens_in) / len(tokens_in) if tokens_in else 0,
+             "avg_tokens_out": sum(tokens_out) / len(tokens_out) if tokens_out else 0}
+    return rows, stats
+
+
+def render_comparison(results, judge_model, when=None):
+    """results: list of (provider_name, model, rows, summary, stats), all on the same retrieved sections."""
+    when = when or date.today().isoformat()
+    lines = [
+        "# Answer quality by model provider",
+        "",
+        f"Date: {when} · Same questions, same retrieved sections (Azure hybrid, top 8), same prompt and "
+        f"honesty rules; only the answering model changes. Judge: {judge_model}.",
+        "",
+        "| Provider | Model | Passing | Faithful | True-but-uncited | Regression fails | Traps: no false claim | Errors | Median latency | Avg tokens in / out |",
+        "|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for name, model, rows, s, st in results:
+        lines.append(
+            f"| {name} | `{model}` | {s['passed']} of {s['total']} | {s['faithful_of_answered']:.0%} | "
+            f"{s.get('answers_with_uncited', 0)} | {s['checks_failed']} | {s['trap_no_false_claim']:.0%} | "
+            f"{st['errors']} | {st['median_seconds']:.1f}s | {st['avg_tokens_in']:.0f} / {st['avg_tokens_out']:.0f} |")
+    lines += ["", "## Where the providers disagree", "",
+              "| ID | " + " | ".join(name for name, *_ in results) + " |",
+              "|---|" + "---|" * len(results)]
+    by_id = [{r["id"]: r for r in rows} for _, _, rows, _, _ in results]
+    for qid in by_id[0]:
+        marks = ["✅" if b.get(qid, {}).get("passed") else "❌" for b in by_id]
+        if len(set(marks)) > 1:
+            lines.append(f"| {qid} | " + " | ".join(marks) + " |")
+    lines += [
+        "",
+        "Notes:",
+        "- One run per provider; single runs vary by a few questions, so treat small gaps as noise.",
+        "- The judge is one fixed model for every provider. It may favour answers in its own style, especially "
+        "from its own family; the citation test and regression checks are deterministic and unaffected.",
+        "- Per-provider reports with every answer are saved next to this file.",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def main(argv=None):
+    from app.providers import PROVIDER_NAMES
     parser = argparse.ArgumentParser(description="Evaluate answers end to end")
     parser.add_argument("--golden", default="eval/golden_set.json")
     parser.add_argument("--ids", nargs="*", help="only these question ids")
+    parser.add_argument("--providers", nargs="+", default=["azure-openai"], choices=PROVIDER_NAMES,
+                        help="answering model(s) to evaluate; several = a side-by-side comparison")
+    parser.add_argument("--judge", default="azure-openai", choices=PROVIDER_NAMES, help="provider for the LLM judge")
     parser.add_argument("--save", action="store_true")
     args = parser.parse_args(argv)
 
@@ -339,10 +447,10 @@ def main(argv=None):
         load_dotenv()
     except ImportError:
         pass
-    import os
 
-    from app.answering import answerer_from_env, azure_chat_client, azure_configured
+    from app.answering import Answerer, answerer_from_env, azure_chat_client, azure_configured
     from app.embeddings import AzureOpenAIEmbedder, CachingEmbedder
+    from app.providers import ProviderError, provider_from_env
     if not azure_configured():
         sys.exit("Azure settings missing in .env (run python -m scripts.check_azure)")
 
@@ -350,27 +458,38 @@ def main(argv=None):
     if args.ids:
         questions = [q for q in questions if q["id"] in set(args.ids)]
     client = azure_chat_client(max_retries=8)            # back off on 429s rather than fail
+    try:
+        providers = [provider_from_env(name, azure_client=client) for name in args.providers]
+        judge_provider = provider_from_env(args.judge, azure_client=client)
+    except ProviderError as err:
+        sys.exit(f"{err} (run python -m scripts.check_providers)")
     embedder = CachingEmbedder(AzureOpenAIEmbedder(client=client))
     embedder.prewarm([q["question"] for q in questions])
-    answerer = answerer_from_env(client=client, embedder=embedder)
-    judge = make_judge(client, os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"])
+    retriever = CachingRetriever(answerer_from_env(client=client, embedder=embedder).retriever)
+    judge = make_judge(judge_provider)
 
-    rows = []
-    start = time.time()
-    for i, q in enumerate(questions, 1):
-        answer = answerer.ask(q["question"])
-        row = score_question(q, answer, judge)
-        rows.append(row)
-        print(f"[{i:>2}/{len(questions)}] {'PASS' if row['passed'] else 'FAIL'}  {q['id']}")
-    summary = summarise(rows)
-    report = render_report(rows, summary, answerer.deployment)
-    print("\n" + report)
-    print(f"Took {time.time() - start:.0f}s")
+    results, out_dir, today = [], Path("docs/eval"), date.today().isoformat()
+    for provider in providers:
+        print(f"\n=== {provider.name} ({provider.model}) ===")
+        start = time.time()
+        rows, stats = run_provider(Answerer(retriever, provider=provider), questions, judge)
+        summary = summarise(rows)
+        report = render_report(rows, summary, f"{provider.model} ({provider.name}); judge {judge_provider.model}")
+        results.append((provider.name, provider.model, rows, summary, stats))
+        print(f"{provider.name}: {summary['passed']} of {summary['total']} passing · took {time.time() - start:.0f}s")
+        if len(providers) == 1:
+            print("\n" + report)
+        if args.save:
+            out_dir.mkdir(parents=True, exist_ok=True)
+            suffix = "" if provider.name == "azure-openai" and len(providers) == 1 else f"-{provider.name}"
+            (out_dir / f"{today}-answers{suffix}.md").write_text(report, encoding="utf-8")
+    if len(providers) > 1:
+        comparison = render_comparison(results, f"{judge_provider.model} ({judge_provider.name})")
+        print("\n" + comparison)
+        if args.save:
+            (out_dir / f"{today}-providers.md").write_text(comparison, encoding="utf-8")
     if args.save:
-        out = Path("docs/eval") / f"{date.today().isoformat()}-answers.md"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(report, encoding="utf-8")
-        print(f"Saved {out}")
+        print(f"Saved reports to {out_dir}/")
 
 
 if __name__ == "__main__":
