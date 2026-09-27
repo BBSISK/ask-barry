@@ -112,8 +112,9 @@ def test_answerer_end_to_end_with_fakes():
     answer = Answerer(retriever, chat, "gpt-4.1-mini").ask("Has Barry used Terraform?")
     assert retriever.last_k == 8                                   # Stage 4 decision
     assert answer.supported and answer.retrieved == 8
-    assert [s.number for s in answer.sources] == [2]
-    assert answer.sources[0].url.endswith("#s2")
+    assert [s.number for s in answer.sources] == [1]              # renumbered for readers
+    assert answer.sources[0].url.endswith("#s2")                   # ...but still the 2nd retrieved section
+    assert answer.answer == "Barry used Terraform [1]."
     assert chat.last["model"] == "gpt-4.1-mini" and chat.last["temperature"] == 0
     assert chat.last["response_format"] == {"type": "json_object"}
 
@@ -204,3 +205,17 @@ def test_health_reports_live_features_only_when_configured(api, client):
 def test_index_shows_form_only_when_available(api, client):
     assert b'id="ask-form"' in api.get("/").data
     assert b'id="ask-form"' not in client.get("/").data
+
+
+def test_renumber_citations_orders_by_first_use():
+    from app.answering import renumber_citations
+    text, pairs = renumber_citations("A [7] and B [3], again [7].", [7, 3])
+    assert text == "A [1] and B [2], again [1]."
+    assert pairs == [(7, 1), (3, 2)]
+
+
+def test_prompt_guards_against_roadmap_confusion_and_rambling():
+    system = build_messages("q", [result(1)])[0]["content"]
+    assert "Present planned work as planned" in system
+    assert "never cancels evidence" in system
+    assert "at most 4 sentences" in system
