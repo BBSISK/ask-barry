@@ -21,6 +21,7 @@ A portfolio assistant that answers questions about my software projects using **
 - Retrieval comparison scored at section level
 - Grounded answering with citations, rate limiting and a web UI
 - Answer-quality evaluation with an evidence-checking LLM judge
+- An MCP server, so AI assistants can query it as a tool
 - Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
 
 | Stage | Scope | Status |
@@ -32,7 +33,11 @@ A portfolio assistant that answers questions about my software projects using **
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
 | 5 | Grounded answers with citations (RAG), live | Done |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Done |
-| 7 | Extras: nightly index refresh, switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | In progress |
+| 7a | Nightly index refresh (GitHub Action) and a check for true-but-uncited answers | Done |
+| 7b | Model card, architecture diagram, AI disclosure | Done: [model card](docs/model-card.md) |
+| 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
+| 7d | Answer quality compared across model providers | Next |
+| 7e | Infrastructure as code for this project's Azure resources | Planned |
 
 ## Architecture
 
@@ -181,6 +186,37 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 ## Deployment
 
 `render.yaml` defines the Render web service (free plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+
+## Use Ask Barry from an AI assistant (MCP, Stage 7)
+
+`ask_barry_mcp.py` is a small [Model Context Protocol](https://modelcontextprotocol.io) server with one read-only tool, `ask_barry`. It lets Claude Desktop, Claude Code, Cursor or VS Code ask about my projects and get the same cited answers as the website.
+- **A thin client:** it calls the live `/api/ask` endpoint, so it needs no Azure keys and inherits the live app's honesty rules and rate limits.
+- **Structured output:** the answer, a `supported` flag and the cited sources (repo, file, section, link), so the assistant can keep the citations.
+- **Built on the official MCP Python SDK** (stdio transport). Unit tests plus an in-memory client test cover the tool listing, schemas, results and errors.
+
+```bash
+pip install mcp                                              # or: pip install -r requirements-dev.txt
+python ask_barry_mcp.py --check "How does Wall Inspector deploy to production?"   # smoke test, no MCP client needed
+```
+
+Claude Code:
+
+```bash
+claude mcp add ask-barry -- /path/to/ask-barry/.venv/bin/python /path/to/ask-barry/ask_barry_mcp.py
+```
+
+Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "ask-barry": {
+      "command": "/path/to/ask-barry/.venv/bin/python",
+      "args": ["/path/to/ask-barry/ask_barry_mcp.py"]
+    }
+  }
+}
+```
 
 ## Keeping the index fresh (Stage 7)
 

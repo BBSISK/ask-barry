@@ -19,6 +19,7 @@ Ask Barry is an AI assistant that answers questions about Barry Sisk's software 
 2. **For each question**, hybrid search (keyword + vector, merged with Reciprocal Rank Fusion) retrieves the 8 most relevant sections.
 3. The model writes a short answer from those sections only, citing them by number.
 4. Code checks the citations before anything is shown, and the page displays the answer with links to the exact sections.
+5. The same answers are available to AI assistants through a read-only MCP tool, `ask_barry`. It calls the live app, so the same rules and rate limits apply.
 
 The architecture diagram is in the [README](../README.md#architecture).
 

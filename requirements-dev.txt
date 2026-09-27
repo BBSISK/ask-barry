@@ -1,3 +1,5 @@
 -r requirements.txt
 pytest>=8.0
 python-dotenv>=1.0   # lets `flask run` read your local .env
+mcp>=1.27,<2         # Ask Barry MCP server (ask_barry_mcp.py) and its tests; 2.x changed the API
+cryptography<49      # pulled in by mcp; 49+ has no pre-built wheel for Intel Macs
