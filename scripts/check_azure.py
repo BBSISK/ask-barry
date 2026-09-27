@@ -25,6 +25,8 @@ OPTIONAL = ("AZURE_OPENAI_CHAT_DEPLOYMENT",)
 SECRET_NAMES = {"AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY"}
 EXPECTED_EMBED_DIMS = 1536   # text-embedding-3-small
 
+from app.embeddings import openai_base_url  # noqa: E402  (re-exported for tests)
+
 
 def load_env():
     """Read .env if python-dotenv is installed (it is, via requirements-dev.txt)."""
@@ -44,14 +46,6 @@ def describe(name, value):
     if name in SECRET_NAMES:
         return f"set (…{value[-4:]})" if len(value) >= 8 else "set (too short?)"
     return value
-
-
-def openai_base_url(endpoint):
-    """Accept either https://<name>.openai.azure.com or .../openai/v1/ and return the v1 base URL."""
-    endpoint = endpoint.strip().rstrip("/")
-    if endpoint.endswith("/openai/v1"):
-        return endpoint + "/"
-    return endpoint + "/openai/v1/"
 
 
 def check_embeddings(client, deployment):

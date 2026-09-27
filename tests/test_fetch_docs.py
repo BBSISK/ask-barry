@@ -108,3 +108,11 @@ def test_fetch_all_writes_files_and_manifest(tmp_path):
 def test_fetch_all_respects_excluded_paths(tmp_path):
     manifest = fetch_all(FakeGitHub(), "BBSISK", tmp_path, exclude_paths=["demo/README.md"])
     assert manifest["documents"] == []
+
+
+def test_folder_exclusion_keeps_eval_reports_out_of_the_corpus():
+    from scripts.fetch_docs import DEFAULT_EXCLUDED_PATHS, is_excluded
+    assert is_excluded("ask-barry", "docs/eval/2026-09-27-bm25.md", DEFAULT_EXCLUDED_PATHS)
+    assert not is_excluded("ask-barry", "docs/azure-setup.md", DEFAULT_EXCLUDED_PATHS)
+    assert not is_excluded("ask-barry", "README.md", DEFAULT_EXCLUDED_PATHS)
+    assert is_excluded("Wall_Inspector", "INTERVIEW_ARCHITECTURE_GUIDE.md", DEFAULT_EXCLUDED_PATHS)

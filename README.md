@@ -4,9 +4,9 @@ A portfolio assistant that answers questions about my software projects ("Has Ba
 
 It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
 
-## Current status: Stage 3 complete (Azure provisioned)
+## Current status: Stage 4 (embeddings + hybrid search in Azure AI Search)
 
-**What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), and the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3).
+**What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3), and ingestion of the chunks into an Azure AI Search index with embeddings, plus a keyword / vector / hybrid comparison (Stage 4).
 **What is not built yet:** search, embeddings and AI-generated answers. The live app does not use the chunks or the search yet, and `/health` reports these features as `false` until they exist.
 
 | Stage | Scope | Status |
@@ -15,7 +15,7 @@ It is being built in stages to learn and demonstrate retrieval-augmented generat
 | 1 | Fetch public repo READMEs/docs and split them into sections (no AI) | Done |
 | 2 | Keyword search baseline + evaluation question set | Done |
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
-| 4 | Embeddings + hybrid search in Azure AI Search | Planned |
+| 4 | Embeddings + hybrid search in Azure AI Search | In progress |
 | 5 | Grounded answers with citations (RAG) | Planned |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |
 | 7 | Extras: multi-provider, Terraform, MCP tool, model card | Planned |
@@ -44,9 +44,22 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 35 questions with the file that answers each, plus 8 **trap** questions about skills my public docs don't evidence (e.g. Kubernetes, or "has he trained a YOLOv8 model?"). The final assistant must decline the traps.
-- **Baseline (BM25, 45 chunks, 27 Sep 2026):** Recall@1 0.83 · Recall@3 0.94 · MRR 0.88. The full report is in [`docs/eval/2026-09-27-bm25.md`](docs/eval/2026-09-27-bm25.md).
-- **What it shows:** the two misses are vocabulary mismatches ("studying for" vs "Higher Diploma", "contact" vs "Get in touch"). And 7 of 8 traps still match *something* on common words, so keyword scores alone can't tell "no evidence" from "evidence". These are the gaps that embeddings (Stage 4) and grounded answering (Stage 5) have to close.
+- **Golden set:** `eval/golden_set.json` holds 35 questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
+- **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
+
+## Index into Azure AI Search and compare retrievers (Stage 4)
+
+```bash
+python -m scripts.ingest --dry-run                          # what would change (no cost)
+python -m scripts.ingest                                    # create index, embed, upload
+python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid
+```
+
+- **Index:** `ask-barry-chunks`, one document per chunk: text, repo, file, heading, GitHub link, and a 1536-dimension `text-embedding-3-small` vector (HNSW, cosine). The vector field is never returned in results.
+- **Ingestion only re-embeds what changed:** chunks are compared by content hash, and chunks that disappear from the corpus (e.g. a repo made private) are deleted from the index.
+- **Three query modes over the same index:** keyword (Azure BM25), vector (nearest neighbours), and hybrid (both, merged with Reciprocal Rank Fusion).
+- **Tests:** all offline, with fake Azure clients, so CI needs no keys.
 
 ## Run locally
 

@@ -127,3 +127,12 @@ def test_corpus_sources_lists_repos_with_short_sha():
     from scripts.evaluate_retrieval import corpus_sources
     chunks = [{"repo": "b", "commit_sha": "1234567890"}, {"repo": "a", "commit_sha": ""}, {"repo": "b", "commit_sha": "x"}]
     assert corpus_sources(chunks) == "a, b@1234567"
+
+
+def test_make_retriever_bm25_and_comparison_report():
+    from scripts.evaluate_retrieval import evaluate, make_retriever, render_comparison
+    r = make_retriever("bm25", CHUNKS)
+    q = [{"id": "q1", "type": "answerable", "question": "Terraform", "expected": ["wall/README.md"]},
+         {"id": "q2", "type": "answerable", "question": "kubernetes", "expected": ["wall/README.md"]}]
+    report = render_comparison({"bm25": evaluate(r, q)}, len(CHUNKS), "wall@abc")
+    assert "| bm25 | 0.50 |" in report and "q2" in report

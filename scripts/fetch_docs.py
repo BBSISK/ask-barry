@@ -31,12 +31,23 @@ RAW = "https://raw.githubusercontent.com"
 DOC_EXTENSIONS = (".md", ".markdown")
 # Folders that hold third-party or generated content, never Barry's own docs.
 EXCLUDED_DIRS = {"node_modules", "vendor", "venv", ".venv", "site-packages", "dist", "build", ".github"}
-# Individual files that are public but are not evidence of Barry's work
-# (e.g. interview rehearsal notes, domain reference catalogues). Edit as needed.
+# Public files that are not evidence of Barry's work. Edit as needed.
+# An entry ending in "/" excludes everything under that folder.
 DEFAULT_EXCLUDED_PATHS = (
-    "wall_inspector/INTERVIEW_ARCHITECTURE_GUIDE.md",
-    "wall_inspector/worked_examples_catalog.md",
+    "wall_inspector/INTERVIEW_ARCHITECTURE_GUIDE.md",   # interview rehearsal notes
+    "wall_inspector/worked_examples_catalog.md",        # masonry reference content
+    "ask-barry/docs/eval/",   # evaluation reports quote the test questions: indexing them would leak the test set
 )
+
+
+def is_excluded(repo, path, exclude_paths):
+    """True if repo/path matches an exact entry or sits under a folder entry ending in '/'."""
+    full = f"{repo}/{path}".lower()
+    for entry in exclude_paths:
+        entry = entry.lower()
+        if full == entry or (entry.endswith("/") and full.startswith(entry)):
+            return True
+    return False
 MIN_BYTES = 50          # skip empty placeholder READMEs
 MAX_BYTES = 200_000     # skip anything suspiciously large
 
@@ -141,9 +152,8 @@ def fetch_repo_docs(client, owner, repo, exclude_paths=()):
     if tree.get("truncated"):
         print(f"  warning: tree for {name} was truncated by GitHub; some docs may be missing", file=sys.stderr)
     docs = []
-    skip = {p.lower() for p in exclude_paths}
     for path in select_doc_paths(tree.get("tree", [])):
-        if f"{name}/{path}".lower() in skip:
+        if is_excluded(name, path, exclude_paths):
             print(f"  skipping excluded file {name}/{path}")
             continue
         docs.append((path, client.get_text(raw_url(owner, name, sha, path))))

@@ -129,23 +129,98 @@ def render_report(retriever_name, rows, summary, n_chunks, sources=""):
     return "\n".join(lines) + "\n"
 
 
+RETRIEVERS = ("bm25", "azure-keyword", "azure-vector", "azure-hybrid")
+
+
+def make_retriever(name, chunks, embedder=None):
+    """Build a retriever by name. Azure ones read their settings from .env.
+
+    Pass a shared (caching) embedder so several retrievers reuse one embedding per question.
+    """
+    if name == "bm25":
+        return BM25Retriever(chunks)
+    from app.azure_search import AzureSearchRetriever, search_client_from_env
+    mode = name.split("-", 1)[1]
+    if mode in ("vector", "hybrid") and embedder is None:
+        from app.embeddings import AzureOpenAIEmbedder, CachingEmbedder
+        embedder = CachingEmbedder(AzureOpenAIEmbedder())
+    return AzureSearchRetriever(search_client_from_env(), embedder if mode != "keyword" else None, mode=mode)
+
+
+def render_comparison(results, n_chunks, sources):
+    """One table comparing retrievers on the same questions."""
+    lines = [
+        "# Retrieval comparison",
+        "",
+        f"Date: {date.today().isoformat()} · Chunks: {n_chunks}",
+        "",
+        f"Corpus: {sources}",
+        "",
+        "| Retriever | Recall@1 | Recall@3 | Recall@5 | MRR | Misses (answerable) |",
+        "|---|---|---|---|---|---|",
+    ]
+    for name, (rows, summary) in results.items():
+        misses = [r["id"] for r in rows if r["type"] == "answerable" and not r["rank"]]
+        lines.append(
+            f"| {name} | {summary['recall@1']:.2f} | {summary['recall@3']:.2f} | "
+            f"{summary['recall@5']:.2f} | {summary['mrr']:.2f} | {', '.join(misses) or 'none'} |"
+        )
+    lines += [
+        "",
+        "Scores are not comparable across retrievers (BM25 scores vs Azure RRF scores), "
+        "so trap questions are judged in Stage 5/6 by the answering step, not by a score threshold here.",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Evaluate retrieval against the golden set")
     parser.add_argument("--chunks", default="corpus/chunks.jsonl")
     parser.add_argument("--golden", default="eval/golden_set.json")
-    parser.add_argument("--save", action="store_true", help="write docs/eval/<date>-<retriever>.md")
+    parser.add_argument("--retriever", choices=RETRIEVERS + ("all",), default="bm25")
+    parser.add_argument("--save", action="store_true", help="write reports to docs/eval/")
     args = parser.parse_args(argv)
 
+    if args.retriever != "bm25":
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+        except ImportError:
+            pass
+
     chunks = load_chunks(args.chunks)
-    retriever = BM25Retriever(chunks)
-    rows, summary = evaluate(retriever, load_golden(args.golden))
-    report = render_report(retriever.name, rows, summary, len(chunks), corpus_sources(chunks))
-    print(report)
+    questions = load_golden(args.golden)
+    sources = corpus_sources(chunks)
+    names = RETRIEVERS if args.retriever == "all" else (args.retriever,)
+
+    embedder = None
+    if any(n in ("azure-vector", "azure-hybrid") for n in names):
+        from app.embeddings import AzureOpenAIEmbedder, CachingEmbedder
+        embedder = CachingEmbedder(AzureOpenAIEmbedder())
+        embedder.prewarm([q["question"] for q in questions])      # one batched request for all questions
+
+    results = {}
+    out_dir = Path("docs/eval")
+    for name in names:
+        retriever = make_retriever(name, chunks, embedder)
+        rows, summary = evaluate(retriever, questions)
+        results[name] = (rows, summary)
+        report = render_report(name, rows, summary, len(chunks), sources)
+        if len(names) == 1:
+            print(report)
+        if args.save:
+            out_dir.mkdir(parents=True, exist_ok=True)
+            (out_dir / f"{date.today().isoformat()}-{name}.md").write_text(report, encoding="utf-8")
+
+    if len(names) > 1:
+        comparison = render_comparison(results, len(chunks), sources)
+        print(comparison)
+        if args.save:
+            (out_dir / f"{date.today().isoformat()}-comparison.md").write_text(comparison, encoding="utf-8")
+    if embedder is not None:
+        print(f"Embedding API calls for queries: {embedder.calls}")
     if args.save:
-        out = Path("docs/eval") / f"{date.today().isoformat()}-{retriever.name}.md"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(report, encoding="utf-8")
-        print(f"Saved {out}")
+        print(f"Saved reports to {out_dir}/")
 
 
 if __name__ == "__main__":
