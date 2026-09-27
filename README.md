@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects ("Has Ba
 
 It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
 
-## Current status: Stage 3 (Azure setup)
+## Current status: Stage 3 complete (Azure provisioned)
 
 **What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), and the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3).
 **What is not built yet:** search, embeddings and AI-generated answers. The live app does not use the chunks or the search yet, and `/health` reports these features as `false` until they exist.
@@ -14,7 +14,7 @@ It is being built in stages to learn and demonstrate retrieval-augmented generat
 | 0 | Skeleton: Flask, tests, CI, Render deploy | Done |
 | 1 | Fetch public repo READMEs/docs and split them into sections (no AI) | Done |
 | 2 | Keyword search baseline + evaluation question set | Done |
-| 3 | Azure setup (Azure OpenAI, Azure AI Search) | In progress: [guide](docs/azure-setup.md) |
+| 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
 | 4 | Embeddings + hybrid search in Azure AI Search | Planned |
 | 5 | Grounded answers with citations (RAG) | Planned |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |

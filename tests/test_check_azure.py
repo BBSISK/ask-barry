@@ -13,6 +13,12 @@ from scripts.check_azure import (
 )
 
 
+def test_chat_deployment_is_optional():
+    env = {name: "x" for name in REQUIRED}
+    assert "AZURE_OPENAI_CHAT_DEPLOYMENT" not in REQUIRED
+    assert missing_settings(env) == []
+
+
 def test_missing_settings_lists_blank_and_absent():
     env = {name: "x" for name in REQUIRED}
     env["AZURE_SEARCH_API_KEY"] = "   "

@@ -100,7 +100,7 @@ PASS  Azure AI Search: reachable, 0 index(es) so far
 | `401` / `Access denied` | Wrong key, or a key from a different resource |
 | `404` / `DeploymentNotFound` | The deployment *name* in `.env` doesn't match the name you gave it in Foundry |
 | `429` | Rate limit too low, or quota exhausted; wait a minute |
-| Quota insufficient when deploying | Azure for Students limitation, so use Option B |
+| Quota insufficient when deploying | Azure for Students limitation (use Option B), **or** a new Pay-As-You-Go subscription with a 0 allowance for that model (common in 2026). In Foundry → Manage quota, turn on **Show all** to see each model's allowance, deploy a model that has some, or use **Request quota** (ask for ~10K tokens per minute; approval takes hours to days). Embeddings are enough for Stage 4 |
 | Policy error when creating a resource | Region not in your subscription's allowed list (Step 1) |
 | Embeddings `expected 1536` | You deployed `text-embedding-3-large` (3072 dims); use `-small` |
 

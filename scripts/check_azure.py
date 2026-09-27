@@ -16,10 +16,12 @@ REQUIRED = (
     "AZURE_OPENAI_ENDPOINT",
     "AZURE_OPENAI_API_KEY",
     "AZURE_OPENAI_EMBED_DEPLOYMENT",
-    "AZURE_OPENAI_CHAT_DEPLOYMENT",
     "AZURE_SEARCH_ENDPOINT",
     "AZURE_SEARCH_API_KEY",
 )
+# Optional until Stage 5 (answers). Left blank, the chat check is skipped, e.g.
+# while a quota request for the chat model is pending.
+OPTIONAL = ("AZURE_OPENAI_CHAT_DEPLOYMENT",)
 SECRET_NAMES = {"AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY"}
 EXPECTED_EMBED_DIMS = 1536   # text-embedding-3-small
 
@@ -84,9 +86,10 @@ def main():
     load_env()
     env = os.environ
     print("Settings:")
-    for name in REQUIRED:
+    for name in REQUIRED + OPTIONAL:
         value = env.get(name, "")
-        print(f"  {name:<32} {describe(name, value) if value else 'MISSING'}")
+        blank = "not set (optional until Stage 5)" if name in OPTIONAL else "MISSING"
+        print(f"  {name:<32} {describe(name, value) if value else blank}")
     missing = missing_settings(env)
     if missing:
         sys.exit(f"\nAdd these to .env first: {', '.join(missing)}")
@@ -94,13 +97,17 @@ def main():
     from openai import OpenAI
     client = OpenAI(api_key=env["AZURE_OPENAI_API_KEY"], base_url=openai_base_url(env["AZURE_OPENAI_ENDPOINT"]))
 
+    chat_deployment = env.get("AZURE_OPENAI_CHAT_DEPLOYMENT", "").strip()
     checks = [
         ("Azure OpenAI embeddings", lambda: check_embeddings(client, env["AZURE_OPENAI_EMBED_DEPLOYMENT"])),
-        ("Azure OpenAI chat", lambda: check_chat(client, env["AZURE_OPENAI_CHAT_DEPLOYMENT"])),
         ("Azure AI Search", lambda: check_search(env["AZURE_SEARCH_ENDPOINT"], env["AZURE_SEARCH_API_KEY"])),
     ]
+    if chat_deployment:
+        checks.insert(1, ("Azure OpenAI chat", lambda: check_chat(client, chat_deployment)))
     failures = 0
     print()
+    if not chat_deployment:
+        print("SKIP  Azure OpenAI chat: AZURE_OPENAI_CHAT_DEPLOYMENT is blank (needed from Stage 5)")
     for label, fn in checks:
         try:
             print(f"PASS  {label}: {fn()}")
@@ -109,7 +116,10 @@ def main():
             print(f"FAIL  {label}: {type(err).__name__}: {str(err)[:300]}")
     if failures:
         sys.exit(f"\n{failures} check(s) failed. See docs/azure-setup.md, section 'Troubleshooting'.")
-    print("\nAll Azure checks passed. Stage 3 is complete.")
+    if chat_deployment:
+        print("\nAll Azure checks passed. Stage 3 is complete.")
+    else:
+        print("\nEmbeddings and Search passed: ready for Stage 4. Add the chat deployment before Stage 5.")
 
 
 if __name__ == "__main__":
