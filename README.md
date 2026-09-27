@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 7 in progress (RAG live in production, answer quality evaluated)
+## Current status: all stages complete (RAG live in production, answer quality evaluated)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -37,7 +37,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7b | Model card, architecture diagram, AI disclosure | Done: [model card](docs/model-card.md) |
 | 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
-| 7e | Infrastructure as code for this project's Azure resources | In progress: [infra/](infra/) |
+| 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
 
 ## Architecture
 
@@ -268,7 +268,7 @@ The Azure resources were first created by hand in the portal ([guide](docs/azure
 | `gpt-4.1-mini` and `text-embedding-3-small` deployments (Global Standard) | `azurerm_cognitive_deployment` × 2 |
 | Azure AI Search `ask-barry-search` (Free, Switzerland West) | `azurerm_search_service` |
 
-- **Safe by design:** every resource has `prevent_destroy`, and the target plan is imports only: *0 to add, 0 to change, 0 to destroy*.
+- **Safe by design:** every resource has `prevent_destroy`. The first plan found two portal settings the code was missing (the network rule and the search auth-failure mode). After adding them, the plan was *5 to import, 0 to add, 0 to change, 0 to destroy*, and `apply` imported all five without changing anything in Azure (27 September 2026).
 - **No secrets:** Terraform never reads or outputs keys, and the subscription ID comes from the signed-in Azure CLI, not the repo. State stays out of git and can be rebuilt from the import blocks at any time.
 - **Checked in CI:** every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.
 - **Left out on purpose:** the Foundry project and the budget alert, which were created in the portal. The config comments explain why.
