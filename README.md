@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 5 complete (RAG live in production)
+## Current status: Stage 6 complete (RAG live in production, answer quality evaluated)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -20,6 +20,7 @@ A portfolio assistant that answers questions about my software projects using **
 - Azure AI Search index with embeddings
 - Retrieval comparison scored at section level
 - Grounded answering with citations, rate limiting and a web UI
+- Answer-quality evaluation with an evidence-checking LLM judge
 
 | Stage | Scope | Status |
 |---|---|---|
@@ -29,7 +30,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
 | 5 | Grounded answers with citations (RAG), live | Done |
-| 6 | Answer-quality evaluation, including refusal of unsupported claims | In progress |
+| 6 | Answer-quality evaluation, including refusal of unsupported claims | Done |
 | 7 | Extras: switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | Planned |
 
 ## Sources
@@ -123,6 +124,26 @@ Each golden-set question is run through the full live pipeline (retrieval, gener
 
 - **About the judge:** it's the same model family, so the headline numbers don't rest on it alone. The citation test and regression checks are deterministic.
 - **Tokens per minute:** a full run makes about 80 model calls. Raise the chat deployment's limit (e.g. to 50K tokens per minute) so it isn't throttled; the client also backs off automatically on rate limits.
+
+### Results (27 Sep 2026)
+
+| Metric | Result |
+|---|---|
+| Answered (37 answerable questions) | 100% |
+| Answer cites a section containing the answer | 100% |
+| Faithful to cited sources (LLM judge) | 97% |
+| Regression checks failed | 0 |
+| Traps: no false claim (8 questions) | 100% |
+| Passing every check | 44 of 45 |
+
+Full report, including every answer for human review: [docs/eval/2026-09-27-answers.md](docs/eval/2026-09-27-answers.md).
+
+What building the evaluator taught me:
+- **Ask the judge for evidence, not a verdict.** The judge lists each claim with a quoted supporting passage, and code checks that every quote really appears in the sources. It matches whole words, so small rewordings pass but new content words don't. A bare yes/no judge gave false negatives that couldn't be audited.
+- **Test the evaluator too.** Early versions failed correct answers because of formatting (backticks, HTML in diagrams), a token limit that cut off the judge's output, and a judge that couldn't see the source labels the answering model saw. Each fix came with a unit test.
+- **Read the passing answers.** One trap answer passed but speculated about what related work "implied". The answer prompt and trap judge were tightened as a result.
+- **Known remaining fault: true but uncited.** An answer occasionally states a fact from a section it retrieved but didn't cite, so the reader can't check it. It's recorded here rather than tuned away.
+- **Single runs vary** by a few questions even at temperature 0, so failures are reviewed by cause rather than by headline number.
 
 ## Run locally
 
