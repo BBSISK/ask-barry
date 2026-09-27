@@ -94,7 +94,10 @@ def main(argv=None):
     missing = [n for n in ("AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_EMBED_DEPLOYMENT",
                            "AZURE_SEARCH_ENDPOINT", "AZURE_SEARCH_API_KEY") if not os.getenv(n)]
     if missing:
-        sys.exit(f"Missing in .env: {', '.join(missing)} (run python -m scripts.check_azure)")
+        sys.exit(f"Missing settings: {', '.join(missing)}.\n"
+                 "  Locally: add them to .env (check with python -m scripts.check_azure).\n"
+                 "  In GitHub Actions: add them as repository secrets under "
+                 "Settings > Secrets and variables > Actions (the Search key secret is AZURE_SEARCH_ADMIN_KEY).")
 
     index_name = os.getenv("AZURE_SEARCH_INDEX", "ask-barry-chunks")
     chunks = load_chunks(args.chunks)
