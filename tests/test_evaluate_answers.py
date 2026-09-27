@@ -120,3 +120,54 @@ def test_summary_and_report():
 
 def test_api_payload_never_includes_cited_texts():
     assert "cited_texts" not in answer("x").to_dict()
+
+
+# --- evidence-based judge verdicts -----------------------------------------
+
+def test_faithfulness_from_quoted_evidence():
+    from scripts.evaluate_answers import faithfulness
+    ok = {"claims": [{"claim": "uses Claude Code daily", "support": "I build with AI agents every day (Claude Code"}]}
+    assert faithfulness(ok) == (True, [])
+    bad = {"claims": [{"claim": "uses Claude Code", "support": "…Claude Code"},
+                      {"claim": "uses Kubernetes", "support": None},
+                      {"claim": "on AWS", "support": "null"}]}
+    assert faithfulness(bad) == (False, ["uses Kubernetes", "on AWS"])
+    assert faithfulness({"error": "x"}) == (False, ["x"])
+    assert faithfulness({})[0] is False
+
+
+def test_score_uses_quoted_evidence_not_a_bare_boolean():
+    verdict = {"faithful": False, "claims": [{"claim": "Terraform", "support": "Docker · Terraform"}]}
+    row = score_question(CLOUD_Q, answer("Barry used Terraform [1]."), judge_says(**verdict))
+    assert row["faithful"] is True and row["passed"]
+
+
+def test_report_lists_every_answer_for_review():
+    rows = [score_question(TRAP_Q, answer("No, Barry has not used Kubernetes [1]."),
+                           judge_says(claims_skill=False, reason="says he has not"))]
+    report = render_report(rows, summarise(rows), "m", when="2026-09-27")
+    assert "## All answers (for human review)" in report
+    assert "No, Barry has not used Kubernetes" in report and "says he has not" in report
+
+
+def test_invented_evidence_is_rejected():
+    from scripts.evaluate_answers import faithfulness, quote_in_sources
+    sources = "[1] **Cloud & DevOps:** Docker · Terraform · GitHub Actions"
+    assert quote_in_sources("Cloud & DevOps: Docker", sources)                 # markdown ignored
+    assert quote_in_sources("…Docker · Terraform…", sources)                   # fragments ok
+    assert not quote_in_sources("Barry deployed Kubernetes clusters", sources)  # made up
+    verdict = {"claims": [{"claim": "uses Docker", "support": "Docker · Terraform"},
+                          {"claim": "uses Kubernetes", "support": "Kubernetes clusters on AKS"}]}
+    ok, unsupported = faithfulness(verdict, sources)
+    assert not ok and unsupported == ["uses Kubernetes (quoted evidence not found in sources)"]
+
+
+def test_quote_matching_ignores_formatting_but_not_wording():
+    from scripts.evaluate_answers import quote_in_sources
+    src = ("export labeled datasets in **Microsoft COCO 1.0 JSON** format for downstream "
+           "Computer Vision (`CVAT` / `YOLOv8`) training. A[\"💬 Prompt<br/>Claude Code\"]")
+    assert quote_in_sources("Microsoft COCO 1.0 JSON format for downstream Computer Vision (CVAT / YOLOv8) training", src)
+    assert quote_in_sources("Prompt Claude Code", src)                          # HTML + emoji ignored
+    assert not quote_in_sources("COCO 1.0 JSON format for model training", src)  # reworded
+    assert not quote_in_sources("COCO", src)                                     # too short to prove anything
+    assert not quote_in_sources("son format", src)                               # whole words only

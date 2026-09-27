@@ -22,6 +22,7 @@ so the headline numbers don't rest on the judge alone.
 """
 import argparse
 import json
+import re
 import sys
 import time
 from datetime import date
@@ -29,11 +30,22 @@ from pathlib import Path
 
 from scripts.evaluate_retrieval import load_golden
 
-JUDGE_FAITHFUL = """You check whether an answer is fully supported by its sources.
+JUDGE_FAITHFUL = """You check whether an answer is supported by its sources.
 Sources are excerpts from Barry Sisk's public GitHub documentation.
-Return JSON: {"faithful": true or false, "unsupported": ["each claim not supported by the sources"]}
-Mark faithful=false if ANY claim is missing from the sources, contradicts them, or presents
-planned/future work as done (or done work as merely planned)."""
+
+Split the answer into its factual claims. For each claim, give the shortest passage from
+the sources that supports it, or null if nothing does.
+- "support" must be copied word for word from the sources (at most 25 words; use "..." to
+  join two separate pieces). Never reword it: it is checked against the sources automatically.
+- The CLAIM may paraphrase: paraphrases and synonyms count as support ("daily" = "every day"; "uses X in VS Code" is
+  supported by a diagram step "X in VS Code").
+- A claim that something is PLANNED is supported by a source saying it will or can happen later.
+- A claim that something is DONE is NOT supported by a source that only says it is planned, and vice versa.
+- Wording like "Barry" vs "I" (the README author) is the same person.
+- A general comment or conclusion the sources do not state (for example "this ensures security")
+  is a claim with support null.
+
+Return JSON: {"claims": [{"claim": "...", "support": "quoted passage or null"}]}"""
 
 JUDGE_TRAP = """A question asks whether Barry has a particular skill or experience.
 Decide whether the answer CLAIMS or IMPLIES that Barry has it.
@@ -67,6 +79,51 @@ def run_checks(answer_text, checks):
     return failures
 
 
+def _norm(text):
+    """Lowercase word tokens only: ignores markdown, HTML tags, punctuation, emoji and spacing."""
+    text = re.sub(r"<[^>]{0,40}>", " ", str(text or "").lower())
+    return " " + " ".join(re.findall(r"\w+", text)) + " "
+
+
+def quote_in_sources(quote, sources_text):
+    """True if the judge's quote (or any fragment of 3+ words or 12+ characters, split on ellipses) appears in the sources.
+
+    Matching is on whole words in order, so formatting differences don't matter but invented
+    or reworded evidence still fails.
+    """
+    haystack = _norm(sources_text)
+    fragments = [_norm(f) for f in re.split(r"\.\.\.|…", str(quote or ""))]
+    return any((len(f.split()) >= 3 or len(f.strip()) >= 12) and f in haystack for f in fragments)
+
+
+def faithfulness(verdict, sources_text=None):
+    """Decide faithfulness from the judge's per-claim evidence, not from a bare yes/no.
+
+    Returns (faithful, unsupported_claims). A claim counts as supported only if the
+    judge quoted a supporting passage AND (when sources_text is given) that quote
+    really appears in the sources, so the judge can't invent evidence.
+    Simple verdicts with a boolean 'faithful' key are still accepted (unit tests).
+    """
+    if "error" in verdict:
+        return False, [verdict["error"]]
+    claims = verdict.get("claims")
+    if isinstance(claims, list) and claims:
+        unsupported = []
+        for c in claims:
+            if not isinstance(c, dict):
+                unsupported.append(str(c))
+                continue
+            support = str(c.get("support") or "").strip()
+            if not support or support.lower() == "null":
+                unsupported.append(c.get("claim", "?"))
+            elif sources_text is not None and not quote_in_sources(support, sources_text):
+                unsupported.append(f"{c.get('claim', '?')} (quoted evidence not found in sources)")
+        return not unsupported, unsupported
+    if "faithful" in verdict:
+        return verdict["faithful"] is True, list(verdict.get("unsupported") or [])
+    return False, ["judge returned no claims"]
+
+
 def parse_judge(raw):
     try:
         return json.loads(raw)
@@ -96,8 +153,7 @@ def score_question(q, answer, judge):
     row["check_failures"] = run_checks(answer.answer, q.get("checks")) if answer.supported else []
     if answer.supported:
         verdict = judge("faithful", q["question"], answer.answer, sources_text)
-        row["faithful"] = verdict.get("faithful") is True
-        row["unsupported"] = verdict.get("unsupported") or ([verdict["error"]] if "error" in verdict else [])
+        row["faithful"], row["unsupported"] = faithfulness(verdict, sources_text)
     else:
         row["faithful"] = None
         row["unsupported"] = []
@@ -170,6 +226,11 @@ def render_report(rows, summary, model, when=None):
     lines += ["## All questions", "", "| ID | Type | Pass | Supported | Sources cited |", "|---|---|---|---|---|"]
     for r in rows:
         lines.append(f"| {r['id']} | {r['type']} | {'✅' if r['passed'] else '❌'} | {r['supported']} | {len(r['sources'])} |")
+    lines += ["", "## All answers (for human review)", ""]
+    for r in rows:
+        note = f" (judge: {r['reason']})" if r["type"] == "trap" and r.get("reason") and r["reason"] != "refused" else ""
+        lines.append(f"- **{r['id']}** {'✅' if r['passed'] else '❌'} {r['question']}")
+        lines.append(f"  - {r['answer'][:500]}{note}")
     return "\n".join(lines) + "\n"
 
 
@@ -182,7 +243,7 @@ def make_judge(client, deployment):
         system = JUDGE_TRAP if kind == "trap" else JUDGE_FAITHFUL
         user = f"Question: {question}\n\nAnswer: {answer_text}\n\nSources:\n{sources_text or '(none)'}"
         resp = client.chat.completions.create(
-            model=deployment, temperature=0, max_completion_tokens=300,
+            model=deployment, temperature=0, max_completion_tokens=1500,
             response_format={"type": "json_object"},
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
         )
