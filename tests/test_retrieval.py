@@ -136,3 +136,44 @@ def test_make_retriever_bm25_and_comparison_report():
          {"id": "q2", "type": "answerable", "question": "kubernetes", "expected": ["wall/README.md"]}]
     report = render_comparison({"bm25": evaluate(r, q)}, len(CHUNKS), "wall@abc")
     assert "| bm25 | 0.50 |" in report and "q2" in report
+
+
+# --- section-level scoring --------------------------------------------------
+
+def test_section_rank_needs_right_file_and_the_answer():
+    from app.retrieval import SearchResult
+    from scripts.evaluate_retrieval import first_relevant_rank, first_section_rank
+    results = [
+        SearchResult({"repo": "profile", "path": "README.md", "text": "How I build: git push, CI, deploy"}, 3.0, 1),
+        SearchResult({"repo": "other", "path": "README.md", "text": "email barry.b.sisk@gmail.com"}, 2.0, 2),
+        SearchResult({"repo": "profile", "path": "README.md", "text": "Get in touch: Barry.B.Sisk@gmail.com"}, 1.0, 3),
+    ]
+    expected, evidence = {"profile/README.md"}, ["barry.b.sisk@gmail.com"]
+    assert first_relevant_rank(results, expected) == 1            # right file, wrong section
+    assert first_section_rank(results, expected, evidence) == 3   # wrong file at 2 doesn't count; case-insensitive
+
+
+def test_validate_golden_requires_evidence_for_answerable():
+    bad = {"questions": [{"id": "a", "type": "answerable", "question": "q", "expected": ["x/README.md"]}]}
+    with pytest.raises(ValueError, match="evidence"):
+        validate_golden(bad)
+
+
+def test_check_evidence_flags_drifted_docs():
+    from scripts.evaluate_retrieval import check_evidence
+    chunks = [{"repo": "wall", "path": "README.md", "text": "Terraform provisions Render"}]
+    questions = [
+        {"id": "ok", "type": "answerable", "expected": ["wall/README.md"], "evidence": ["terraform"]},
+        {"id": "gone", "type": "answerable", "expected": ["wall/README.md"], "evidence": ["Kafka"]},
+        {"id": "t", "type": "trap", "expected": []},
+    ]
+    assert check_evidence(questions, chunks) == ["gone"]
+
+
+def test_summary_reports_both_levels():
+    from scripts.evaluate_retrieval import summarise
+    rows = [{"type": "answerable", "rank": 1, "section_rank": 3, "top_score": 1.0},
+            {"type": "answerable", "rank": 2, "section_rank": None, "top_score": 1.0}]
+    s = summarise(rows)
+    assert s["recall@1"] == 0.5 and s["section_recall@1"] == 0.0
+    assert s["section_recall@3"] == 0.5 and s["section_mrr"] == pytest.approx(1 / 6)

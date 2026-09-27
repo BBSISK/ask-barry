@@ -19,7 +19,7 @@ from pathlib import Path
 
 from app.retrieval import BM25Retriever, load_chunks
 
-KS = (1, 3, 5)
+KS = (1, 3, 5, 8)   # 8 = candidate context size for the Stage 5 answering step
 
 
 def load_golden(path):
@@ -40,6 +40,8 @@ def validate_golden(data):
         ids.add(q["id"])
         if q["type"] == "answerable" and not q["expected"]:
             raise ValueError(f"{q['id']}: answerable question needs expected files")
+        if q["type"] == "answerable" and not q.get("evidence"):
+            raise ValueError(f"{q['id']}: answerable question needs evidence phrases")
         if q["type"] == "trap" and q["expected"]:
             raise ValueError(f"{q['id']}: trap question must have no expected files")
         if q["type"] not in ("answerable", "trap"):
@@ -51,10 +53,36 @@ def source_key(chunk):
 
 
 def first_relevant_rank(results, expected):
+    """File level: rank of the first result from an expected file."""
     for r in results:
         if source_key(r.chunk) in expected:
             return r.rank
     return None
+
+
+def contains_evidence(chunk, evidence):
+    text = chunk.get("text", "").lower()
+    return any(phrase.lower() in text for phrase in evidence)
+
+
+def first_section_rank(results, expected, evidence):
+    """Section level: rank of the first result from an expected file that actually contains the answer."""
+    for r in results:
+        if source_key(r.chunk) in expected and contains_evidence(r.chunk, evidence):
+            return r.rank
+    return None
+
+
+def check_evidence(questions, chunks):
+    """Ids of answerable questions whose evidence no longer appears in the corpus (docs drifted)."""
+    missing = []
+    for q in questions:
+        if q["type"] != "answerable":
+            continue
+        expected = set(q["expected"])
+        if not any(source_key(c) in expected and contains_evidence(c, q["evidence"]) for c in chunks):
+            missing.append(q["id"])
+    return missing
 
 
 def evaluate(retriever, questions, k_max=max(KS)):
@@ -66,6 +94,8 @@ def evaluate(retriever, questions, k_max=max(KS)):
             "type": q["type"],
             "question": q["question"],
             "rank": first_relevant_rank(results, set(q["expected"])) if q["type"] == "answerable" else None,
+            "section_rank": (first_section_rank(results, set(q["expected"]), q.get("evidence", []))
+                             if q["type"] == "answerable" else None),
             "top_score": results[0].score if results else 0.0,
             "top_source": source_key(results[0].chunk) if results else "-",
             "top_heading": results[0].chunk.get("heading", "") if results else "",
@@ -79,6 +109,9 @@ def summarise(rows):
     n = len(ans) or 1
     summary = {f"recall@{k}": sum(1 for r in ans if r["rank"] and r["rank"] <= k) / n for k in KS}
     summary["mrr"] = sum(1 / r["rank"] for r in ans if r["rank"]) / n
+    for k in KS:
+        summary[f"section_recall@{k}"] = sum(1 for r in ans if r.get("section_rank") and r["section_rank"] <= k) / n
+    summary["section_mrr"] = sum(1 / r["section_rank"] for r in ans if r.get("section_rank")) / n
     summary["n_answerable"] = len(ans)
     summary["n_traps"] = len(traps)
     ans_scores = [r["top_score"] for r in ans]
@@ -106,26 +139,32 @@ def render_report(retriever_name, rows, summary, n_chunks, sources=""):
         "",
         f"Corpus: {sources}" if sources else "",
         "",
-        "| Metric | Value |",
-        "|---|---|",
+        "| Metric | File level | Section level (chunk contains the answer) |",
+        "|---|---|---|",
     ]
     for k in KS:
-        lines.append(f"| Recall@{k} | {summary[f'recall@{k}']:.2f} |")
+        lines.append(f"| Recall@{k} | {summary[f'recall@{k}']:.2f} | {summary[f'section_recall@{k}']:.2f} |")
     lines += [
-        f"| MRR | {summary['mrr']:.2f} |",
+        f"| MRR | {summary['mrr']:.2f} | {summary['section_mrr']:.2f} |",
+        "",
+        "| Other | Value |",
+        "|---|---|",
         f"| Median top score, answerable | {summary['answerable_top_score_median']:.2f} |",
         f"| Median top score, traps | {summary['trap_top_score_median']:.2f} |",
         f"| Traps that still matched something | {summary['traps_with_any_hit']} of {summary['n_traps']} |",
         "",
         "## Per question",
         "",
-        "| ID | Rank of first correct file | Top score | Top result |",
-        "|---|---|---|---|",
+        "| ID | File rank | Section rank | Top score | Top result |",
+        "|---|---|---|---|---|",
     ]
     for r in rows:
-        rank = "trap" if r["type"] == "trap" else (r["rank"] or "miss")
+        if r["type"] == "trap":
+            rank = section = "trap"
+        else:
+            rank, section = r["rank"] or "miss", r.get("section_rank") or "miss"
         heading = r["top_heading"].replace("|", "/")[:60]
-        lines.append(f"| {r['id']} | {rank} | {r['top_score']:.2f} | {r['top_source']} ({heading}) |")
+        lines.append(f"| {r['id']} | {rank} | {section} | {r['top_score']:.2f} | {r['top_source']} ({heading}) |")
     return "\n".join(lines) + "\n"
 
 
@@ -156,16 +195,36 @@ def render_comparison(results, n_chunks, sources):
         "",
         f"Corpus: {sources}",
         "",
-        "| Retriever | Recall@1 | Recall@3 | Recall@5 | MRR | Misses (answerable) |",
-        "|---|---|---|---|---|---|",
+        "## Section level (the retrieved chunk contains the answer)",
+        "",
+        "This is what matters for Stage 5: the answering model only sees the chunks retrieved.",
+        "",
+        "| Retriever | Recall@1 | Recall@3 | Recall@5 | Recall@8 | MRR | Not found in top 8 |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for name, (rows, summary) in results.items():
+        misses = [r["id"] for r in rows if r["type"] == "answerable" and not r.get("section_rank")]
+        lines.append(
+            f"| {name} | {summary['section_recall@1']:.2f} | {summary['section_recall@3']:.2f} | "
+            f"{summary['section_recall@5']:.2f} | {summary['section_recall@8']:.2f} | "
+            f"{summary['section_mrr']:.2f} | {', '.join(misses) or 'none'} |"
+        )
+    lines += [
+        "",
+        "## File level (a chunk from the right file)",
+        "",
+        "| Retriever | Recall@1 | Recall@3 | Recall@5 | Recall@8 | MRR | Not found in top 8 |",
+        "|---|---|---|---|---|---|---|",
     ]
     for name, (rows, summary) in results.items():
         misses = [r["id"] for r in rows if r["type"] == "answerable" and not r["rank"]]
         lines.append(
             f"| {name} | {summary['recall@1']:.2f} | {summary['recall@3']:.2f} | "
-            f"{summary['recall@5']:.2f} | {summary['mrr']:.2f} | {', '.join(misses) or 'none'} |"
+            f"{summary['recall@5']:.2f} | {summary['recall@8']:.2f} | {summary['mrr']:.2f} | {', '.join(misses) or 'none'} |"
         )
     lines += [
+        "",
+        "Sample: 35 answerable questions, so one question moves recall by about 0.03. Treat small gaps as noise.",
         "",
         "Scores are not comparable across retrievers (BM25 scores vs Azure RRF scores), "
         "so trap questions are judged in Stage 5/6 by the answering step, not by a score threshold here.",
@@ -191,6 +250,10 @@ def main(argv=None):
     chunks = load_chunks(args.chunks)
     questions = load_golden(args.golden)
     sources = corpus_sources(chunks)
+    stale = check_evidence(questions, chunks)
+    if stale:
+        print(f"WARNING: evidence phrases not found in the corpus for {', '.join(stale)}: "
+              "the docs changed, so update eval/golden_set.json before trusting section-level scores.\n")
     names = RETRIEVERS if args.retriever == "all" else (args.retriever,)
 
     embedder = None

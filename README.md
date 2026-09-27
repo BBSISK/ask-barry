@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects ("Has Ba
 
 It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
 
-## Current status: Stage 4 (embeddings + hybrid search in Azure AI Search)
+## Current status: Stage 4 complete (hybrid search evaluated)
 
 **What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3), and ingestion of the chunks into an Azure AI Search index with embeddings, plus a keyword / vector / hybrid comparison (Stage 4).
 **What is not built yet:** search, embeddings and AI-generated answers. The live app does not use the chunks or the search yet, and `/health` reports these features as `false` until they exist.
@@ -15,7 +15,7 @@ It is being built in stages to learn and demonstrate retrieval-augmented generat
 | 1 | Fetch public repo READMEs/docs and split them into sections (no AI) | Done |
 | 2 | Keyword search baseline + evaluation question set | Done |
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
-| 4 | Embeddings + hybrid search in Azure AI Search | In progress |
+| 4 | Embeddings + hybrid search in Azure AI Search | Done |
 | 5 | Grounded answers with citations (RAG) | Planned |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |
 | 7 | Extras: multi-provider, Terraform, MCP tool, model card | Planned |
@@ -60,6 +60,17 @@ python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyw
 - **Ingestion only re-embeds what changed:** chunks are compared by content hash, and chunks that disappear from the corpus (e.g. a repo made private) are deleted from the index.
 - **Three query modes over the same index:** keyword (Azure BM25), vector (nearest neighbours), and hybrid (both, merged with Reciprocal Rank Fusion).
 - **Tests:** all offline, with fake Azure clients, so CI needs no keys.
+- **Scoring at section level:** a result counts only if it comes from the right file *and* contains the answer (evidence phrases in the golden set). File-level scoring alone overstated keyword search.
+- **Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level:**
+
+  | Retriever | Recall@1 | Recall@5 | Recall@8 | MRR |
+  |---|---|---|---|---|
+  | BM25 (own implementation) | 0.66 | 0.91 | 0.91 | 0.77 |
+  | Azure keyword | 0.74 | 0.94 | 0.94 | 0.81 |
+  | Azure vector | 0.66 | 0.94 | 0.94 | 0.74 |
+  | **Azure hybrid** | **0.80** | **0.94** | **1.00** | **0.86** |
+
+- **Decision:** hybrid search, passing the top **8** chunks to the answering step (Stage 5), because it's the only setting that retrieved the answer for every question. With 35 questions, one question moves recall by about 0.03, so small gaps are noise. Full reports: [`docs/eval/`](docs/eval/).
 
 ## Run locally
 
