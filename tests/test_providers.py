@@ -173,10 +173,19 @@ def test_provider_failure_becomes_an_error_row_not_a_crash_or_a_pass():
 def test_comparison_report_lists_providers_and_disagreements():
     from scripts.evaluate_answers import render_comparison, run_provider, summarise
     good = run_provider(Answerer(FakeRetriever(), provider=FakeProvider()), Q, judge_ok, log=lambda *_: None)
-    bad = run_provider(Answerer(FakeRetriever(), provider=FakeProvider(fail=True)), Q, judge_ok, log=lambda *_: None)
+    flaky = FakeProvider()
+    real_generate = flaky.generate
+
+    def fail_first(messages, max_tokens=400):                   # fails only on the first question
+        if flaky.calls == 0:
+            flaky.calls += 1
+            raise ProviderError("timeout")
+        return real_generate(messages, max_tokens)
+    flaky.generate = fail_first
+    bad = run_provider(Answerer(FakeRetriever(), provider=flaky), Q, judge_ok, log=lambda *_: None)
     report = render_comparison([("a", "m-a", good[0], summarise(good[0]), good[1]),
                                 ("b", "m-b", bad[0], summarise(bad[0]), bad[1])], "judge-m", when="2026-09-27")
-    assert "| a | `m-a` | 2 of 2 |" in report and "| b | `m-b` | 0 of 2 |" in report
+    assert "| a | `m-a` | 2 of 2 |" in report and "| b | `m-b` | 1 of 2 |" in report
     assert "| profile-07 | ✅ | ❌ |" in report and "Judge: judge-m" in report
 
 
@@ -193,3 +202,15 @@ def test_provider_is_skipped_after_consecutive_errors():
     rows, stats = run_provider(Answerer(FakeRetriever(), provider=provider), many, judge_ok, log=lambda *_: None)
     assert provider.calls == 3 and stats["errors"] == 6                  # stopped calling after 3 in a row
     assert all(not r["passed"] for r in rows) and "skipped" in rows[-1]["error"]
+
+
+def test_unavailable_provider_is_reported_as_not_run_not_as_regressions():
+    from scripts.evaluate_answers import render_comparison, run_provider, summarise
+    good = run_provider(Answerer(FakeRetriever(), provider=FakeProvider()), Q, judge_ok, log=lambda *_: None)
+    dead = run_provider(Answerer(FakeRetriever(), provider=FakeProvider(fail=True)), Q, judge_ok, log=lambda *_: None)
+    s_dead = summarise(dead[0])
+    assert s_dead["checks_failed"] == 0 and s_dead["errors"] == 2        # errors are not regression failures
+    report = render_comparison([("a", "m-a", good[0], summarise(good[0]), good[1]),
+                                ("g", "m-g", dead[0], s_dead, dead[1])], "judge-m", when="2026-09-27")
+    assert "| g | `m-g` | not run: every call failed |" in report and "first error: ProviderError: boom" in report
+    assert "| ID | a |" in report                                         # the dead provider isn't compared

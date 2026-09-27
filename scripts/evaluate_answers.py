@@ -251,7 +251,8 @@ def summarise(rows):
         "answered": rate(ans, "answered"),
         "cited_answer": rate(ans, "cited_answer"),
         "faithful_of_answered": rate(answered, "faithful"),
-        "checks_failed": sum(1 for r in ans if r.get("check_failures")),
+        "checks_failed": sum(1 for r in ans if r.get("check_failures") and not r.get("error")),
+        "errors": sum(1 for r in rows if r.get("error")),
         "answers_with_uncited": sum(1 for r in ans if r.get("uncited")),
         "trap_no_false_claim": rate(traps, "no_false_claim"),
         "passed": sum(1 for r in rows if r["passed"]),
@@ -407,7 +408,14 @@ def render_comparison(results, judge_model, when=None):
         "| Provider | Model | Passing | Faithful | True-but-uncited | Regression fails | Traps: no false claim | Errors | Median latency | Avg tokens in / out |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
+    unavailable = []
     for name, model, rows, s, st in results:
+        if st["errors"] == len(rows):                      # never answered: a setup/quota problem, not a score
+            first = next((r["error"] for r in rows if r.get("error")), "")
+            unavailable.append(name)
+            lines.append(f"| {name} | `{model}` | not run: every call failed | – | – | – | – | {st['errors']} | – | – |")
+            lines.append(f"|  | first error: {first[:150].replace('|', '/')} | | | | | | | | |")
+            continue
         lines.append(
             f"| {name} | `{model}` | {s['passed']} of {s['total']} | {s['faithful_of_answered']:.0%} | "
             f"{s.get('answers_with_uncited', 0)} | {s['checks_failed']} | {s['trap_no_false_claim']:.0%} | "
@@ -415,7 +423,10 @@ def render_comparison(results, judge_model, when=None):
     lines += ["", "## Where the providers disagree", "",
               "| ID | " + " | ".join(name for name, *_ in results) + " |",
               "|---|" + "---|" * len(results)]
-    by_id = [{r["id"]: r for r in rows} for _, _, rows, _, _ in results]
+    scored = [res for res in results if res[0] not in unavailable]
+    lines[-2] = "| ID | " + " | ".join(name for name, *_ in scored) + " |"
+    lines[-1] = "|---|" + "---|" * len(scored)
+    by_id = [{r["id"]: r for r in rows} for _, _, rows, _, _ in scored]
     for qid in by_id[0]:
         marks = ["✅" if b.get(qid, {}).get("passed") else "❌" for b in by_id]
         if len(set(marks)) > 1:
