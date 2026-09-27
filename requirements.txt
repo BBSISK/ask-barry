@@ -1,2 +1,4 @@
 Flask>=3.0,<4
 gunicorn>=22.0
+openai>=1.40               # Azure OpenAI via the v1 endpoint (Stage 3+)
+azure-search-documents>=11.5   # Azure AI Search (Stage 3+)

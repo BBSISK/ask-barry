@@ -1,0 +1,116 @@
+"""Stage 3 smoke test: prove the Azure resources are reachable with your keys.
+
+Usage (after filling in the AZURE_* values in .env):
+    python -m scripts.check_azure
+
+It makes three tiny calls and prints PASS/FAIL for each:
+  1. Azure OpenAI embeddings: embeds one short sentence, checks the vector size.
+  2. Azure OpenAI chat: asks the chat deployment for a one-word reply.
+  3. Azure AI Search: reads service statistics (no index needed yet).
+Cost: a fraction of a cent. Secrets are never printed, only their last 4 characters.
+"""
+import os
+import sys
+
+REQUIRED = (
+    "AZURE_OPENAI_ENDPOINT",
+    "AZURE_OPENAI_API_KEY",
+    "AZURE_OPENAI_EMBED_DEPLOYMENT",
+    "AZURE_OPENAI_CHAT_DEPLOYMENT",
+    "AZURE_SEARCH_ENDPOINT",
+    "AZURE_SEARCH_API_KEY",
+)
+SECRET_NAMES = {"AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY"}
+EXPECTED_EMBED_DIMS = 1536   # text-embedding-3-small
+
+
+def load_env():
+    """Read .env if python-dotenv is installed (it is, via requirements-dev.txt)."""
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    load_dotenv()
+
+
+def missing_settings(env):
+    return [name for name in REQUIRED if not env.get(name, "").strip()]
+
+
+def describe(name, value):
+    """Safe-to-print description of a setting: secrets show only their last 4 characters."""
+    if name in SECRET_NAMES:
+        return f"set (…{value[-4:]})" if len(value) >= 8 else "set (too short?)"
+    return value
+
+
+def openai_base_url(endpoint):
+    """Accept either https://<name>.openai.azure.com or .../openai/v1/ and return the v1 base URL."""
+    endpoint = endpoint.strip().rstrip("/")
+    if endpoint.endswith("/openai/v1"):
+        return endpoint + "/"
+    return endpoint + "/openai/v1/"
+
+
+def check_embeddings(client, deployment):
+    resp = client.embeddings.create(model=deployment, input="Barry builds Flask apps.")
+    dims = len(resp.data[0].embedding)
+    if dims != EXPECTED_EMBED_DIMS:
+        raise RuntimeError(f"got {dims} dimensions, expected {EXPECTED_EMBED_DIMS} (is this text-embedding-3-small?)")
+    return f"{dims}-dimension vector"
+
+
+def check_chat(client, deployment):
+    resp = client.chat.completions.create(
+        model=deployment,
+        messages=[{"role": "user", "content": "Reply with the single word: ready"}],
+        max_completion_tokens=300,   # reasoning models spend some tokens thinking first
+    )
+    text = (resp.choices[0].message.content or "").strip()
+    return f"model replied {text[:40]!r}" if text else "call succeeded (empty reply; fine for a smoke test)"
+
+
+def check_search(endpoint, key):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    stats = SearchIndexClient(endpoint, AzureKeyCredential(key)).get_service_statistics()
+    counters = stats["counters"] if isinstance(stats, dict) else stats.counters
+    indexes = counters["index_counter"] if isinstance(counters, dict) else counters.index_counter
+    usage = indexes["usage"] if isinstance(indexes, dict) else indexes.usage
+    return f"reachable, {usage} index(es) so far"
+
+
+def main():
+    load_env()
+    env = os.environ
+    print("Settings:")
+    for name in REQUIRED:
+        value = env.get(name, "")
+        print(f"  {name:<32} {describe(name, value) if value else 'MISSING'}")
+    missing = missing_settings(env)
+    if missing:
+        sys.exit(f"\nAdd these to .env first: {', '.join(missing)}")
+
+    from openai import OpenAI
+    client = OpenAI(api_key=env["AZURE_OPENAI_API_KEY"], base_url=openai_base_url(env["AZURE_OPENAI_ENDPOINT"]))
+
+    checks = [
+        ("Azure OpenAI embeddings", lambda: check_embeddings(client, env["AZURE_OPENAI_EMBED_DEPLOYMENT"])),
+        ("Azure OpenAI chat", lambda: check_chat(client, env["AZURE_OPENAI_CHAT_DEPLOYMENT"])),
+        ("Azure AI Search", lambda: check_search(env["AZURE_SEARCH_ENDPOINT"], env["AZURE_SEARCH_API_KEY"])),
+    ]
+    failures = 0
+    print()
+    for label, fn in checks:
+        try:
+            print(f"PASS  {label}: {fn()}")
+        except Exception as err:        # report every failure, don't stop at the first
+            failures += 1
+            print(f"FAIL  {label}: {type(err).__name__}: {str(err)[:300]}")
+    if failures:
+        sys.exit(f"\n{failures} check(s) failed. See docs/azure-setup.md, section 'Troubleshooting'.")
+    print("\nAll Azure checks passed. Stage 3 is complete.")
+
+
+if __name__ == "__main__":
+    main()

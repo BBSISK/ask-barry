@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     APP_NAME = "Ask Barry"
     # Stage marker shown on /health so the deployed state is always explicit.
-    BUILD_STAGE = "2-keyword-baseline"
+    BUILD_STAGE = "3-azure-setup"
 
 
 class DevelopmentConfig(Config):
