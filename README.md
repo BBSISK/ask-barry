@@ -1,13 +1,25 @@
 # Ask Barry
 
-A portfolio assistant that answers questions about my software projects ("Has Barry used Terraform?", "How does Wall Inspector's CI work?") using **only** the documentation in my public GitHub repositories, and cites the repo and file behind every answer. If the documentation doesn't support a claim, it says so rather than guessing.
+A portfolio assistant that answers questions about my software projects using **only** the documentation in my public GitHub repositories, and cites the repo, file and section behind every answer. If the documentation doesn't support a claim, it says so rather than guessing.
 
-It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
+**Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 5 (grounded answers with citations)
+## Current status: Stage 5 complete (RAG live in production)
 
-**What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3), and ingestion of the chunks into an Azure AI Search index with embeddings, plus a keyword / vector / hybrid comparison (Stage 4).
-**What is not built yet:** search, embeddings and AI-generated answers. The live app does not use the chunks or the search yet, and `/health` reports these features as `false` until they exist.
+**Retrieval-augmented generation is live in production:**
+- Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
+- Azure OpenAI (`gpt-4.1-mini`) writes a short answer that must cite the retrieved sections.
+- The code refuses any answer without a valid citation.
+- `/health` reports search, embeddings and generation as `true` when the Azure settings are present.
+
+**Built so far:**
+- Flask app with CI and Render deployment
+- Document fetching and chunking
+- BM25 baseline with a golden question set
+- Azure setup
+- Azure AI Search index with embeddings
+- Retrieval comparison scored at section level
+- Grounded answering with citations, rate limiting and a web UI
 
 | Stage | Scope | Status |
 |---|---|---|
@@ -16,9 +28,9 @@ It is being built in stages to learn and demonstrate retrieval-augmented generat
 | 2 | Keyword search baseline + evaluation question set | Done |
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
-| 5 | Grounded answers with citations (RAG) | In progress |
-| 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |
-| 7 | Extras: multi-provider, Terraform, MCP tool, model card | Planned |
+| 5 | Grounded answers with citations (RAG), live | Done |
+| 6 | Answer-quality evaluation, including refusal of unsupported claims | Next |
+| 7 | Extras: switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | Planned |
 
 ## Sources
 

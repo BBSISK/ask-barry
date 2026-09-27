@@ -57,6 +57,8 @@
     {"id": "trap-05", "type": "trap", "question": "Does Barry have a PhD?", "expected": []},
     {"id": "trap-06", "type": "trap", "question": "Has Barry used MongoDB?", "expected": []},
     {"id": "trap-07", "type": "trap", "question": "Has Barry trained a YOLOv8 model?", "expected": [], "why": "Docs say Wall Inspector EXPORTS data for YOLOv8 training, not that a model was trained."},
-    {"id": "trap-08", "type": "trap", "question": "Has Barry deployed a RAG system to production?", "expected": [], "why": "Docs say he is exploring RAG and building a verified pool for FUTURE retrieval. Flip to answerable only once Ask Barry Stage 5 is live and documented."}
+    {"id": "trap-09", "type": "trap", "question": "Has Barry worked with Apache Kafka?", "expected": []},
+
+    {"id": "askbarry-02", "type": "answerable", "question": "Has Barry deployed a RAG system to production?", "expected": ["ask-barry/README.md"], "evidence": ["Retrieval-augmented generation is live in production"], "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."}
   ]
 }
