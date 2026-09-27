@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     APP_NAME = "Ask Barry"
     # Stage marker shown on /health so the deployed state is always explicit.
-    BUILD_STAGE = "0-skeleton"
+    BUILD_STAGE = "1-ingestion"
 
 
 class DevelopmentConfig(Config):
