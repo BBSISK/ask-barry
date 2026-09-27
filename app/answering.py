@@ -52,9 +52,13 @@ class Answer:
     sources: list = field(default_factory=list)      # only the sources actually cited
     retrieved: int = 0                                # how many chunks the model saw
     model: str = ""
+    # Full text of the cited chunks, for evaluation only. Not sent to the browser.
+    cited_texts: list = field(default_factory=list, repr=False)
 
     def to_dict(self):
-        return asdict(self)
+        data = asdict(self)
+        data.pop("cited_texts", None)
+        return data
 
 
 def validate_question(question):
@@ -138,11 +142,12 @@ class Answerer:
         raw = resp.choices[0].message.content
         supported, text, cited = parse_model_output(raw, len(results))
         text, renumbered = renumber_citations(text, cited)
-        sources = []
+        sources, cited_texts = [], []
         for original, number in renumbered:
             c = results[original - 1].chunk
             sources.append(Source(number, c.get("repo", ""), c.get("path", ""), c.get("heading", ""), c.get("url", "")))
-        return Answer(question, text, supported, sources, len(results), self.deployment)
+            cited_texts.append(c.get("text", ""))
+        return Answer(question, text, supported, sources, len(results), self.deployment, cited_texts)
 
 
 AZURE_SETTINGS = (
@@ -156,15 +161,22 @@ def azure_configured(env=None):
     return all(env.get(name, "").strip() for name in AZURE_SETTINGS)
 
 
-def answerer_from_env():
-    """Build the production Answerer: Azure hybrid search + Azure OpenAI chat."""
+def azure_chat_client(max_retries=2):
+    """OpenAI client for the Azure v1 endpoint. Retries back off on 429 rate limits."""
     from openai import OpenAI
 
-    from app.azure_search import AzureSearchRetriever, search_client_from_env
-    from app.embeddings import AzureOpenAIEmbedder, openai_base_url
+    from app.embeddings import openai_base_url
+    return OpenAI(api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                  base_url=openai_base_url(os.environ["AZURE_OPENAI_ENDPOINT"]),
+                  max_retries=max_retries)
 
-    client = OpenAI(api_key=os.environ["AZURE_OPENAI_API_KEY"],
-                    base_url=openai_base_url(os.environ["AZURE_OPENAI_ENDPOINT"]))
-    embedder = AzureOpenAIEmbedder(client=client)
+
+def answerer_from_env(client=None, embedder=None):
+    """Build the production Answerer: Azure hybrid search + Azure OpenAI chat."""
+    from app.azure_search import AzureSearchRetriever, search_client_from_env
+    from app.embeddings import AzureOpenAIEmbedder
+
+    client = client or azure_chat_client()
+    embedder = embedder or AzureOpenAIEmbedder(client=client)
     retriever = AzureSearchRetriever(search_client_from_env(), embedder, mode="hybrid")
     return Answerer(retriever, client, os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"])

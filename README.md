@@ -29,7 +29,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
 | 5 | Grounded answers with citations (RAG), live | Done |
-| 6 | Answer-quality evaluation, including refusal of unsupported claims | Next |
+| 6 | Answer-quality evaluation, including refusal of unsupported claims | In progress |
 | 7 | Extras: switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | Planned |
 
 ## Sources
@@ -103,6 +103,26 @@ flask --app wsgi run                                       # web UI at http://12
   - Questions are capped at 300 characters, and the app doesn't log question text.
   - Model output is rendered as text, never HTML.
   - In production the app uses a read-only Search query key.
+
+## Answer-quality evaluation (Stage 6)
+
+```bash
+python -m scripts.evaluate_answers --save                     # all questions -> docs/eval/<date>-answers.md
+python -m scripts.evaluate_answers --ids profile-10 trap-01   # a subset
+```
+
+Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:
+
+| Check | How |
+|---|---|
+| Answered | The system gave a supported answer, not "no evidence" |
+| Cites the answer | At least one **cited** section is from the right file and contains the answer's evidence phrase (deterministic) |
+| Faithful | An LLM judge confirms every claim is supported by the cited text, and that planned work isn't presented as done (or the reverse) |
+| Regression checks | Fixed must / must-not phrases for known past failures, e.g. an answer that confused one project's roadmap with another project's history |
+| Traps | Pass if the system refuses **or** gives a grounded "no". Fail only if it claims the skill (LLM judge) |
+
+- **About the judge:** it's the same model family, so the headline numbers don't rest on it alone. The citation test and regression checks are deterministic.
+- **Tokens per minute:** a full run makes about 80 model calls. Raise the chat deployment's limit (e.g. to 50K tokens per minute) so it isn't throttled; the client also backs off automatically on rate limits.
 
 ## Run locally
 

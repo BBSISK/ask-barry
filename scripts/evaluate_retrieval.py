@@ -44,6 +44,10 @@ def validate_golden(data):
             raise ValueError(f"{q['id']}: answerable question needs evidence phrases")
         if q["type"] == "trap" and q["expected"]:
             raise ValueError(f"{q['id']}: trap question must have no expected files")
+        checks = q.get("checks")
+        if checks is not None and (not isinstance(checks, dict)
+                                   or set(checks) - {"must_include", "must_not_include"}):
+            raise ValueError(f"{q['id']}: checks may only contain must_include / must_not_include")
         if q["type"] not in ("answerable", "trap"):
             raise ValueError(f"{q['id']}: unknown type {q['type']}")
 

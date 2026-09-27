@@ -18,6 +18,7 @@
     {"id": "profile-07", "type": "answerable", "question": "Has Barry used Docker?", "expected": ["BBSISK/README.md", "wall_inspector/README.md"], "evidence": ["Docker"]},
     {"id": "profile-08", "type": "answerable", "question": "What cloud and DevOps tools has Barry worked with?", "expected": ["BBSISK/README.md", "wall_inspector/README.md"], "evidence": ["Cloud & DevOps", "GitHub Actions", "Terraform"]},
     {"id": "profile-09", "type": "answerable", "question": "How can I contact Barry?", "expected": ["BBSISK/README.md"], "evidence": ["barry.b.sisk@gmail.com"]},
+    {"id": "profile-10", "type": "answerable", "question": "What cloud tools has Barry used?", "expected": ["BBSISK/README.md", "wall_inspector/README.md"], "evidence": ["Cloud & DevOps", "Terraform"], "checks": {"must_include": ["Terraform"], "must_not_include": ["Terraform (planned", "Terraform is planned", "planned for later"]}, "history": "Regression for 27 Sep 2026 live bug: Terraform described as planned (confused with this project's roadmap)."},
 
     {"id": "wall-01", "type": "answerable", "question": "What is Wall Inspector and who is it for?", "expected": ["wall_inspector/README.md", "BBSISK/README.md"], "evidence": ["skills-assessment"]},
     {"id": "wall-02", "type": "answerable", "question": "What does the Intake Sentinel agent check in uploaded photographs?", "expected": ["wall_inspector/README.md"], "evidence": ["photogrammetric pillars"]},
@@ -59,6 +60,6 @@
     {"id": "trap-07", "type": "trap", "question": "Has Barry trained a YOLOv8 model?", "expected": [], "why": "Docs say Wall Inspector EXPORTS data for YOLOv8 training, not that a model was trained."},
     {"id": "trap-09", "type": "trap", "question": "Has Barry worked with Apache Kafka?", "expected": []},
 
-    {"id": "askbarry-02", "type": "answerable", "question": "Has Barry deployed a RAG system to production?", "expected": ["ask-barry/README.md"], "evidence": ["Retrieval-augmented generation is live in production"], "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."}
+    {"id": "askbarry-02", "type": "answerable", "question": "Has Barry deployed a RAG system to production?", "expected": ["ask-barry/README.md"], "evidence": ["Retrieval-augmented generation is live in production"], "checks": {"must_not_include": ["not yet deployed", "has not deployed"]}, "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."}
   ]
 }

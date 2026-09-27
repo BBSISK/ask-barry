@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     APP_NAME = "Ask Barry"
     # Stage marker shown on /health so the deployed state is always explicit.
-    BUILD_STAGE = "5-rag"
+    BUILD_STAGE = "6-answer-eval"
     # Build the Azure-backed answerer from AZURE_* environment variables when present.
     ANSWERING_FROM_ENV = True
     BEHIND_PROXY = False
