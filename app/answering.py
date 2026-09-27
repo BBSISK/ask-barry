@@ -62,6 +62,7 @@ class Answer:
         data = asdict(self)
         data.pop("cited_texts", None)
         data.pop("uncited_texts", None)
+        data["ai_generated"] = True        # machine-readable marker (EU AI Act Art. 50 transparency)
         return data
 
 

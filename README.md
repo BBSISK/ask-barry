@@ -12,7 +12,7 @@ A portfolio assistant that answers questions about my software projects using **
 - The code refuses any answer without a valid citation.
 - `/health` reports search, embeddings and generation as `true` when the Azure settings are present.
 
-**Built so far:**
+**Built so far** ([model card](docs/model-card.md)):
 - Flask app with CI and Render deployment
 - Document fetching and chunking
 - BM25 baseline with a golden question set
@@ -21,6 +21,7 @@ A portfolio assistant that answers questions about my software projects using **
 - Retrieval comparison scored at section level
 - Grounded answering with citations, rate limiting and a web UI
 - Answer-quality evaluation with an evidence-checking LLM judge
+- Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
 
 | Stage | Scope | Status |
 |---|---|---|
@@ -32,6 +33,25 @@ A portfolio assistant that answers questions about my software projects using **
 | 5 | Grounded answers with citations (RAG), live | Done |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Done |
 | 7 | Extras: nightly index refresh, switchable model providers, infrastructure as code for this project's Azure resources, an MCP tool, a model card | In progress |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Nightly["Nightly GitHub Action"]
+        F["Fetch public READMEs + docs<br/>(pinned commits)"] --> C["Split into sections<br/>by heading"]
+        C --> E["Embed new or changed sections<br/>text-embedding-3-small"]
+    end
+    E --> I[("Azure AI Search index<br/>keyword + vector")]
+    Q["Question"] --> R["Hybrid retrieval<br/>top 8 sections"]
+    I --> R
+    R --> G["gpt-4.1-mini<br/>sources-only rules, JSON"]
+    G --> V{"Valid citation?"}
+    V -- yes --> A["Answer + links to<br/>exact sections"]
+    V -- no --> N["I can't find evidence of that"]
+```
+
+How it works, what it's for (and not for), evaluation results, known limitations and the EU AI Act assessment are in the **[model card](docs/model-card.md)**.
 
 ## Sources
 
@@ -57,7 +77,7 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 35 questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **Golden set:** `eval/golden_set.json` holds 37 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
 - **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
 - **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
 

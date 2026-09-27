@@ -34,7 +34,7 @@
 <body>
 <main>
   <h1>{{ app_name }}</h1>
-  <p class="lede">Ask about Barry Sisk's software projects. Answers come <strong>only</strong> from the documentation in his public GitHub repositories, with links to the sources. If the documentation doesn't support something, it says so.</p>
+  <p class="lede">An <strong>AI assistant</strong> for questions about Barry Sisk's software projects. Answers come <strong>only</strong> from the documentation in his public GitHub repositories, with links to the sources. If the documentation doesn't support something, it says so.</p>
 
   {% if available %}
   <form id="ask-form">
@@ -55,7 +55,7 @@
   <footer>
     Retrieval-augmented generation: Azure AI Search (hybrid keyword + vector) finds the relevant sections, and Azure OpenAI writes a short answer that must cite them.
     Answers can be incomplete: the documentation doesn't cover everything Barry has done.
-    This app doesn't store your questions. Build stage: {{ stage }} · <a href="https://github.com/BBSISK/ask-barry">source code</a>
+    This app doesn't store your questions. Build stage: {{ stage }} · <a href="https://github.com/BBSISK/ask-barry/blob/main/docs/model-card.md">model card (how it works, limits)</a> · <a href="https://github.com/BBSISK/ask-barry">source code</a>
   </footer>
 </main>
 {% if available %}
@@ -95,7 +95,8 @@
         }
         card.append(list);
       }
-      out.replaceChildren(card, el("p", { class: "meta" }, `Based on ${data.retrieved} retrieved sections · model: ${data.model}`));
+      const label = data.ai_generated ? "AI-generated answer: check the linked sources · " : "";
+      out.replaceChildren(card, el("p", { class: "meta" }, `${label}based on ${data.retrieved} retrieved sections · model: ${data.model}`));
     } catch (e) {
       out.replaceChildren(el("p", { class: "error" }, "Couldn't reach the server. The free host may be waking up: try again in 30 seconds."));
     } finally {
