@@ -1,7 +1,7 @@
-# Render Blueprint (infrastructure as code) for HDip Study Assistant.
+# Render Blueprint (infrastructure as code) for Ask Barry.
 services:
   - type: web
-    name: hdip-study-assistant
+    name: ask-barry
     runtime: python
     plan: free
     region: frankfurt

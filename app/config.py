@@ -8,7 +8,7 @@ import os
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
-    APP_NAME = "HDip Study Assistant"
+    APP_NAME = "Ask Barry"
     # Stage marker shown on /health so the deployed state is always explicit.
     BUILD_STAGE = "0-skeleton"
 

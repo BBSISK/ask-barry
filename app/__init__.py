@@ -1,4 +1,4 @@
-"""HDip Study Assistant: Flask application factory."""
+"""Ask Barry: Flask application factory."""
 import os
 
 from flask import Flask

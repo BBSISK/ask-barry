@@ -20,7 +20,7 @@ def test_health_reports_no_ai_features_yet(client):
 def test_index_page_renders(client):
     resp = client.get("/")
     assert resp.status_code == 200
-    assert b"HDip Study Assistant" in resp.data
+    assert b"Ask Barry" in resp.data
 
 
 def test_production_refuses_to_start_without_secret_key(monkeypatch):

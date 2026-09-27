@@ -1,6 +1,8 @@
-# HDip Study Assistant
+# Ask Barry
 
-A question-answering app over my own Higher Diploma in Software Development course notes (Maynooth University). It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
+A portfolio assistant that answers questions about my software projects ("Has Barry used Terraform?", "How does Wall Inspector's CI work?") using **only** the documentation in my public GitHub repositories, and cites the repo and file behind every answer. If the documentation doesn't support a claim, it says so rather than guessing.
+
+It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
 
 ## Current status: Stage 0 (skeleton)
 
@@ -9,14 +11,18 @@ A question-answering app over my own Higher Diploma in Software Development cour
 
 | Stage | Scope | Status |
 |---|---|---|
-| 0 | Skeleton: Flask, tests, CI, Render deploy | In progress |
-| 1 | Load and chunk notes (no AI) | Planned |
+| 0 | Skeleton: Flask, tests, CI, Render deploy | Done |
+| 1 | Fetch public repo READMEs/docs and split them into sections (no AI) | Planned |
 | 2 | Keyword search baseline + evaluation question set | Planned |
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Planned |
 | 4 | Embeddings + hybrid search in Azure AI Search | Planned |
 | 5 | Grounded answers with citations (RAG) | Planned |
-| 6 | Answer-quality evaluation | Planned |
+| 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |
 | 7 | Extras: multi-provider, Terraform, MCP tool, model card | Planned |
+
+## Sources
+
+Only README and documentation files from my **public** GitHub repositories. No private repositories, source code, CV or personal details. Everything the assistant can see is already public.
 
 ## Run locally
 
@@ -35,7 +41,6 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 
 `render.yaml` defines the Render web service (free plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
 
-## Data and privacy
+## Security
 
-- The notes corpus lives in `corpus/`, which is gitignored. Only my own notes are used, never lecturers' slides or handouts.
-- Secrets are environment variables only. The app refuses to start in production without `SECRET_KEY`.
+Secrets are environment variables only. The app refuses to start in production without `SECRET_KEY`.
