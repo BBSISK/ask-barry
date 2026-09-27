@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects ("Has Ba
 
 It is being built in stages to learn and demonstrate retrieval-augmented generation (RAG) with Azure AI Search and Azure OpenAI.
 
-## Current status: Stage 4 complete (hybrid search evaluated)
+## Current status: Stage 5 (grounded answers with citations)
 
 **What exists:** a Flask app with a health check, CI and Render deployment (Stage 0), plus offline scripts that fetch documentation from my public repos and split it into citable chunks (Stage 1), a keyword (BM25) search with an evaluation against a golden question set (Stage 2), the Azure setup guide plus a smoke test for Azure OpenAI and Azure AI Search (Stage 3), and ingestion of the chunks into an Azure AI Search index with embeddings, plus a keyword / vector / hybrid comparison (Stage 4).
 **What is not built yet:** search, embeddings and AI-generated answers. The live app does not use the chunks or the search yet, and `/health` reports these features as `false` until they exist.
@@ -16,7 +16,7 @@ It is being built in stages to learn and demonstrate retrieval-augmented generat
 | 2 | Keyword search baseline + evaluation question set | Done |
 | 3 | Azure setup (Azure OpenAI, Azure AI Search) | Done: [guide](docs/azure-setup.md) |
 | 4 | Embeddings + hybrid search in Azure AI Search | Done |
-| 5 | Grounded answers with citations (RAG) | Planned |
+| 5 | Grounded answers with citations (RAG) | In progress |
 | 6 | Answer-quality evaluation, including refusal of unsupported claims | Planned |
 | 7 | Extras: multi-provider, Terraform, MCP tool, model card | Planned |
 
@@ -71,6 +71,26 @@ python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyw
   | **Azure hybrid** | **0.80** | **0.94** | **1.00** | **0.86** |
 
 - **Decision:** hybrid search, passing the top **8** chunks to the answering step (Stage 5), because it's the only setting that retrieved the answer for every question. With 35 questions, one question moves recall by about 0.03, so small gaps are noise. Full reports: [`docs/eval/`](docs/eval/).
+
+## Grounded answers (Stage 5)
+
+```bash
+python -m scripts.ask "How does Wall Inspector deploy to production?"
+python -m scripts.ask --show-context "<any question>"      # also list the retrieved sections
+flask --app wsgi run                                       # web UI at http://127.0.0.1:5000
+```
+
+- **Pipeline:** question → Azure AI Search hybrid retrieval (top 8 sections, the Stage 4 decision) → numbered sources in the prompt → `gpt-4.1-mini` (temperature 0, JSON output) → citation check → answer with links.
+- **Honesty rules enforced in code, not just the prompt:**
+  - An answer must cite at least one of the sources it was given, or it is replaced with *"I can't find evidence of that in Barry's public GitHub documentation."*
+  - Citations to sources that weren't provided are dropped.
+  - Unparseable model output becomes an error, never raw text.
+- **Web API:** `POST /api/ask {"question": "..."}` returns the answer, `supported`, and the cited sources (repo, file, section, GitHub link pinned to a commit).
+- **Public-endpoint safeguards:**
+  - Rate limits: 6 questions per minute per IP, and 300 a day overall.
+  - Questions are capped at 300 characters, and the app doesn't log question text.
+  - Model output is rendered as text, never HTML.
+  - In production the app uses a read-only Search query key.
 
 ## Run locally
 

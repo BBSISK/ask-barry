@@ -14,3 +14,24 @@ services:
         value: production
       - key: SECRET_KEY
         generateValue: true         # Render generates it; never stored in the repo
+      # Stage 5: Azure settings. "sync: false" = the values are entered in the
+      # Render dashboard, never committed. Use a Search QUERY key here (read-only),
+      # not the admin key used locally for ingestion.
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_EMBED_DEPLOYMENT
+        value: text-embedding-3-small
+      - key: AZURE_OPENAI_CHAT_DEPLOYMENT
+        value: gpt-4.1-mini
+      - key: AZURE_SEARCH_ENDPOINT
+        sync: false
+      - key: AZURE_SEARCH_API_KEY
+        sync: false
+      - key: AZURE_SEARCH_INDEX
+        value: ask-barry-chunks
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "6"
+      - key: RATE_LIMIT_PER_DAY
+        value: "300"

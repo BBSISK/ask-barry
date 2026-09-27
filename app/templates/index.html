@@ -4,16 +4,109 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ app_name }}</title>
+  <meta name="description" content="Ask questions about Barry Sisk's software projects. Answers come only from his public GitHub documentation, with sources.">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.5; color: #222; }
-    .stage { display: inline-block; padding: .15rem .5rem; border-radius: .3rem; background: #eef; font-size: .85rem; }
+    :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3; --warn-bg:#fff6e5; --warn:#8a5a00; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#141416; --fg:#ececec; --muted:#a0a4ab; --card:#1d1e21; --line:#2e3035; --accent:#8fa9ff; --warn-bg:#2d2615; --warn:#f0c46b; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 44rem; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+    h1 { font-size: 1.8rem; margin: 0 0 .25rem; }
+    .lede { color: var(--muted); margin: 0 0 1.5rem; }
+    form { display:flex; gap:.5rem; }
+    input[type=text] { flex:1; font:inherit; padding:.7rem .85rem; border:1px solid var(--line); border-radius:.6rem; background:var(--card); color:var(--fg); }
+    button { font:inherit; padding:.7rem 1.1rem; border:0; border-radius:.6rem; background:var(--accent); color:#fff; cursor:pointer; }
+    button[disabled] { opacity:.6; cursor:wait; }
+    .examples { margin:.75rem 0 1.5rem; display:flex; flex-wrap:wrap; gap:.4rem; }
+    .examples button { background:transparent; color:var(--accent); border:1px solid var(--line); padding:.3rem .7rem; font-size:.9rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:.8rem; padding:1rem 1.1rem; }
+    .card.unsupported { background:var(--warn-bg); color:var(--warn); }
+    .sources { margin:.75rem 0 0; padding-left:1.1rem; font-size:.92rem; }
+    .sources a { color:var(--accent); }
+    .meta { color:var(--muted); font-size:.85rem; margin-top:1rem; }
+    .error { color:#c5221f; }
+    footer { color:var(--muted); font-size:.85rem; margin-top:2.5rem; border-top:1px solid var(--line); padding-top:1rem; }
+    @media (max-width: 30rem) { form { flex-direction: column; } }
   </style>
 </head>
 <body>
+<main>
   <h1>{{ app_name }}</h1>
-  <p class="stage">Build stage: {{ stage }}</p>
-  <p>An assistant that will answer questions about Barry Sisk's software projects,
-     using only the documentation in his public GitHub repositories, with citations.</p>
-  <p>Under construction: search and AI answers are not live yet.</p>
+  <p class="lede">Ask about Barry Sisk's software projects. Answers come <strong>only</strong> from the documentation in his public GitHub repositories, with links to the sources. If the documentation doesn't support something, it says so.</p>
+
+  {% if available %}
+  <form id="ask-form">
+    <label for="q" class="visually-hidden" style="position:absolute;left:-9999px">Your question</label>
+    <input id="q" name="question" type="text" maxlength="300" autocomplete="off" placeholder="e.g. How does Wall Inspector deploy to production?" required>
+    <button id="ask-btn" type="submit">Ask</button>
+  </form>
+  <div class="examples" aria-label="Example questions">
+    <button type="button">What cloud tools has Barry used?</button>
+    <button type="button">How does In My Time protect privacy?</button>
+    <button type="button">Has Barry worked with MCP?</button>
+  </div>
+  <div id="result" aria-live="polite"></div>
+  {% else %}
+  <div class="card unsupported">Answering isn't switched on for this server yet.</div>
+  {% endif %}
+
+  <footer>
+    Retrieval-augmented generation: Azure AI Search (hybrid keyword + vector) finds the relevant sections, and Azure OpenAI writes a short answer that must cite them.
+    Answers can be incomplete: the documentation doesn't cover everything Barry has done.
+    This app doesn't store your questions. Build stage: {{ stage }} · <a href="https://github.com/BBSISK/ask-barry">source code</a>
+  </footer>
+</main>
+{% if available %}
+<script>
+  const form = document.getElementById("ask-form");
+  const input = document.getElementById("q");
+  const btn = document.getElementById("ask-btn");
+  const out = document.getElementById("result");
+
+  function el(tag, attrs = {}, text = "") {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text) e.textContent = text;          // textContent: never inject HTML from the model
+    return e;
+  }
+
+  async function ask(question) {
+    btn.disabled = true; btn.textContent = "Thinking…";
+    out.replaceChildren(el("p", { class: "meta" }, "Searching the documentation…"));
+    try {
+      const resp = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) { out.replaceChildren(el("p", { class: "error" }, data.error || "Something went wrong.")); return; }
+      const card = el("div", { class: data.supported ? "card" : "card unsupported" });
+      card.append(el("p", {}, data.answer));
+      if (data.sources && data.sources.length) {
+        const list = el("ol", { class: "sources" });
+        for (const s of data.sources) {
+          const li = el("li", { value: String(s.number) });
+          const a = el("a", { href: s.url, target: "_blank", rel: "noopener" }, `${s.repo} / ${s.path}`);
+          li.append(a, document.createTextNode(s.heading ? ` (${s.heading})` : ""));
+          list.append(li);
+        }
+        card.append(list);
+      }
+      out.replaceChildren(card, el("p", { class: "meta" }, `Based on ${data.retrieved} retrieved sections · model: ${data.model}`));
+    } catch (e) {
+      out.replaceChildren(el("p", { class: "error" }, "Couldn't reach the server. The free host may be waking up: try again in 30 seconds."));
+    } finally {
+      btn.disabled = false; btn.textContent = "Ask";
+    }
+  }
+
+  form.addEventListener("submit", (e) => { e.preventDefault(); if (input.value.trim()) ask(input.value.trim()); });
+  document.querySelectorAll(".examples button").forEach((b) =>
+    b.addEventListener("click", () => { input.value = b.textContent; ask(b.textContent); }));
+</script>
+{% endif %}
 </body>
 </html>
