@@ -1,8 +1,8 @@
 # Retrieval evaluation: azure-vector
 
-Date: 2026-09-27 · Chunks indexed: 58 · Answerable questions: 35 · Trap questions: 8
+Date: 2026-09-27 · Chunks indexed: 59 · Answerable questions: 35 · Trap questions: 8
 
-Corpus: BBSISK@509eed3, agentmath_showcase@82a0751, ask-barry@ba39a93, inmytime-showcase@adecf68, my30words_showcase@59ea449, wall_inspector@bcd4662
+Corpus: BBSISK@509eed3, agentmath_showcase@82a0751, ask-barry@8fa660a, inmytime-showcase@adecf68, my30words_showcase@59ea449, wall_inspector@bcd4662
 
 | Metric | Value |
 |---|---|
