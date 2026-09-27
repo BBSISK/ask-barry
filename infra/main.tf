@@ -30,6 +30,12 @@ resource "azurerm_cognitive_account" "ai_services" {
   public_network_access_enabled = true
   project_management_enabled    = true
 
+  # As created in the portal: public access, no IP restrictions.
+  network_acls {
+    default_action = "Allow"
+    ip_rules       = []
+  }
+
   identity {
     type = "SystemAssigned"
   }
@@ -89,6 +95,7 @@ resource "azurerm_search_service" "search" {
   location                      = var.search_location
   sku                           = "free"
   local_authentication_enabled  = true
+  authentication_failure_mode   = "http401WithBearerChallenge"
   public_network_access_enabled = true
 
   # Azure reports the free semantic ranker as "free", but the provider rejects that setting on
