@@ -27,3 +27,19 @@ jobs:
           APP_ENV: production
           SECRET_KEY: ci-smoke-test-only
         run: python -c "from wsgi import app; print(app.name, 'boots OK')"
+
+  terraform:
+    name: Terraform (format + validate, no Azure access)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+      - name: Validate configuration
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate

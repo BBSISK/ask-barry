@@ -37,7 +37,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7b | Model card, architecture diagram, AI disclosure | Done: [model card](docs/model-card.md) |
 | 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
-| 7e | Infrastructure as code for this project's Azure resources | Planned |
+| 7e | Infrastructure as code for this project's Azure resources | In progress: [infra/](infra/) |
 
 ## Architecture
 
@@ -256,6 +256,32 @@ What I take from it:
 - **Trap questions differ in style, not score.** Claude and Gemini refused all eight outright. The live model answered two with a hedged "no", and one of those described what related work "indicates", which is the speculation pattern listed in the model card.
 - **No sign of judge self-preference.** The judge is the same family as the live model, yet the live model scored lowest.
 - **The live app stays on Azure OpenAI.** It is the fastest and cheapest, it answers from exactly the same evidence, and its failures were citation completeness rather than accuracy. Gemini's quality came with about 10 times the output tokens, because of its internal reasoning.
+
+## Infrastructure as code (Stage 7e)
+
+The Azure resources were first created by hand in the portal ([guide](docs/azure-setup.md)). `infra/` now describes them in Terraform and **adopts them with import blocks**, so nothing is recreated:
+
+| Resource | Terraform |
+|---|---|
+| Resource group `rg-ask-barry` (Sweden Central) | `azurerm_resource_group` |
+| Foundry / Azure AI Services resource (S0, system-assigned identity) | `azurerm_cognitive_account` |
+| `gpt-4.1-mini` and `text-embedding-3-small` deployments (Global Standard) | `azurerm_cognitive_deployment` × 2 |
+| Azure AI Search `ask-barry-search` (Free, Switzerland West) | `azurerm_search_service` |
+
+- **Safe by design:** every resource has `prevent_destroy`, and the target plan is imports only: *0 to add, 0 to change, 0 to destroy*.
+- **No secrets:** Terraform never reads or outputs keys, and the subscription ID comes from the signed-in Azure CLI, not the repo. State stays out of git and can be rebuilt from the import blocks at any time.
+- **Checked in CI:** every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.
+- **Left out on purpose:** the Foundry project and the budget alert, which were created in the portal. The config comments explain why.
+
+Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in:
+
+```bash
+git clone https://github.com/BBSISK/ask-barry.git && cd ask-barry/infra
+export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv) TF_VAR_subscription_id=$(az account show --query id -o tsv)
+terraform init
+terraform plan        # expect: 5 to import, 0 to add, 0 to change, 0 to destroy
+terraform apply       # records the imports in state; changes nothing in Azure
+```
 
 ## Keeping the index fresh (Stage 7)
 

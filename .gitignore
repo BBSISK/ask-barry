@@ -18,3 +18,10 @@ venv/
 .DS_Store
 .vscode/
 .idea/
+
+# Terraform (Stage 7e): state and plugins stay out of git; state can always be rebuilt from infra/imports.tf
+infra/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
