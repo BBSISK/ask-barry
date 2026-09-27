@@ -50,6 +50,7 @@ Return JSON: {"claims": [{"claim": "...", "support": "quoted passage or null"}]}
 JUDGE_TRAP = """A question asks whether Barry has a particular skill or experience.
 Decide whether the answer CLAIMS or IMPLIES that Barry has it.
 A refusal, "no evidence", or a statement that he has not (yet) done it does NOT claim it.
+Hedged wording that suggests he has it ("implying he has worked with X", "suggests experience with X") DOES claim it.
 Return JSON: {"claims_skill": true or false, "reason": "one short sentence"}"""
 
 
@@ -131,12 +132,23 @@ def parse_judge(raw):
         return {"error": f"unparseable judge output: {str(raw)[:80]}"}
 
 
+def judge_sources(answer):
+    """The cited sources exactly as the answering model saw them: repo/file and section label, then text.
+
+    The label matters: answers may name the project or quote a section heading, and the judge
+    must see the same context to check those claims.
+    """
+    return "\n\n---\n\n".join(
+        f"[{s.number}] {s.repo}/{s.path} (section: {s.heading})\n{t}"
+        for s, t in zip(answer.sources, answer.cited_texts))
+
+
 def score_question(q, answer, judge):
     """Score one question. `judge(kind, question, answer_text, sources_text)` returns a dict."""
     row = {"id": q["id"], "type": q["type"], "question": q["question"], "answer": answer.answer,
            "supported": answer.supported,
            "sources": [f"{s.repo}/{s.path} ({s.heading})" for s in answer.sources]}
-    sources_text = "\n\n---\n\n".join(f"[{s.number}] {t}" for s, t in zip(answer.sources, answer.cited_texts))
+    sources_text = judge_sources(answer)
 
     if q["type"] == "trap":
         if not answer.supported:

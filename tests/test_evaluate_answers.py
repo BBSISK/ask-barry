@@ -171,3 +171,12 @@ def test_quote_matching_ignores_formatting_but_not_wording():
     assert not quote_in_sources("COCO 1.0 JSON format for model training", src)  # reworded
     assert not quote_in_sources("COCO", src)                                     # too short to prove anything
     assert not quote_in_sources("son format", src)                               # whole words only
+
+
+def test_judge_sees_repo_and_section_labels_like_the_answerer():
+    from scripts.evaluate_answers import judge_sources, quote_in_sources
+    a = answer("x", sources=(("ask-barry", "README.md", "Current status: Stage 5 complete (RAG live in production)", "body"),))
+    text = judge_sources(a)
+    assert text.startswith("[1] ask-barry/README.md (section: Current status")
+    assert quote_in_sources("Stage 5 complete (RAG live in production)", text)
+    assert quote_in_sources("ask-barry/README.md", text)
