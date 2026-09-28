@@ -73,6 +73,8 @@ The golden set has 47 questions (one added with the career page on 28 September 
 | Trap questions: no false claim | 100% (8 of 8) |
 | Passing every check | 43 of 46 (all 3 failures were true-but-uncited, not invented) |
 
+**Re-run with the career page** (28 September 2026, 47 questions): 44 of 47 passing, traps 8 of 8, regression checks 0 failed. Of the 3 failures, 1 was a search request that timed out (infrastructure, not an answer; search requests now time out after 30 seconds and retry) and 2 were true-but-uncited. The new career question passed.
+
 **How faithfulness is judged:** an LLM judge splits each answer into claims and quotes the supporting passage for each one. Code then checks that every quote really appears in the sources, so the judge can't invent evidence. Citation accuracy and regression checks are deterministic and don't depend on the judge. Every answer is published in the report for human review.
 
 **Other models, same evidence** (27 September 2026, 46 questions, identical retrieved sections and rules): Azure OpenAI gpt-4.1-mini (live) 43/46, Claude Haiku 4.5 45/46, Gemini 3.5 Flash 46/46. Every failure was "true but uncited", and every model passed all eight trap questions. The gaps are within run-to-run noise. The live app stays on Azure OpenAI because it is the fastest and cheapest. Details are in the README.

@@ -157,6 +157,13 @@ def plan_sync(chunks, existing):
     return to_embed, unchanged, to_delete
 
 
+# The SDK waits up to 300 s for a reply by default; one stalled request on the free tier once took that long
+# (28 Sep 2026 answer eval). Fail fast and retry instead, so a live question or agent step can't hang for minutes.
+SEARCH_CONNECT_TIMEOUT = 10
+SEARCH_READ_TIMEOUT = 30
+SEARCH_RETRIES = 2
+
+
 def search_client_from_env(index_name=None):
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
@@ -164,6 +171,7 @@ def search_client_from_env(index_name=None):
         endpoint=os.environ["AZURE_SEARCH_ENDPOINT"],
         index_name=index_name or os.environ.get("AZURE_SEARCH_INDEX", "ask-barry-chunks"),
         credential=AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"]),
+        connection_timeout=SEARCH_CONNECT_TIMEOUT, read_timeout=SEARCH_READ_TIMEOUT, retry_total=SEARCH_RETRIES,
     )
 
 

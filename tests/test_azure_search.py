@@ -346,3 +346,16 @@ def test_production_answerer_uses_the_name_free_vector(monkeypatch):
     monkeypatch.setenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4.1-mini")
     a = answering.answerer_from_env(client=object(), embedder=FakeEmbedder(dims=8))
     assert a.retriever.name_free_vector is True and a.retriever.per_repo_cap is None
+
+
+def test_search_client_fails_fast_instead_of_waiting_five_minutes(monkeypatch):
+    from app.azure_search import SEARCH_READ_TIMEOUT, SEARCH_RETRIES, search_client_from_env
+    monkeypatch.setenv("AZURE_SEARCH_ENDPOINT", "https://example.search.windows.net")
+    monkeypatch.setenv("AZURE_SEARCH_API_KEY", "not-a-real-key")
+    pipeline = search_client_from_env()._client._pipeline
+    transport = pipeline._transport
+    while not hasattr(transport, "connection_config"):
+        transport = transport._transport
+    assert transport.connection_config.read_timeout == SEARCH_READ_TIMEOUT <= 30
+    retries = [getattr(p, "_policy", p) for p in pipeline._impl_policies]
+    assert [r.total_retries for r in retries if type(r).__name__ == "RetryPolicy"] == [SEARCH_RETRIES]

@@ -316,6 +316,8 @@ python -m scripts.evaluate_agent --save            # agent vs a single-shot base
 | Agent (plans, one tool call per requirement) | 98% | **100%** | **0** | 0 | 2 of 2 | 0 | 33 s (6.8 tool calls) |
 | Single-shot baseline (one search, one call) | 100% | 92% | **0** | 5 | 2 of 2 | 0 | 8 s |
 
+**Re-run after adding the career page** (28 September 2026, agent only): unchanged at 98% coverage, 100% status accuracy and 0 false evidence; 2 rows were now labelled **Listed on profile** because their only support was my own profile repo.
+
 Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filter are excluded), 27 of which my docs don't evidence.
 
 **What I take from it:**
