@@ -6,7 +6,9 @@ services:
     plan: free
     region: frankfurt
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app
+    # ONE worker: the job-ad agent keeps its jobs in process memory (Stage 8d). Threads serve the page's
+    # progress polling while an agent run works in the background.
+    startCommand: gunicorn wsgi:app --workers 1 --threads 4 --timeout 60
     healthCheckPath: /health
     autoDeployTrigger: checksPass   # deploy only after GitHub Actions CI passes
     envVars:
@@ -35,3 +37,8 @@ services:
         value: "6"
       - key: RATE_LIMIT_PER_DAY
         value: "300"
+      # Stage 8d: the job-ad evidence agent costs ~2 cents per ad, so it has its own, tighter limits.
+      - key: AGENT_RATE_PER_HOUR
+        value: "3"
+      - key: AGENT_RATE_PER_DAY
+        value: "20"

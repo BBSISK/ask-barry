@@ -8,13 +8,13 @@ def test_health_ok(client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["status"] == "ok"
-    assert data["stage"] == "6-answer-eval"
+    assert data["stage"] == "8-job-agent"
 
 
 def test_health_reports_no_ai_features_yet(client):
     # Honesty check: nothing claims to be live before it is built.
     features = client.get("/health").get_json()["features"]
-    assert features == {"search": False, "embeddings": False, "generation": False}
+    assert features == {"search": False, "embeddings": False, "generation": False, "job_agent": False}
 
 
 def test_index_page_renders(client):

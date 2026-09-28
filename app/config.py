@@ -10,13 +10,16 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     APP_NAME = "Ask Barry"
     # Stage marker shown on /health so the deployed state is always explicit.
-    BUILD_STAGE = "6-answer-eval"
+    BUILD_STAGE = "8-job-agent"
     # Build the Azure-backed answerer from AZURE_* environment variables when present.
     ANSWERING_FROM_ENV = True
     BEHIND_PROXY = False
     # Protect the Azure bill on a public endpoint.
     RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "6"))
     RATE_LIMIT_PER_DAY = int(os.getenv("RATE_LIMIT_PER_DAY", "300"))
+    # Job-ad evidence agent (Stage 8d): about 2 cents of Azure usage per ad, so much tighter limits.
+    AGENT_RATE_PER_HOUR = int(os.getenv("AGENT_RATE_PER_HOUR", "3"))
+    AGENT_RATE_PER_DAY = int(os.getenv("AGENT_RATE_PER_DAY", "20"))
 
 
 class DevelopmentConfig(Config):

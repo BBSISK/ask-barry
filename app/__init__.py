@@ -7,13 +7,14 @@ from .config import CONFIGS
 from .ratelimit import RateLimiter
 
 
-def create_app(config_name=None, answerer=None):
+def create_app(config_name=None, answerer=None, jobstore=None):
     """Create and configure the Flask app.
 
     config_name: "development", "testing" or "production". Defaults to the
     APP_ENV environment variable, then "production" (safest default).
     answerer: optional Answerer to use (tests pass a fake). If omitted, the
     real Azure-backed one is built on first use when the AZURE_* settings exist.
+    jobstore: optional JobStore for the job-ad agent (tests pass one with a fake runner).
     """
     config_name = config_name or os.getenv("APP_ENV", "production")
     if config_name not in CONFIGS:
@@ -34,6 +35,14 @@ def create_app(config_name=None, answerer=None):
         app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
     app.extensions["answerer"] = answerer
+    if jobstore is None:
+        from .agent_jobs import JobStore
+        jobstore = JobStore()
+        jobstore.from_env = True               # the real agent: only offered when Azure is configured
+    app.extensions["jobstore"] = jobstore
+    app.extensions["agent_ratelimiter"] = RateLimiter(
+        per_minute=app.config["AGENT_RATE_PER_HOUR"], per_day=app.config["AGENT_RATE_PER_DAY"],
+        window=3600, noun="evidence maps")
     app.extensions["ratelimiter"] = RateLimiter(
         per_minute=app.config["RATE_LIMIT_PER_MINUTE"], per_day=app.config["RATE_LIMIT_PER_DAY"]
     )

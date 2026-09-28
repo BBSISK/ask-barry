@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 8 in progress (RAG live in production, answer quality evaluated, job-ad agent evaluated)
+## Current status: Stage 8 complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -38,7 +38,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
-| 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | CLI and evaluation Done ([results](#job-ad-evidence-agent-stage-8)); web page Next |
+| 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | Done: CLI, evaluation ([results](#job-ad-evidence-agent-stage-8)) and web page (`/evidence`) |
 
 ## Architecture
 
@@ -324,6 +324,12 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 - **Defence in depth showed up in practice:** Azure's Prompt Shields blocked the blunt injection ad before either system saw it; the subtler one got through the filter and was handled by the fence and citation check. The in-code defences against the blunt case are covered by offline tests with a scripted model.
 - **Prompt rules weren't enough.** The first live run ignored "one row per skill" and "no grading words", so both are now enforced in code (see the guardrail table).
 - Caveats: one run, 10 ads, labels written by me. Treat it as evidence the design works, not as a precise accuracy figure.
+
+**On the website (Stage 8d):** the `/evidence` page runs the same agent, calling the same MCP server. One ad takes 30–60 seconds, longer than a web request should wait, so `POST /api/evidence` starts a background job and the page polls `GET /api/evidence/<id>`, showing each question as the agent asks it. It's kept small for a free single-instance host:
+- one gunicorn worker (jobs live in memory) and one agent run at a time (each starts an MCP helper process, about 90 MB);
+- 3 evidence maps per hour per visitor and 20 per day in total (about 2 cents each);
+- the pasted ad is never stored or logged; only the questions and the evidence map are kept for 30 minutes;
+- the page builds the table with `textContent`, so nothing from the model or the ad is ever treated as HTML, and only github.com links are shown.
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 

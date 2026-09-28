@@ -36,8 +36,13 @@ def result_text(result):
     return "".join(parts)
 
 
-def make_middleware(tool_log):
+def make_middleware(tool_log, on_call=None):
+    """Records every tool call (and refuses any tool but ask_barry). on_call(ToolCall) reports progress."""
     from agent_framework import function_middleware
+
+    def recorded(call):
+        if on_call is not None:
+            on_call(call)
 
     @function_middleware
     async def record_tool_calls(context, call_next):
@@ -45,18 +50,18 @@ def make_middleware(tool_log):
         args = context.arguments.model_dump() if hasattr(context.arguments, "model_dump") else dict(context.arguments)
         if name != ALLOWED_TOOL:                                   # defence in depth; allowed_tools also restricts
             context.result = f"Tool {name!r} is not allowed. Only {ALLOWED_TOOL} may be used."
-            tool_log.record(args.get("question", name), "{}")
+            recorded(tool_log.record(args.get("question", name), "{}"))
             return
         await call_next()
-        tool_log.record(args.get("question", ""), result_text(context.result))
+        recorded(tool_log.record(args.get("question", ""), result_text(context.result)))
 
     return record_tool_calls
 
 
-def build_agent(client, tools, tool_log):
+def build_agent(client, tools, tool_log, on_call=None):
     from agent_framework import Agent
     return Agent(client=client, name="job_evidence_agent", instructions=INSTRUCTIONS, tools=tools,
-                 middleware=[make_middleware(tool_log)],
+                 middleware=[make_middleware(tool_log, on_call)],
                  default_options={"temperature": 0, "response_format": {"type": "json_object"}})
 
 
@@ -90,8 +95,10 @@ def ask_barry_mcp_tool():
                         approval_mode="never_require", load_prompts=False, request_timeout=90)
 
 
-async def run(job_ad, client=None, tools=None):
-    """Run the agent on one job ad. Returns (Report, stats). Never raises for model misbehaviour."""
+async def run(job_ad, client=None, tools=None, on_call=None):
+    """Run the agent on one job ad. Returns (Report, stats). Never raises for model misbehaviour.
+
+    on_call(ToolCall) is called after each tool call (the web page uses it to show progress)."""
     message = user_message(job_ad)                    # raises ValueError for empty input
     tool_log = ToolLog()
     tools = tools if tools is not None else [ask_barry_mcp_tool()]
@@ -104,7 +111,7 @@ async def run(job_ad, client=None, tools=None):
         for t in tools:                               # MCP tools connect (start the server) on enter
             if hasattr(t, "__aenter__"):
                 await stack.enter_async_context(t)
-        agent = build_agent(client, tools, tool_log)
+        agent = build_agent(client, tools, tool_log, on_call)
         try:
             response = await asyncio.wait_for(agent.run(message), RUN_TIMEOUT)
             role_title, rows = parse_report(response.text)

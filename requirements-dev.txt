@@ -1,7 +1,4 @@
 -r requirements.txt
 pytest>=8.0
 python-dotenv>=1.0   # lets `flask run` read your local .env
-mcp>=1.27,<2         # Ask Barry MCP server (ask_barry_mcp.py) and its tests; 2.x changed the API
 cryptography<49      # pulled in by mcp; 49+ has no pre-built wheel for Intel Macs
-agent-framework-core>=1.19,<2     # Stage 8 job-ad evidence agent (Microsoft Agent Framework)
-agent-framework-openai>=1.14,<2   # its OpenAI / Azure OpenAI chat client

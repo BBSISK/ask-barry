@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job-ad evidence map · {{ app_name }}</title>
+  <meta name="description" content="Paste a job ad: an AI agent checks each requirement against Barry Sisk's public GitHub documentation and links the evidence. No scores or verdicts.">
+  <style>
+    :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3;
+            --ok-bg:#e8f3ec; --ok:#1e6b3a; --rel-bg:#eef2fc; --rel:#2f4f9e; --no-bg:#f3f3f1; --no:#5f6368;
+            --warn-bg:#fff6e5; --warn:#8a5a00; --on-accent:#fff; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#141416; --fg:#ececec; --muted:#a0a4ab; --card:#1d1e21; --line:#2e3035; --accent:#8fa9ff;
+              --ok-bg:#16301f; --ok:#8fd6a6; --rel-bg:#1b2440; --rel:#a9bcff; --no-bg:#25262a; --no:#b4b8bf;
+              --warn-bg:#2d2615; --warn:#f0c46b; --on-accent:#10152b; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+    h1 { font-size: 1.7rem; margin: 0 0 .25rem; }
+    h2 { font-size: 1.2rem; margin: 0 0 .5rem; }
+    a { color: var(--accent); }
+    .lede { color: var(--muted); margin: 0 0 1.25rem; }
+    textarea { width:100%; min-height: 14rem; font:inherit; font-size:.95rem; padding:.75rem .85rem; border:1px solid var(--line);
+               border-radius:.6rem; background:var(--card); color:var(--fg); resize: vertical; }
+    .row { display:flex; align-items:center; gap:.75rem; margin:.6rem 0 1.5rem; flex-wrap: wrap; }
+    button { font:inherit; padding:.7rem 1.1rem; border:0; border-radius:.6rem; background:var(--accent); color:var(--on-accent); cursor:pointer; }
+    button[disabled] { opacity:.6; cursor:wait; }
+    .meta { color:var(--muted); font-size:.85rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:.8rem; padding:1rem 1.1rem; margin-bottom:1rem; }
+    .card.warn { background:var(--warn-bg); color:var(--warn); }
+    ol.steps { margin:.25rem 0 0; padding-left:1.3rem; font-size:.92rem; }
+    ol.steps li { margin:.15rem 0; }
+    .tag { display:inline-block; font-size:.78rem; padding:.05rem .45rem; border-radius:1rem; white-space:nowrap; }
+    .tag.evidenced { background:var(--ok-bg); color:var(--ok); }
+    .tag.related_only { background:var(--rel-bg); color:var(--rel); }
+    .tag.not_documented { background:var(--no-bg); color:var(--no); }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; }
+    th, td { text-align:left; vertical-align:top; padding:.55rem .5rem; border-top:1px solid var(--line); }
+    th { color:var(--muted); font-weight:600; font-size:.8rem; border-top:0; }
+    td.req { font-weight:600; min-width: 9rem; }
+    .note { display:block; color:var(--muted); font-size:.8rem; margin-top:.2rem; }
+    .error { color:#c5221f; }
+    @media (max-width: 40rem) {                 /* phones: one card per requirement instead of a wide table */
+      table, tbody, tr, td { display:block; width:100%; }
+      tr.head { display:none; }
+      tr { border-top:1px solid var(--line); padding:.6rem 0; }
+      td { border:0; padding:.15rem 0; }
+      td.req { display:flex; justify-content:space-between; align-items:baseline; gap:.5rem; }
+    }
+    footer { color:var(--muted); font-size:.85rem; margin-top:2.5rem; border-top:1px solid var(--line); padding-top:1rem; }
+  </style>
+</head>
+<body>
+<main>
+  <p class="meta"><a href="/">← {{ app_name }}</a></p>
+  <h1>Job-ad evidence map</h1>
+  <p class="lede">Paste a job advertisement. An <strong>AI agent</strong> picks out the checkable requirements, asks
+    the Ask Barry tool about each one, and reports what Barry Sisk's <strong>public GitHub documentation</strong> shows,
+    with links. It never scores, ranks or judges fit: "not documented" means the docs don't show it, not that Barry lacks the skill.</p>
+
+  {% if available %}
+  <form id="ad-form">
+    <label for="ad" style="position:absolute;left:-9999px">Job advertisement</label>
+    <textarea id="ad" maxlength="{{ max_chars }}" required placeholder="Paste the job ad here (title, responsibilities, requirements)…"></textarea>
+    <div class="row">
+      <button id="go" type="submit">Map the evidence</button>
+      <span class="meta">Takes about 30–60 seconds · {{ per_hour }} per hour per visitor · the ad isn't stored</span>
+    </div>
+  </form>
+  <div id="progress" aria-live="polite"></div>
+  <div id="result" aria-live="polite"></div>
+  {% else %}
+  <div class="card warn">The evidence agent isn't switched on for this server.</div>
+  {% endif %}
+
+  <footer>
+    How it works: a Microsoft Agent Framework agent (Azure OpenAI) calls the Ask Barry MCP server once per requirement.
+    Code checks every "evidenced" row cites a link the tool actually returned, and removes any judgement about fit.
+    Build stage: {{ stage }} · <a href="https://github.com/BBSISK/ask-barry#job-ad-evidence-agent-stage-8">how it was evaluated</a> ·
+    <a href="https://github.com/BBSISK/ask-barry/blob/main/docs/model-card.md">model card (limits)</a>
+  </footer>
+</main>
+{% if available %}
+<script>
+  const LABELS = { evidenced: "Evidenced", related_only: "Related only", not_documented: "Not documented" };
+  const form = document.getElementById("ad-form"), ad = document.getElementById("ad"), go = document.getElementById("go");
+  const progress = document.getElementById("progress"), result = document.getElementById("result");
+
+  function el(tag, attrs = {}, text = "") {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text) e.textContent = text;            // textContent only: never inject HTML from the model or the ad
+    return e;
+  }
+  const safeUrl = (u) => typeof u === "string" && u.startsWith("https://github.com/");
+
+  function showProgress(job) {
+    const card = el("div", { class: "card" });
+    card.append(el("h2", {}, job.status === "running" ? "Checking the documentation…" : "Questions the agent asked"));
+    card.append(el("p", { class: "meta" }, `${job.steps.length} tool call${job.steps.length === 1 ? "" : "s"} · ${job.seconds}s`));
+    if (job.steps.length) {
+      const list = el("ol", { class: "steps" });
+      for (const s of job.steps) list.append(el("li", {}, `${s.question} → ${s.supported ? `supported, ${s.links} link${s.links === 1 ? "" : "s"}` : "not found in the docs"}`));
+      card.append(list);
+    }
+    progress.replaceChildren(card);
+  }
+
+  function showReport(job) {
+    const r = job.report;
+    if (r.blocked) {
+      result.replaceChildren(el("div", { class: "card warn" },
+        `No evidence map: Azure OpenAI's content safety filter blocked this request (${r.blocked}). ` +
+        "Nothing is claimed. Remove any instructions aimed at an AI from the ad and try again."));
+      return;
+    }
+    const card = el("div", { class: "card" });
+    card.append(el("h2", {}, `Evidence map: ${r.role_title}`));
+    const c = r.counts;
+    card.append(el("p", { class: "meta" },
+      `AI-generated evidence map: check the linked sources · ${r.requirements.length} requirements · evidenced ${c.evidenced} · ` +
+      `related only ${c.related_only} · not documented ${c.not_documented}`));
+    const wrap = el("div", { class: "table-wrap" }), table = el("table");
+    const head = el("tr", { class: "head" });
+    for (const h of ["Requirement", "Status", "Evidence", "Sources"]) head.append(el("th", {}, h));
+    table.append(head);
+    for (const row of r.requirements) {
+      const tr = el("tr");
+      const req = el("td", { class: "req" }, row.requirement);
+      req.append(el("span", { class: "note" }, row.kind === "nice" ? "nice to have" : "must have"));
+      const status = el("td"); status.append(el("span", { class: `tag ${row.status}` }, LABELS[row.status] || row.status));
+      const ev = el("td", {}, row.evidence || "–");
+      if (row.notes && row.notes.length) ev.append(el("span", { class: "note" }, `Guardrail: ${row.notes.join("; ")}`));
+      const src = el("td");
+      row.sources.filter(safeUrl).forEach((u, i) => {
+        if (i) src.append(document.createTextNode(" "));
+        src.append(el("a", { href: u, target: "_blank", rel: "noopener" }, `[${i + 1}]`));
+      });
+      if (!src.childNodes.length) src.textContent = "–";
+      tr.append(req, status, ev, src);
+      table.append(tr);
+    }
+    wrap.append(table); card.append(wrap);
+    if (r.dropped && r.dropped.length) card.append(el("p", { class: "meta" }, `Not checked (row limit): ${r.dropped.join(", ")}.`));
+    if (r.fallback) card.append(el("p", { class: "meta" }, "The agent didn't finish within its budget; rows show the tool answers as returned."));
+    card.append(el("p", { class: "meta" }, "\"Not documented\" means Barry's public docs don't show it, not that he lacks the skill. " +
+      "This is not an assessment of suitability for the role."));
+    result.replaceChildren(card);
+  }
+
+  async function poll(id) {
+    while (true) {
+      await new Promise((ok) => setTimeout(ok, 2000));
+      const resp = await fetch(`/api/evidence/${encodeURIComponent(id)}`);
+      const job = await resp.json();
+      if (!resp.ok) throw new Error(job.error || "The job was lost (the server may have restarted).");
+      showProgress(job);
+      if (job.status === "done") { showReport(job); return; }
+      if (job.status === "error") throw new Error(job.error);
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = ad.value.trim();
+    if (!text) return;
+    go.disabled = true; go.textContent = "Working…";
+    result.replaceChildren();
+    progress.replaceChildren(el("p", { class: "meta" }, "Starting the agent…"));
+    try {
+      const resp = await fetch("/api/evidence", { method: "POST", headers: { "Content-Type": "application/json" },
+                                                  body: JSON.stringify({ job_ad: text }) });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || "Something went wrong.");
+      await poll(data.id);
+    } catch (err) {
+      progress.replaceChildren(el("p", { class: "error" }, err.message || "Couldn't reach the server. The free host may be waking up: try again in 30 seconds."));
+    } finally {
+      go.disabled = false; go.textContent = "Map the evidence";
+    }
+  });
+</script>
+{% endif %}
+</body>
+</html>

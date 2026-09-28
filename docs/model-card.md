@@ -20,7 +20,7 @@ Ask Barry is an AI assistant that answers questions about Barry Sisk's software 
 3. The model writes a short answer from those sections only, citing them by number.
 4. Code checks the citations before anything is shown, and the page displays the answer with links to the exact sections.
 5. The same answers are available to AI assistants through a read-only MCP tool, `ask_barry`. It calls the live app, so the same rules and rate limits apply.
-6. A job-ad evidence agent (Stage 8) uses that tool to map a pasted job advertisement to documented evidence, one requirement at a time. It is an evidence map, not an assessment: every "evidenced" row must cite a link the tool returned, and the output has no scores, rankings or fit judgements.
+6. A job-ad evidence agent (Stage 8) uses that tool to map a pasted job advertisement to documented evidence, one requirement at a time. It is an evidence map, not an assessment: every "evidenced" row must cite a link the tool returned, and the output has no scores, rankings or fit judgements. It runs from the command line and on the website (`/evidence`), where it works as a background job and shows each question it asks.
 
 The architecture diagram is in the [README](../README.md#architecture).
 
@@ -36,6 +36,7 @@ The architecture diagram is in the [README](../README.md#architecture).
 | Training | None. No model is fine-tuned; everything the assistant knows at answer time is in the retrieved sections |
 
 **Privacy:** the app doesn't store or log question text. The rate limiter keeps IP addresses in memory for one minute only. Questions are sent to Azure OpenAI to be embedded and answered. Under Microsoft's Azure OpenAI terms, they aren't used to train models. A Global Standard deployment may process requests in any Azure region.
+The job-ad page doesn't store or log the pasted ad either (it may be someone else's text): the ad is sent to Azure OpenAI for the run, and only the agent's questions and the evidence map are kept in memory for 30 minutes so the page can show them. IP addresses are held for one hour for the agent's rate limit (3 per hour, 20 per day).
 
 ## Honesty controls
 

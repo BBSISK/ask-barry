@@ -199,8 +199,9 @@ def test_api_503_when_not_configured(client):
 
 
 def test_health_reports_live_features_only_when_configured(api, client):
-    assert api.get("/health").get_json()["features"] == {"search": True, "embeddings": True, "generation": True}
-    assert client.get("/health").get_json()["features"] == {"search": False, "embeddings": False, "generation": False}
+    live, off = api.get("/health").get_json()["features"], client.get("/health").get_json()["features"]
+    assert {k: live[k] for k in ("search", "embeddings", "generation")} == {"search": True, "embeddings": True, "generation": True}
+    assert off == {"search": False, "embeddings": False, "generation": False, "job_agent": False}
 
 
 def test_index_shows_form_only_when_available(api, client):
