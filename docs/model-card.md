@@ -9,7 +9,7 @@ Ask Barry is an AI assistant that answers questions about Barry Sisk's software 
 **Intended use:** recruiters, interviewers and developers who want a quick, sourced answer about what Barry has built, as a starting point for reading the linked documentation.
 
 **Not intended for:**
-- ranking, scoring, filtering or comparing candidates, or making or automating hiring decisions;
+- ranking, scoring, filtering or comparing candidates, or making or automating hiring decisions. This includes the job-ad evidence agent: it reports which requirements Barry's own public documentation shows, with links, and never judges suitability;
 - questions about Barry's personal life, or anything outside his public project documentation;
 - treating an answer as independently verified fact. Answers report what the documentation says.
 
@@ -20,6 +20,7 @@ Ask Barry is an AI assistant that answers questions about Barry Sisk's software 
 3. The model writes a short answer from those sections only, citing them by number.
 4. Code checks the citations before anything is shown, and the page displays the answer with links to the exact sections.
 5. The same answers are available to AI assistants through a read-only MCP tool, `ask_barry`. It calls the live app, so the same rules and rate limits apply.
+6. A job-ad evidence agent (Stage 8) uses that tool to map a pasted job advertisement to documented evidence, one requirement at a time. It is an evidence map, not an assessment: every "evidenced" row must cite a link the tool returned, and the output has no scores, rankings or fit judgements.
 
 The architecture diagram is in the [README](../README.md#architecture).
 
@@ -75,6 +76,8 @@ The golden set has 46 questions. 38 are answerable, each with the file and evide
 
 **Other models, same evidence** (27 September 2026, 46 questions, identical retrieved sections and rules): Azure OpenAI gpt-4.1-mini (live) 43/46, Claude Haiku 4.5 45/46, Gemini 3.5 Flash 46/46. Every failure was "true but uncited", and every model passed all eight trap questions. The gaps are within run-to-run noise. The live app stays on Azure OpenAI because it is the fastest and cheapest. Details are in the README.
 
+**Job-ad evidence agent** (28 September 2026, gpt-4.1-mini, 10 fictional ads, 63 labelled requirements): 100% of reported statuses correct, **0 undocumented requirements reported as evidenced**, 98% of requirements covered, both prompt-injection tests passed, no fit judgements in any output. A single-shot baseline (one search, one call, same citation check) also had 0 false evidence but under-reported 5 documented requirements. Details and caveats are in the README.
+
 ## Known limitations
 
 - **Only as accurate as the documentation.** The READMEs are written by Barry and not independently verified. If the documentation doesn't mention something, that doesn't mean Barry lacks the skill.
@@ -84,6 +87,8 @@ The golden set has 46 questions. 38 are answerable, each with the file and evide
 - **Same-family judge.** The judge is the same model family as the answering model. The deterministic checks and published answers are there so the headline numbers don't rest on the judge alone.
 - **Small test set, English only.** With 46 questions, one question moves a percentage by 2–3 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
+- **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.
+- **Platform filter.** Azure OpenAI's content safety may refuse a job ad containing text that looks like instructions to an AI. The agent then produces no evidence map, and says so.
 - **Cold starts.** The free hosting tier sleeps when idle, so the first question can take about 30 seconds.
 
 ## Responsible AI and the EU AI Act

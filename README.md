@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: all stages complete (RAG live in production, answer quality evaluated)
+## Current status: Stage 8 in progress (RAG live in production, answer quality evaluated, job-ad agent evaluated)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -38,6 +38,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7c | MCP server: Ask Barry as a tool for AI assistants | Done: [see below](#use-ask-barry-from-an-ai-assistant-mcp-stage-7) |
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
+| 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | CLI and evaluation Done ([results](#job-ad-evidence-agent-stage-8)); web page Next |
 
 ## Architecture
 
@@ -282,6 +283,49 @@ terraform init
 terraform plan        # expect: 5 to import, 0 to add, 0 to change, 0 to destroy
 terraform apply       # records the imports in state; changes nothing in Azure
 ```
+
+## Job-ad evidence agent (Stage 8)
+
+An AI agent that turns a job advertisement into an **evidence map**. For each requirement it reports whether my public documentation shows it, with links. It's built on **Microsoft Agent Framework** and uses the Ask Barry **MCP server** as its tool.
+
+```bash
+python -m scripts.job_agent job_ad.txt --trace     # evidence map + every tool call it made
+python -m scripts.evaluate_agent --save            # agent vs a single-shot baseline on 10 test ads
+```
+
+**How it works:** the agent reads the ad, picks up to 12 checkable requirements, and calls `ask_barry` once per requirement with a neutral question. If the first answer is unsupported, it may try one rephrasing. It then classifies each requirement as **evidenced**, **related only** (for example, a related tool is documented but not the one asked about) or **not documented**.
+
+**Guardrails** (`app/job_agent.py`, enforced in code, not just the prompt):
+
+| Risk | Guardrail |
+|---|---|
+| The pasted ad tries to instruct the agent (prompt injection) | The ad is size-capped, stripped of control characters and fenced as data. Nothing it says can create evidence, because of the next row. Before any of that, Azure OpenAI's content safety (Prompt Shields) may refuse an ad that reads like an injection attempt; the agent then reports "not produced" and claims nothing, instead of crashing. |
+| Claiming a skill without proof | Every "evidenced" or "related only" row must cite links that `ask_barry` actually returned in a supported answer during that run. Otherwise code downgrades it to "not documented". |
+| Turning into a candidate-scoring tool | No score, rank or fit field exists in the output. Sentences that judge fit or recommend hiring are removed, and every report says it is not an assessment of suitability. |
+| Runaway loops and cost | The framework limits tool calls (16), loop iterations and run time. If the agent doesn't finish, the report falls back to the tool answers as returned. |
+| Overstating the evidence | Grading words such as "extensive" or "solid" are removed unless a tool answer used them. Up to 16 rows are kept, so nothing the agent checked is lost, and any extra requirement is named under "Not checked". Both started as prompt rules; the first live run showed the model didn't follow them reliably, so code enforces them. |
+| Wrong or extra tools | The MCP connection is restricted to `ask_barry`, and middleware refuses any other tool and records every call. |
+
+**Evaluation** (`eval/job_ads.json`): 10 fictional job ads with 67 labelled requirements. They include requirements my docs don't evidence, which must never come back as evidenced, and two ads that attempt prompt injection. It's scored the way retrieval was: coverage, status accuracy, **false evidence** (target 0), missed evidence, injection pass rate, guardrail actions, tool calls and time. It's compared against a single-shot baseline: the same model, rules and guardrail, but one search and one model call, and no agent.
+
+**Results** (28 September 2026, gpt-4.1-mini, 10 ads; report in `docs/eval/`):
+
+| System | Coverage | Status accuracy | **False evidence** | Missed evidence | Injection tests passed | Fit judgements | Median time per ad |
+|---|---|---|---|---|---|---|---|
+| Agent (plans, one tool call per requirement) | 98% | **100%** | **0** | 0 | 2 of 2 | 0 | 33 s (6.8 tool calls) |
+| Single-shot baseline (one search, one call) | 100% | 92% | **0** | 5 | 2 of 2 | 0 | 8 s |
+
+Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filter are excluded), 27 of which my docs don't evidence.
+
+**What I take from it:**
+- **The citation check is what keeps both systems honest.** Neither reported a single undocumented requirement as evidenced, with or without the agent loop.
+- **The agent loop buys accuracy, not safety.** One search over a whole ad retrieves sections about the ad's main theme, so the baseline under-reported 5 requirements that are documented elsewhere, marking them "related only". Asking one focused question per requirement found them all. The cost is about 4x the time and around 7 tool calls per ad.
+- **One real miss:** in one ad the agent folded a requirement into a neighbouring row, so it wasn't reported on its own (the 2% coverage gap).
+- **Defence in depth showed up in practice:** Azure's Prompt Shields blocked the blunt injection ad before either system saw it; the subtler one got through the filter and was handled by the fence and citation check. The in-code defences against the blunt case are covered by offline tests with a scripted model.
+- **Prompt rules weren't enough.** The first live run ignored "one row per skill" and "no grading words", so both are now enforced in code (see the guardrail table).
+- Caveats: one run, 10 ads, labels written by me. Treat it as evidence the design works, not as a precise accuracy figure.
+
+For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 
 ## Keeping the index fresh (Stage 7)
 

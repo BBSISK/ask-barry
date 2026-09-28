@@ -25,3 +25,7 @@ infra/.terraform/
 *.tfstate.*
 *.tfplan
 crash.log
+
+# Stage 8: job-ad evidence reports (may contain third-party job ads)
+reports/
+sample_job_ad.txt
