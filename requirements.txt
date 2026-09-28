@@ -5,3 +5,4 @@ azure-search-documents>=11.5   # Azure AI Search (Stage 3+)
 mcp>=1.27,<2                      # Ask Barry MCP server; the Stage 8 agent calls it on the live site too
 agent-framework-core>=1.19,<2     # Stage 8 job-ad evidence agent (Microsoft Agent Framework)
 agent-framework-openai>=1.14,<2   # its OpenAI / Azure OpenAI chat client
+qrcode>=7.4,<9                    # Stage 8f: share QR codes (SVG output, pure Python)

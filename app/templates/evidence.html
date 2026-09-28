@@ -57,6 +57,12 @@
                  cursor:pointer; background:transparent; }
     label.scan.busy { opacity:.6; cursor:wait; }
     #scan-status:empty { display:none; }
+    a.jump { display:inline-block; margin:0 0 .6rem; font-weight:600; }
+    .share-row { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+    .share-qr { width:190px; height:190px; background:#fff; border-radius:.5rem; padding:6px; }
+    .share-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .share-actions a.btn, .share-actions button { font:inherit; font-size:.95rem; padding:.55rem .9rem; border-radius:.6rem;
+      border:1px solid var(--accent); background:transparent; color:var(--accent); text-decoration:none; cursor:pointer; }
     @media (max-width: 40rem) {                 /* phones: one card per requirement instead of a wide table */
       table, tbody, tr, td { display:block; width:100%; }
       tr.head { display:none; }
@@ -170,6 +176,37 @@
     result.replaceChildren(card);
   }
 
+  // Share on the spot: a QR code to scan from this screen, the phone's share sheet, WhatsApp, email, copy link.
+  function showShare(share, role) {
+    const msg = `Evidence map for ${role}: how Barry Sisk's documented work lines up with each requirement, with links.`;
+    const card = el("div", { class: "card share", id: "share" });
+    const jump = el("a", { href: "#share", class: "jump" }, "Share this evidence map ↓");
+    result.prepend(jump);
+    card.append(el("h2", {}, "Share this evidence map"));
+    const box = el("div", { class: "share-row" });
+    const qr = el("img", { src: share.qr, alt: "QR code: scan to open this evidence map", class: "share-qr" });
+    const side = el("div");
+    side.append(el("p", {}, "Scan with your phone's camera to keep this evidence map. The link works for weeks."));
+    const actions = el("div", { class: "share-actions" });
+    if (navigator.share) {
+      const b = el("button", { type: "button" }, "Share…");
+      b.addEventListener("click", () => navigator.share({ title: `Evidence map: ${role}`, text: msg, url: share.url }).catch(() => {}));
+      actions.append(b);
+    }
+    actions.append(
+      el("a", { class: "btn", href: `https://wa.me/?text=${encodeURIComponent(msg + " " + share.url)}`, target: "_blank", rel: "noopener" }, "WhatsApp"),
+      el("a", { class: "btn", href: `mailto:?subject=${encodeURIComponent("Evidence map: " + role + " (Barry Sisk)")}&body=${encodeURIComponent(msg + "\n\n" + share.url + "\n\nAll my links: " + location.origin + "/connect\n\nBarry Sisk")}` }, "Email"));
+    const copy = el("button", { type: "button" }, "Copy link");
+    copy.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(share.url); copy.textContent = "Copied"; } catch (e) { prompt("Copy this link:", share.url); }
+    });
+    actions.append(copy);
+    side.append(actions);
+    box.append(qr, side);
+    card.append(box);
+    result.append(card);
+  }
+
   async function poll(id) {
     while (true) {
       await new Promise((ok) => setTimeout(ok, 2000));
@@ -177,7 +214,7 @@
       const job = await resp.json();
       if (!resp.ok) throw new Error(job.error || "The job was lost (the server may have restarted).");
       showProgress(job);
-      if (job.status === "done") { showReport(job); return; }
+      if (job.status === "done") { showReport(job); if (job.share) showShare(job.share, job.report.role_title); return; }
       if (job.status === "error") throw new Error(job.error);
     }
   }

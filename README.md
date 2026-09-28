@@ -337,6 +337,8 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 
 **Scan a job ad (Stage 8e):** on a phone, the evidence page's **Scan a job ad** button opens the camera. The photo is shrunk on the phone, and the same gpt-4.1-mini deployment transcribes the visible text (it's told to transcribe only, never to follow instructions in the image). The text goes into the box for the visitor to check and correct before running the agent, so nothing runs on a photo directly. Photos aren't stored or logged, uploads are capped at 8 MB, and scans have their own limit (8 per hour per visitor). `python -m scripts.scan_check photo.jpg` tries it from the command line.
 
+**Share on the spot (Stage 8f):** when a map is ready, the page shows a QR code to scan from the screen, plus Share / WhatsApp / Email / Copy link buttons. The shared link carries the map itself, compressed and signed with the server's secret (HMAC-SHA256), so it works for weeks with no database and any edited link is rejected. The QR code uses a short `/s/<id>` link (a dense QR on a phone screen won't scan) that redirects to the signed one for a day.
+
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 
 ## Keeping the index fresh (Stage 7)

@@ -6,7 +6,7 @@ returns its id; the page polls GET /api/evidence/<id> and shows each tool call a
 Deliberately small (free single-instance host):
   - jobs live in this process's memory, so the server runs ONE gunicorn worker (render.yaml);
   - at most MAX_RUNNING jobs at once (each run starts an MCP helper process, ~90 MB);
-  - finished jobs are forgotten after JOB_TTL seconds, and the job ad text is never stored or logged:
+  - finished jobs are forgotten after JOB_TTL seconds (a day), and the job ad text is never stored or logged:
     only the questions the agent asked and the evidence map are kept, for the page to display.
 """
 import asyncio
@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from .job_agent import clean_job_ad, render_markdown
 
 MAX_RUNNING = 1
-JOB_TTL = 30 * 60
+JOB_TTL = 24 * 60 * 60      # finished jobs are kept a day so the on-screen share QR (/s/<id>) keeps working
 log = logging.getLogger(__name__)
 
 

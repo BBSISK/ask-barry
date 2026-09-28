@@ -36,7 +36,7 @@ The architecture diagram is in the [README](../README.md#architecture).
 | Training | None. No model is fine-tuned; everything the assistant knows at answer time is in the retrieved sections |
 
 **Privacy:** the app doesn't store or log question text. The rate limiter keeps IP addresses in memory for one minute only. Questions are sent to Azure OpenAI to be embedded and answered. Under Microsoft's Azure OpenAI terms, they aren't used to train models. A Global Standard deployment may process requests in any Azure region.
-The job-ad page doesn't store or log the pasted ad either (it may be someone else's text): the ad is sent to Azure OpenAI for the run, and only the agent's questions and the evidence map are kept in memory for 30 minutes so the page can show them. IP addresses are held for one hour for the agent's rate limit (3 per hour, 20 per day). A photo taken with "Scan a job ad" is sent to Azure OpenAI to read its text and is not stored or logged; the visitor checks the text before anything else happens.
+The job-ad page doesn't store or log the pasted ad either (it may be someone else's text): the ad is sent to Azure OpenAI for the run, and only the agent's questions and the evidence map are kept in memory for a day so the page, and its short share link, can show them. A shared evidence map lives in its link (signed by the server so it can't be altered), not in a database; it contains the requirements and evidence, never the ad text. IP addresses are held for one hour for the agent's rate limit (3 per hour, 20 per day). A photo taken with "Scan a job ad" is sent to Azure OpenAI to read its text and is not stored or logged; the visitor checks the text before anything else happens.
 
 ## Honesty controls
 

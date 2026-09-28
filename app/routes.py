@@ -1,14 +1,21 @@
 """HTTP routes: the question page, the answer API, the job-ad evidence agent and the health check."""
 import logging
 
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
 
 from .agent_jobs import Busy
 from .answering import answerer_from_env, azure_configured, validate_question
 from .job_agent import MAX_JOB_AD_CHARS
 from .scan import ScanError, transcriber_from_env
+from .share import BadShareLink, pack, qr_data_uri, unpack
 
 bp = Blueprint("main", __name__)
+
+
+@bp.app_template_test("github_link")
+def is_github_link(url):
+    """Shared evidence maps only ever link to github.com (the sources the agent verified)."""
+    return isinstance(url, str) and url.startswith("https://github.com/")
 log = logging.getLogger(__name__)
 
 
@@ -165,7 +172,38 @@ def evidence_status(job_id):
     job = current_app.extensions["jobstore"].get(job_id)
     if job is None:
         return jsonify(error="Unknown or expired job."), 404
-    return jsonify(job.to_dict())
+    data = job.to_dict()
+    if job.status == "done" and job.report and not job.report.get("blocked"):
+        short = url_for("main.short_share", job_id=job.id, _external=True)
+        data["share"] = {"url": url_for("main.shared_map", token=share_token(job), _external=True),
+                         "short": short, "qr": qr_data_uri(short)}
+    return jsonify(data)
+
+
+def share_token(job):
+    return pack(job.report, current_app.config["SECRET_KEY"], now=job.finished)
+
+
+@bp.get("/s/<job_id>")
+def short_share(job_id):
+    """The on-screen QR link: short enough to scan, redirects to the durable signed link."""
+    job = current_app.extensions["jobstore"].get(job_id)
+    if job is None or job.status != "done" or not job.report or job.report.get("blocked"):
+        return render_template("shared.html", app_name=current_app.config["APP_NAME"], expired=True), 404
+    return redirect(url_for("main.shared_map", token=share_token(job)), code=302)
+
+
+@bp.get("/evidence/shared/<token>")
+def shared_map(token):
+    """A shared evidence map, read-only. Only shown if the signature proves this server produced it."""
+    try:
+        shared = unpack(token, current_app.config["SECRET_KEY"])
+    except BadShareLink:
+        return render_template("shared.html", app_name=current_app.config["APP_NAME"], expired=True), 404
+    from datetime import datetime, timezone
+    created = datetime.fromtimestamp(shared["created"], tz=timezone.utc).strftime("%-d %B %Y")
+    return render_template("shared.html", app_name=current_app.config["APP_NAME"], expired=False,
+                           report=shared["report"], created=created)
 
 
 @bp.post("/api/ask")

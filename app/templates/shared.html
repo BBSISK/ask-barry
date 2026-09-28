@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if expired %}
+  <title>Link expired · {{ app_name }}</title>
+  <meta name="robots" content="noindex">
+  {% else %}
+  <title>Evidence map: {{ report.role_title }} · Barry Sisk</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="How Barry Sisk's documented work lines up with the requirements of {{ report.role_title }}, with links to the evidence.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Ask Barry">
+  <meta property="og:title" content="Evidence map: {{ report.role_title }} · Barry Sisk">
+  <meta property="og:description" content="Each requirement checked against Barry Sisk's public project documentation, with links. No scores, just sources.">
+  <meta property="og:image" content="{{ url_for('static', filename='og-image.png', _external=True) }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {% endif %}
+  <style>
+    :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3;
+            --ok-bg:#e8f3ec; --ok:#1e6b3a; --rel-bg:#eef2fc; --rel:#2f4f9e; --no-bg:#f3f3f1; --no:#5f6368;
+            --warn-bg:#fff6e5; --warn:#8a5a00; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#141416; --fg:#ececec; --muted:#a0a4ab; --card:#1d1e21; --line:#2e3035; --accent:#8fa9ff;
+              --ok-bg:#16301f; --ok:#8fd6a6; --rel-bg:#1b2440; --rel:#a9bcff; --no-bg:#25262a; --no:#b4b8bf;
+              --warn-bg:#2d2615; --warn:#f0c46b; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    a { color: var(--accent); }
+    h1 { font-size: 1.5rem; margin: .2rem 0 .3rem; }
+    .meta { color:var(--muted); font-size:.88rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:.8rem; padding:1rem 1.1rem; margin:1rem 0; }
+    .tag { display:inline-block; font-size:.78rem; padding:.05rem .45rem; border-radius:1rem; white-space:nowrap; }
+    .tag.evidenced { background:var(--ok-bg); color:var(--ok); }
+    .tag.listed_on_profile { background:var(--warn-bg); color:var(--warn); }
+    .tag.related_only { background:var(--rel-bg); color:var(--rel); }
+    .tag.not_documented { background:var(--no-bg); color:var(--no); }
+    table { width:100%; border-collapse:collapse; font-size:.93rem; }
+    th, td { text-align:left; vertical-align:top; padding:.55rem .5rem; border-top:1px solid var(--line); }
+    th { color:var(--muted); font-size:.8rem; border-top:0; }
+    td.req { font-weight:600; min-width:9rem; }
+    .note { display:block; color:var(--muted); font-size:.8rem; margin-top:.2rem; font-weight:400; }
+    .cta { display:flex; gap:.6rem; flex-wrap:wrap; }
+    .cta a { text-decoration:none; border:1px solid var(--accent); border-radius:.6rem; padding:.55rem .9rem; }
+    @media (max-width: 40rem) {
+      table, tbody, tr, td { display:block; width:100%; }
+      tr.head { display:none; }
+      tr { border-top:1px solid var(--line); padding:.6rem 0; }
+      td { border:0; padding:.15rem 0; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  {% if expired %}
+  <h1>This link has expired</h1>
+  <p>The evidence map behind this link is no longer available. You can find all of Barry Sisk's links, and run the evidence agent on any job ad, here:</p>
+  <p class="cta"><a href="{{ url_for('main.connect') }}">Barry Sisk: all links</a> <a href="{{ url_for('main.evidence_page') }}">Try the evidence agent</a></p>
+  {% else %}
+  <p class="meta">Shared evidence map · created {{ created }} · <a href="{{ url_for('main.connect') }}">Barry Sisk</a></p>
+  <h1>Evidence map: {{ report.role_title }}</h1>
+  <p class="meta">AI-generated evidence map: check the linked sources · {{ report.requirements|length }} requirements ·
+    evidenced {{ report.counts.get('evidenced', 0) }} · listed on profile {{ report.counts.get('listed_on_profile', 0) }} ·
+    related only {{ report.counts.get('related_only', 0) }} · not documented {{ report.counts.get('not_documented', 0) }}</p>
+  {% set labels = {"evidenced": "Evidenced", "listed_on_profile": "Listed on profile", "related_only": "Related only", "not_documented": "Not documented"} %}
+  <div class="card">
+    <table>
+      <tr class="head"><th>Requirement</th><th>Status</th><th>Evidence</th><th>Sources</th></tr>
+      {% for row in report.requirements %}
+      <tr>
+        <td class="req">{{ row.requirement }}<span class="note">{{ "nice to have" if row.kind == "nice" else "must have" }}</span></td>
+        <td><span class="tag {{ row.status }}">{{ labels.get(row.status, row.status) }}</span></td>
+        <td>{{ row.evidence or "–" }}{% if row.notes %}<span class="note">Guardrail: {{ row.notes|join("; ") }}</span>{% endif %}</td>
+        <td>{% set links = (row.sources or [])|select("string")|select("github_link")|list %}
+          {% for u in links %}<a href="{{ u }}" target="_blank" rel="noopener">[{{ loop.index }}]</a> {% else %}–{% endfor %}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% if report.dropped %}<p class="meta">Not checked (row limit): {{ report.dropped|join(", ") }}.</p>{% endif %}
+    {% if report.fallback %}<p class="meta">The agent didn't finish within its budget; rows show the tool answers as returned.</p>{% endif %}
+    <p class="meta">"Evidenced" means a project's documentation shows the work. "Listed on profile" means only Barry's own profile or career summary says it.
+      "Not documented" means Barry's public docs don't show it, not that he lacks the skill. This is not an assessment of suitability for the role.
+      The link is signed by the server that produced it, so its contents can't be altered.</p>
+  </div>
+  <p class="cta"><a href="{{ url_for('main.connect') }}">All of Barry's links</a> <a href="{{ url_for('main.evidence_page') }}">Try it on another role</a>
+    <a href="mailto:barry.b.sisk@gmail.com">Email Barry</a></p>
+  {% endif %}
+</main>
+</body>
+</html>
