@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ app_name }}</title>
   <meta name="description" content="Ask questions about Barry Sisk's software projects. Answers come only from his public GitHub documentation, with sources.">
+  <!-- Link previews (LinkedIn, Slack, email): Open Graph + Twitter card -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ask Barry">
+  <meta property="og:title" content="Ask Barry: ask about Barry Sisk's projects">
+  <meta property="og:description" content="Answers come only from Barry Sisk's public project documentation, with links to the sources. Recruiters can also paste a job ad for an evidence map.">
+  <meta property="og:url" content="{{ request.base_url }}">
+  <meta property="og:image" content="{{ url_for('static', filename='og-image.png', _external=True) }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3; --warn-bg:#fff6e5; --warn:#8a5a00; --on-accent:#fff; }
     @media (prefers-color-scheme: dark) {

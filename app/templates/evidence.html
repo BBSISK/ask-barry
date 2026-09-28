@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Job-ad evidence map · {{ app_name }}</title>
   <meta name="description" content="Paste a job ad: an AI agent checks each requirement against Barry Sisk's public GitHub documentation and links the evidence. No scores or verdicts.">
+  <!-- Link previews (LinkedIn, Slack, email): Open Graph + Twitter card -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ask Barry">
+  <meta property="og:title" content="Paste a job ad: see the evidence for each requirement">
+  <meta property="og:description" content="An AI agent checks each requirement against Barry Sisk's public project docs and links the evidence. No scores, just sources.">
+  <meta property="og:url" content="{{ request.base_url }}">
+  <meta property="og:image" content="{{ url_for('static', filename='og-image.png', _external=True) }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3;
             --ok-bg:#e8f3ec; --ok:#1e6b3a; --rel-bg:#eef2fc; --rel:#2f4f9e; --no-bg:#f3f3f1; --no:#5f6368;

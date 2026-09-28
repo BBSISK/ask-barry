@@ -143,3 +143,13 @@ def test_rate_limiter_forgets_ip_addresses_after_the_window():
     now[0] += 3601
     rl.allow("5.6.7.8")
     assert "1.2.3.4" not in rl._hits
+
+
+@pytest.mark.parametrize("path", ["/", "/evidence"])
+def test_pages_have_link_preview_tags(web, path):
+    html = web.get(path, base_url="https://ask-barry.example").get_data(as_text=True)
+    for prop in ("og:title", "og:description", "og:image", "og:url"):
+        assert f'property="{prop}"' in html
+    assert 'content="https://ask-barry.example/static/og-image.png"' in html      # absolute URL, as LinkedIn needs
+    image = web.get("/static/og-image.png")
+    assert image.status_code == 200 and image.mimetype == "image/png"
