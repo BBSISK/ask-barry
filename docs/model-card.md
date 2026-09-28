@@ -31,7 +31,7 @@ The architecture diagram is in the [README](../README.md#architecture).
 | Answer generation | Azure OpenAI `gpt-4.1-mini` (Global Standard deployment), temperature 0, JSON output, at most 400 output tokens |
 | Embeddings | Azure OpenAI `text-embedding-3-small`, 1536 dimensions |
 | Search | Azure AI Search (Free tier), hybrid keyword + vector |
-| Knowledge source | Markdown README and docs files from public, non-fork repositories owned by BBSISK. This includes a self-reported career page (`docs/career.md` in the BBSISK profile repo) that Barry wrote from his LinkedIn profile and reviewed; nothing is fetched from LinkedIn |
+| Knowledge source | Markdown README and docs files from public, non-fork repositories owned by BBSISK. This includes a self-reported career page (`career.md` in the BBSISK profile repo) that Barry wrote from his LinkedIn profile and reviewed; nothing is fetched from LinkedIn |
 | Deliberately excluded | Private repositories, source code, contact details beyond those already on the profile README, other people's recommendations or endorsements, evaluation reports, and public files that aren't evidence of Barry's own work (e.g. rehearsal notes) |
 | Training | None. No model is fine-tuned; everything the assistant knows at answer time is in the retrieved sections |
 

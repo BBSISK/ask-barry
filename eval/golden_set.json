@@ -15,7 +15,7 @@
       "question": "Where did Barry work before becoming a software developer?",
       "expected": [
         "BBSISK/README.md",
-        "BBSISK/docs/career.md"
+        "BBSISK/career.md"
       ],
       "evidence": [
         "Intel Ireland"
@@ -30,7 +30,7 @@
         "agentmath_showcase/README.md",
         "inmytime-showcase/README.md",
         "my30words_showcase/README.md",
-        "BBSISK/docs/career.md"
+        "BBSISK/career.md"
       ],
       "evidence": [
         "Higher Diploma in Software Development"
@@ -146,7 +146,7 @@
       "type": "answerable",
       "question": "What leadership roles did Barry hold at Intel?",
       "expected": [
-        "BBSISK/docs/career.md"
+        "BBSISK/career.md"
       ],
       "evidence": [
         "Area Manager",

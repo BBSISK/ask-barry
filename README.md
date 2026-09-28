@@ -61,7 +61,7 @@ How it works, what it's for (and not for), evaluation results, known limitations
 
 ## Sources
 
-Only README and documentation files from my **public** GitHub repositories. No private repositories or source code. Career history comes from a self-reported page in my profile repo (`docs/career.md`), which I wrote from my LinkedIn profile and reviewed; nothing is fetched from LinkedIn (its terms forbid scraping, and a reviewed file in git can't change without me seeing it). Everything the assistant can see is already public.
+Only README and documentation files from my **public** GitHub repositories. No private repositories or source code. Career history comes from a self-reported page in my profile repo (`career.md`), which I wrote from my LinkedIn profile and reviewed; nothing is fetched from LinkedIn (its terms forbid scraping, and a reviewed file in git can't change without me seeing it). Everything the assistant can see is already public.
 
 ## Build the document corpus (Stage 1)
 

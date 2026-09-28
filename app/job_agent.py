@@ -28,7 +28,7 @@ MAX_ROWS = MAX_TOOL_CALLS      # the prompt asks for 12; the report keeps up to 
 STATUSES = ("evidenced", "related_only", "not_documented")          # what the model may choose
 PROFILE = "listed_on_profile"                                          # set by code, never by the model
 ALL_STATUSES = ("evidenced", PROFILE, "related_only", "not_documented")
-# Barry's profile repo (README "Toolbox", docs/career.md) is his own summary of himself. A requirement
+# Barry's profile repo (README "Toolbox", career.md) is his own summary of himself. A requirement
 # supported ONLY by it is "listed on profile", not "evidenced": evidence means a project doc shows the work.
 PROFILE_URL_PREFIX = "https://github.com/BBSISK/BBSISK/"
 

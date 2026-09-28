@@ -254,7 +254,7 @@ def test_other_errors_are_not_mistaken_for_the_filter():
     assert content_filter_reason(RuntimeError("HTTP 500 upstream")) is None
 
 
-PROFILE_URL = "https://github.com/BBSISK/BBSISK/blob/abc/docs/career.md#intel-ireland-leixlip"
+PROFILE_URL = "https://github.com/BBSISK/BBSISK/blob/abc/career.md#intel-ireland-leixlip"
 
 
 def test_requirement_backed_only_by_the_profile_is_listed_not_evidenced():
