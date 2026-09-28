@@ -60,7 +60,7 @@ CONNECT_SECTIONS = [
     {"title": "Start here", "cards": [
         {"title": "Paste a job ad", "text": "My AI agent maps each requirement to evidence in my project docs, with links",
          "url": "/evidence", "qr": "evidence", "primary": True},
-        {"title": "Ask Barry", "text": "Ask anything about my work; answers cite their sources",
+        {"title": "Ask me anything", "text": "Ask Barry answers questions about my work, citing its sources",
          "url": "/", "qr": "askbarry"},
     ]},
     {"title": "Profiles", "cards": [
@@ -72,10 +72,10 @@ CONNECT_SECTIONS = [
          "url": "https://github.com/BBSISK/BBSISK/blob/main/career.md", "qr": "career"},
     ]},
     {"title": "What I've built", "cards": [
-        {"title": "Ask Barry (code)", "text": "RAG on Azure OpenAI + AI Search, an evaluated job-ad agent, an MCP server",
-         "url": "https://github.com/BBSISK/ask-barry", "qr": "ask-barry-repo"},
+        {"title": "Ask Barry", "text": "Live RAG assistant (Azure OpenAI + AI Search) with an evaluated job-ad agent",
+         "url": "/", "qr": "askbarry"},
         {"title": "Wall Inspector", "text": "Masonry skills assessment with AI agents and human-in-the-loop provenance",
-         "url": "https://github.com/BBSISK/wall_inspector", "qr": "wall-inspector"},
+         "url": "https://wall-inspector.onrender.com", "qr": "wall-inspector"},
         {"title": "In My Time", "text": "Privacy-first family-history service over WhatsApp",
          "url": "https://www.inmytime.app", "qr": "inmytime"},
         {"title": "AgentMath", "text": "Adaptive maths practice, 3,000+ items",
