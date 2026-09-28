@@ -53,6 +53,10 @@
     td.req { font-weight:600; min-width: 9rem; }
     .note { display:block; color:var(--muted); font-size:.8rem; margin-top:.2rem; }
     .error { color:#c5221f; }
+    label.scan { font:inherit; padding:.65rem 1rem; border:1px solid var(--accent); border-radius:.6rem; color:var(--accent);
+                 cursor:pointer; background:transparent; }
+    label.scan.busy { opacity:.6; cursor:wait; }
+    #scan-status:empty { display:none; }
     @media (max-width: 40rem) {                 /* phones: one card per requirement instead of a wide table */
       table, tbody, tr, td { display:block; width:100%; }
       tr.head { display:none; }
@@ -77,8 +81,11 @@
     <textarea id="ad" maxlength="{{ max_chars }}" required placeholder="Paste the job ad here (title, responsibilities, requirements)…"></textarea>
     <div class="row">
       <button id="go" type="submit">Map the evidence</button>
-      <span class="meta">Takes about 30–60 seconds · {{ per_hour }} per hour per visitor · the ad isn't stored</span>
+      <label class="scan" id="scan-label" for="scan">Scan a job ad
+        <input id="scan" type="file" accept="image/*" capture="environment" hidden></label>
+      <span class="meta">Takes about 30–60 seconds · {{ per_hour }} per hour per visitor · the ad and photos aren't stored</span>
     </div>
+    <p id="scan-status" class="meta" aria-live="polite"></p>
   </form>
   <div id="progress" aria-live="polite"></div>
   <div id="result" aria-live="polite"></div>
@@ -174,6 +181,50 @@
       if (job.status === "error") throw new Error(job.error);
     }
   }
+
+  // "Scan a job ad": photo -> shrink on the phone -> /api/scan -> text into the box for the visitor to CHECK.
+  const scan = document.getElementById("scan"), scanLabel = document.getElementById("scan-label");
+  const scanStatus = document.getElementById("scan-status");
+
+  async function shrink(file, maxSide = 2000) {
+    // Phone photos can be 5-10 MB; a 2000 px JPEG keeps text sharp and uploads fast on fair wi-fi.
+    try {
+      const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+      const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bmp.width * scale); canvas.height = Math.round(bmp.height * scale);
+      canvas.getContext("2d").drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      return await new Promise((ok) => canvas.toBlob((b) => ok(b || file), "image/jpeg", 0.85));
+    } catch (e) {
+      return file;                                   // older browsers: send the original
+    }
+  }
+
+  scan.addEventListener("change", async () => {
+    const file = scan.files && scan.files[0];
+    scan.value = "";
+    if (!file) return;
+    scanLabel.classList.add("busy");
+    scanStatus.className = "meta";
+    scanStatus.textContent = "Reading the photo…";
+    try {
+      const body = new FormData();
+      body.append("image", await shrink(file), "job-ad.jpg");
+      const resp = await fetch("/api/scan", { method: "POST", body });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(data.error || "Couldn't read that photo. Please try again.");
+      const before = ad.value.trim();
+      ad.value = (before ? before + "\n\n" : "") + data.text;   // several photos of a long ad add up
+      ad.focus();
+      scanStatus.textContent = "Photo read by AI: check the text (fix anything misread), then Map the evidence. " +
+        "Long ad? Scan the next part and it's added below.";
+    } catch (err) {
+      scanStatus.className = "error";
+      scanStatus.textContent = err.message || "Couldn't reach the server. Please try again.";
+    } finally {
+      scanLabel.classList.remove("busy");
+    }
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();

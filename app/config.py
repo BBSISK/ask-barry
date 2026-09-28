@@ -20,6 +20,10 @@ class Config:
     # Job-ad evidence agent (Stage 8d): about 2 cents of Azure usage per ad, so much tighter limits.
     AGENT_RATE_PER_HOUR = int(os.getenv("AGENT_RATE_PER_HOUR", "3"))
     AGENT_RATE_PER_DAY = int(os.getenv("AGENT_RATE_PER_DAY", "20"))
+    # "Scan a job ad" (Stage 8e): about a cent per photo; separate limit so scanning doesn't use up agent runs.
+    SCAN_RATE_PER_HOUR = int(os.getenv("SCAN_RATE_PER_HOUR", "8"))
+    SCAN_RATE_PER_DAY = int(os.getenv("SCAN_RATE_PER_DAY", "60"))
+    MAX_CONTENT_LENGTH = 8 * 1024 * 1024        # Flask rejects bigger uploads with 413 before reading them
 
 
 class DevelopmentConfig(Config):

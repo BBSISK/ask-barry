@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request
 from .agent_jobs import Busy
 from .answering import answerer_from_env, azure_configured, validate_question
 from .job_agent import MAX_JOB_AD_CHARS
+from .scan import ScanError, transcriber_from_env
 
 bp = Blueprint("main", __name__)
 log = logging.getLogger(__name__)
@@ -118,6 +119,45 @@ def start_evidence():
     # The ad text is deliberately not logged or stored (it may be a third party's).
     log.info("evidence map started (ad length %d)", len(job_ad))
     return jsonify(id=job.id, status=job.status), 202
+
+
+def get_transcriber():
+    """Photo -> text for "Scan a job ad": the injected one (tests) or Azure, when configured."""
+    fn = current_app.extensions.get("transcriber")
+    if fn is None and current_app.config["ANSWERING_FROM_ENV"] and azure_configured():
+        fn = transcriber_from_env()
+        current_app.extensions["transcriber"] = fn
+    return fn
+
+
+@bp.post("/api/scan")
+def scan_job_ad():
+    """A photo of a job ad -> its text, for the visitor to check before running the agent.
+    The photo is never stored or logged."""
+    upload = request.files.get("image")
+    if upload is None:
+        return jsonify(error="No photo received. Please try again."), 400
+    transcriber = get_transcriber()
+    if transcriber is None:
+        return jsonify(error="Scanning is not configured on this server."), 503
+    allowed, reason = current_app.extensions["scan_ratelimiter"].allow(request.remote_addr or "unknown")
+    if not allowed:
+        return jsonify(error=reason), 429
+    data = upload.read()
+    try:
+        text = transcriber(data)
+    except ScanError as err:
+        return jsonify(error=str(err)), 400
+    except Exception:
+        log.exception("scan failed (photo size %d bytes)", len(data))
+        return jsonify(error="Sorry, something went wrong reading that photo. Please try again."), 502
+    log.info("scanned a job ad (photo %d bytes, text %d chars)", len(data), len(text))
+    return jsonify(text=text, ai_generated=True)
+
+
+@bp.errorhandler(413)
+def too_large(_err):
+    return jsonify(error="That photo is too large. Please try again, closer to the text."), 413
 
 
 @bp.get("/api/evidence/<job_id>")

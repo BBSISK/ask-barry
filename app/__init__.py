@@ -7,7 +7,7 @@ from .config import CONFIGS
 from .ratelimit import RateLimiter
 
 
-def create_app(config_name=None, answerer=None, jobstore=None):
+def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None):
     """Create and configure the Flask app.
 
     config_name: "development", "testing" or "production". Defaults to the
@@ -15,6 +15,7 @@ def create_app(config_name=None, answerer=None, jobstore=None):
     answerer: optional Answerer to use (tests pass a fake). If omitted, the
     real Azure-backed one is built on first use when the AZURE_* settings exist.
     jobstore: optional JobStore for the job-ad agent (tests pass one with a fake runner).
+    transcriber: optional photo -> text function for "Scan a job ad" (tests pass a fake).
     """
     config_name = config_name or os.getenv("APP_ENV", "production")
     if config_name not in CONFIGS:
@@ -40,6 +41,10 @@ def create_app(config_name=None, answerer=None, jobstore=None):
         jobstore = JobStore()
         jobstore.from_env = True               # the real agent: only offered when Azure is configured
     app.extensions["jobstore"] = jobstore
+    app.extensions["transcriber"] = transcriber
+    app.extensions["scan_ratelimiter"] = RateLimiter(
+        per_minute=app.config["SCAN_RATE_PER_HOUR"], per_day=app.config["SCAN_RATE_PER_DAY"],
+        window=3600, noun="photo scans")
     app.extensions["agent_ratelimiter"] = RateLimiter(
         per_minute=app.config["AGENT_RATE_PER_HOUR"], per_day=app.config["AGENT_RATE_PER_DAY"],
         window=3600, noun="evidence maps")

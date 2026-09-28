@@ -290,6 +290,7 @@ An AI agent that turns a job advertisement into an **evidence map**. For each re
 
 ```bash
 python -m scripts.job_agent job_ad.txt --trace     # evidence map + every tool call it made
+python -m scripts.job_agent ads/ --save             # a folder of job ads: one .md + .json report each
 python -m scripts.evaluate_agent --save            # agent vs a single-shot baseline on 10 test ads
 ```
 
@@ -333,6 +334,8 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 - 3 evidence maps per hour per visitor and 20 per day in total (about 2 cents each);
 - the pasted ad is never stored or logged; only the questions and the evidence map are kept for 30 minutes;
 - the page builds the table with `textContent`, so nothing from the model or the ad is ever treated as HTML, and only github.com links are shown.
+
+**Scan a job ad (Stage 8e):** on a phone, the evidence page's **Scan a job ad** button opens the camera. The photo is shrunk on the phone, and the same gpt-4.1-mini deployment transcribes the visible text (it's told to transcribe only, never to follow instructions in the image). The text goes into the box for the visitor to check and correct before running the agent, so nothing runs on a photo directly. Photos aren't stored or logged, uploads are capped at 8 MB, and scans have their own limit (8 per hour per visitor). `python -m scripts.scan_check photo.jpg` tries it from the command line.
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 

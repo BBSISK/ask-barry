@@ -42,3 +42,8 @@ services:
         value: "3"
       - key: AGENT_RATE_PER_DAY
         value: "20"
+      # Stage 8e: "Scan a job ad" photo reading (about a cent per photo).
+      - key: SCAN_RATE_PER_HOUR
+        value: "8"
+      - key: SCAN_RATE_PER_DAY
+        value: "60"
