@@ -56,6 +56,42 @@ def evidence_page():
     )
 
 
+CONNECT_SECTIONS = [
+    {"title": "Start here", "cards": [
+        {"title": "Paste a job ad", "text": "My AI agent maps each requirement to evidence in my project docs, with links",
+         "url": "/evidence", "qr": "evidence", "primary": True},
+        {"title": "Ask Barry", "text": "Ask anything about my work; answers cite their sources",
+         "url": "/", "qr": "askbarry"},
+    ]},
+    {"title": "Profiles", "cards": [
+        {"title": "LinkedIn", "text": "linkedin.com/in/barry-s-50135113",
+         "url": "https://www.linkedin.com/in/barry-s-50135113/", "qr": "linkedin"},
+        {"title": "GitHub", "text": "github.com/BBSISK: code and documentation",
+         "url": "https://github.com/BBSISK", "qr": "github"},
+        {"title": "Career history", "text": "30 years at Intel, teaching, and the HDip",
+         "url": "https://github.com/BBSISK/BBSISK/blob/main/career.md", "qr": "career"},
+    ]},
+    {"title": "What I've built", "cards": [
+        {"title": "Ask Barry (code)", "text": "RAG on Azure OpenAI + AI Search, an evaluated job-ad agent, an MCP server",
+         "url": "https://github.com/BBSISK/ask-barry", "qr": "ask-barry-repo"},
+        {"title": "Wall Inspector", "text": "Masonry skills assessment with AI agents and human-in-the-loop provenance",
+         "url": "https://github.com/BBSISK/wall_inspector", "qr": "wall-inspector"},
+        {"title": "In My Time", "text": "Privacy-first family-history service over WhatsApp",
+         "url": "https://www.inmytime.app", "qr": "inmytime"},
+        {"title": "AgentMath", "text": "Adaptive maths practice, 3,000+ items",
+         "url": "https://www.agentmath.app", "qr": "agentmath"},
+        {"title": "Brief", "text": "A 30-words-a-week journal by WhatsApp and email",
+         "url": "https://www.my30words.com", "qr": "brief"},
+    ]},
+]
+
+
+@bp.get("/connect")
+def connect():
+    """One landing page for printed material (e.g. the careers-fair sheet): every link, one QR code."""
+    return render_template("connect.html", sections=CONNECT_SECTIONS)
+
+
 @bp.post("/api/evidence")
 def start_evidence():
     """Start the job-ad evidence agent. Returns 202 + a job id; poll GET /api/evidence/<id>."""

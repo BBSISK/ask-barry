@@ -153,3 +153,18 @@ def test_pages_have_link_preview_tags(web, path):
     assert 'content="https://ask-barry.example/static/og-image.png"' in html      # absolute URL, as LinkedIn needs
     image = web.get("/static/og-image.png")
     assert image.status_code == 200 and image.mimetype == "image/png"
+
+
+def test_connect_page_lists_every_link_with_a_qr_code(web):
+    from pathlib import Path
+
+    from app.routes import CONNECT_SECTIONS
+    resp = web.get("/connect")
+    html = resp.get_data(as_text=True)
+    assert resp.status_code == 200 and 'property="og:title"' in html
+    cards = [c for s in CONNECT_SECTIONS for c in s["cards"]]
+    assert len(cards) == 10
+    for c in cards:
+        assert f'href="{c["url"]}"' in html
+        assert Path("app/static/qr", c["qr"] + ".png").is_file(), c["qr"]
+    assert "linkedin.com/in/barry-s-50135113" in html and "/evidence" in html

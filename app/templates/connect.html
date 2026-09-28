@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Barry Sisk: links</title>
+  <meta name="description" content="Barry Sisk: software developer building AI applications, with 30 years leading engineering teams at Intel. Projects, LinkedIn, GitHub and a job-ad evidence agent.">
+  <!-- Link previews (LinkedIn, Slack, email): Open Graph + Twitter card -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ask Barry">
+  <meta property="og:title" content="Barry Sisk: projects, LinkedIn, GitHub">
+  <meta property="og:description" content="Software developer building AI applications, with 30 years leading engineering teams at Intel. Everything in one place.">
+  <meta property="og:url" content="{{ request.base_url }}">
+  <meta property="og:image" content="{{ url_for('static', filename='og-image.png', _external=True) }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root { --bg:#fbfbfa; --fg:#1d1d1f; --muted:#5f6368; --card:#fff; --line:#e3e3e0; --accent:#2f5bd3; --tint:#f3f5fc; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#141416; --fg:#ececec; --muted:#a0a4ab; --card:#1d1e21; --line:#2e3035; --accent:#8fa9ff; --tint:#1b2033; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 46rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.8rem; margin: 0; }
+    .lede { color: var(--muted); margin: .25rem 0 1rem; }
+    .avail { background:var(--tint); border-left:4px solid var(--accent); padding:.6rem .8rem; border-radius:.4rem; font-size:.95rem; }
+    h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 1.8rem 0 .6rem; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:.6rem; }
+    @media (min-width: 40rem) { .grid { grid-template-columns: 1fr 1fr; } }
+    a.card { display:flex; gap:.8rem; align-items:center; text-decoration:none; color:inherit; background:var(--card);
+             border:1px solid var(--line); border-radius:.8rem; padding:.8rem .9rem; min-height:4.2rem; }
+    a.card:hover, a.card:focus-visible { border-color: var(--accent); }
+    a.card.primary { border-color: var(--accent); background: var(--tint); }
+    .card b { display:block; }
+    .card span { color:var(--muted); font-size:.88rem; }
+    .card .go { margin-left:auto; color:var(--accent); font-size:1.2rem; flex:none; }
+    .card img { display:none; width:84px; height:84px; flex:none; background:#fff; border-radius:.3rem; padding:3px; }
+    /* On a laptop or tablet at a stand, show each card's QR code so visitors can scan the one they want */
+    @media (min-width: 60rem) { .card img { display:block; } .card .go { display:none; } }
+    footer { color:var(--muted); font-size:.85rem; margin-top:2rem; border-top:1px solid var(--line); padding-top:1rem; }
+    footer a { color: var(--accent); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Barry Sisk</h1>
+  <p class="lede">Software developer building AI applications · 30 years leading engineering teams at Intel · Higher Diploma in Software Development, Maynooth University</p>
+  <p class="avail"><b>Available now</b> for a scoped AI or automation project (about a day a fortnight) or mentoring conversations while I study. Full-time from June 2027.</p>
+
+  {% for section in sections %}
+  <h2>{{ section.title }}</h2>
+  <div class="grid">
+    {% for c in section.cards %}
+    <a class="card{{ ' primary' if c.primary }}" href="{{ c.url }}" {% if not c.url.startswith('/') %}target="_blank" rel="noopener"{% endif %}>
+      <img src="{{ url_for('static', filename='qr/' ~ c.qr ~ '.png') }}" alt="QR code for {{ c.title }}" loading="lazy">
+      <div><b>{{ c.title }}</b><span>{{ c.text }}</span></div>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <footer>
+    Email: <a href="mailto:barry.b.sisk@gmail.com">barry.b.sisk@gmail.com</a> ·
+    This page doesn't use cookies or tracking.
+  </footer>
+</main>
+</body>
+</html>
