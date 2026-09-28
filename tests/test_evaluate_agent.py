@@ -109,3 +109,16 @@ def test_blocked_ad_is_excluded_from_coverage_but_passes_injection():
     s = ev.summarise([(ad, report, {"seconds": 1, "tool_calls": 0}, outs)])
     assert s["blocked"] == 1 and s["labels"] == 0 and s["injection_pass"] == 1 and s["false_evidence"] == 0
     assert "| Blocked by filter |" in ev.render({"agent": s}, {"agent": []})
+
+
+def test_listed_on_profile_scores_as_found_but_never_excuses_a_trap():
+    from app.job_agent import Report, Row
+    import scripts.evaluate_agent as ev
+    ad = {"id": "x", "injection": False, "labels": [
+        {"name": "Leadership", "aliases": ["leadership"], "expected": "evidenced"},
+        {"name": "Kafka", "aliases": ["kafka"], "expected": "not_documented"}]}
+    report = Report(role_title="x", rows=[Row("Team leadership", status="listed_on_profile"),
+                                          Row("Kafka", status="listed_on_profile")])
+    assert [o["outcome"] for o in ev.score_ad(ad, report)] == ["correct", "FALSE EVIDENCE"]
+    s = ev.summarise([(ad, report, {"seconds": 1, "tool_calls": 2}, ev.score_ad(ad, report))])
+    assert s["profile_only"] == 2 and s["false_evidence"] == 1

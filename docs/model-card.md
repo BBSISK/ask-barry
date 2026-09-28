@@ -31,8 +31,8 @@ The architecture diagram is in the [README](../README.md#architecture).
 | Answer generation | Azure OpenAI `gpt-4.1-mini` (Global Standard deployment), temperature 0, JSON output, at most 400 output tokens |
 | Embeddings | Azure OpenAI `text-embedding-3-small`, 1536 dimensions |
 | Search | Azure AI Search (Free tier), hybrid keyword + vector |
-| Knowledge source | Markdown README and docs files from public, non-fork repositories owned by BBSISK |
-| Deliberately excluded | Private repositories, source code, CV and personal details, evaluation reports, and public files that aren't evidence of Barry's own work (e.g. rehearsal notes) |
+| Knowledge source | Markdown README and docs files from public, non-fork repositories owned by BBSISK. This includes a self-reported career page (`docs/career.md` in the BBSISK profile repo) that Barry wrote from his LinkedIn profile and reviewed; nothing is fetched from LinkedIn |
+| Deliberately excluded | Private repositories, source code, contact details beyond those already on the profile README, other people's recommendations or endorsements, evaluation reports, and public files that aren't evidence of Barry's own work (e.g. rehearsal notes) |
 | Training | None. No model is fine-tuned; everything the assistant knows at answer time is in the retrieved sections |
 
 **Privacy:** the app doesn't store or log question text. The rate limiter keeps IP addresses in memory for one minute only. Questions are sent to Azure OpenAI to be embedded and answered. Under Microsoft's Azure OpenAI terms, they aren't used to train models. A Global Standard deployment may process requests in any Azure region.
@@ -57,7 +57,7 @@ The job-ad page doesn't store or log the pasted ad either (it may be someone els
 
 ## Evaluation
 
-The golden set has 46 questions. 38 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
+The golden set has 47 questions (one added with the career page on 28 September 2026; the results below predate it). 39 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
 
 **Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
@@ -81,12 +81,13 @@ The golden set has 46 questions. 38 are answerable, each with the file and evide
 
 ## Known limitations
 
+- **Self-reported career history.** The career page and the profile README are Barry's own summary of himself, not evidence of the work. The job-ad agent labels a requirement supported only by them "Listed on profile" rather than "Evidenced".
 - **Only as accurate as the documentation.** The READMEs are written by Barry and not independently verified. If the documentation doesn't mention something, that doesn't mean Barry lacks the skill.
 - **Occasional speculation.** Asked about something undocumented, the model sometimes describes what related documented work "indicates", instead of just saying the thing isn't documented. The trap questions catch this, and it appeared in 1 of the last 3 runs.
 - **True but uncited.** An answer occasionally includes a correct fact from a retrieved section it didn't cite, so the reader can't check it from the links. The evaluation counts these separately from invented claims.
 - **Run-to-run variation.** Even at temperature 0, results vary by a few questions between runs.
 - **Same-family judge.** The judge is the same model family as the answering model. The deterministic checks and published answers are there so the headline numbers don't rest on the judge alone.
-- **Small test set, English only.** With 46 questions, one question moves a percentage by 2–3 points.
+- **Small test set, English only.** With under 50 questions, one question moves a percentage by 2–3 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.
 - **Platform filter.** Azure OpenAI's content safety may refuse a job ad containing text that looks like instructions to an AI. The agent then produces no evidence map, and says so.

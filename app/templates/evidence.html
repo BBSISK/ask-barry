@@ -33,6 +33,7 @@
     ol.steps li { margin:.15rem 0; }
     .tag { display:inline-block; font-size:.78rem; padding:.05rem .45rem; border-radius:1rem; white-space:nowrap; }
     .tag.evidenced { background:var(--ok-bg); color:var(--ok); }
+    .tag.listed_on_profile { background:var(--warn-bg); color:var(--warn); }
     .tag.related_only { background:var(--rel-bg); color:var(--rel); }
     .tag.not_documented { background:var(--no-bg); color:var(--no); }
     .table-wrap { overflow-x:auto; }
@@ -57,8 +58,8 @@
   <p class="meta"><a href="/">← {{ app_name }}</a></p>
   <h1>Job-ad evidence map</h1>
   <p class="lede">Paste a job advertisement. An <strong>AI agent</strong> picks out the checkable requirements, asks
-    the Ask Barry tool about each one, and reports what Barry Sisk's <strong>public GitHub documentation</strong> shows,
-    with links. It never scores, ranks or judges fit: "not documented" means the docs don't show it, not that Barry lacks the skill.</p>
+    the Ask Barry tool about each one, and reports what Barry Sisk's <strong>public GitHub documentation</strong> shows (project docs, plus his
+    self-reported profile and career summary), with links. It never scores, ranks or judges fit: "not documented" means the docs don't show it, not that Barry lacks the skill.</p>
 
   {% if available %}
   <form id="ad-form">
@@ -84,7 +85,7 @@
 </main>
 {% if available %}
 <script>
-  const LABELS = { evidenced: "Evidenced", related_only: "Related only", not_documented: "Not documented" };
+  const LABELS = { evidenced: "Evidenced", listed_on_profile: "Listed on profile", related_only: "Related only", not_documented: "Not documented" };
   const form = document.getElementById("ad-form"), ad = document.getElementById("ad"), go = document.getElementById("go");
   const progress = document.getElementById("progress"), result = document.getElementById("result");
 
@@ -121,7 +122,7 @@
     const c = r.counts;
     card.append(el("p", { class: "meta" },
       `AI-generated evidence map: check the linked sources · ${r.requirements.length} requirements · evidenced ${c.evidenced} · ` +
-      `related only ${c.related_only} · not documented ${c.not_documented}`));
+      `listed on profile ${c.listed_on_profile} · related only ${c.related_only} · not documented ${c.not_documented}`));
     const wrap = el("div", { class: "table-wrap" }), table = el("table");
     const head = el("tr", { class: "head" });
     for (const h of ["Requirement", "Status", "Evidence", "Sources"]) head.append(el("th", {}, h));
@@ -145,7 +146,9 @@
     wrap.append(table); card.append(wrap);
     if (r.dropped && r.dropped.length) card.append(el("p", { class: "meta" }, `Not checked (row limit): ${r.dropped.join(", ")}.`));
     if (r.fallback) card.append(el("p", { class: "meta" }, "The agent didn't finish within its budget; rows show the tool answers as returned."));
-    card.append(el("p", { class: "meta" }, "\"Not documented\" means Barry's public docs don't show it, not that he lacks the skill. " +
+    card.append(el("p", { class: "meta" }, "\"Evidenced\" means a project's documentation shows the work. " +
+      "\"Listed on profile\" means only Barry's own profile or career summary says it. " +
+      "\"Not documented\" means Barry's public docs don't show it, not that he lacks the skill. " +
       "This is not an assessment of suitability for the role."));
     result.replaceChildren(card);
   }

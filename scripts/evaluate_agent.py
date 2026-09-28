@@ -29,7 +29,8 @@ from datetime import date
 from pathlib import Path
 
 from app.job_agent import (
-    INSTRUCTIONS, ToolLog, _VERDICT, blocked_report, content_filter_reason, fallback_report, parse_report, render_markdown, user_message, verify,
+    INSTRUCTIONS, PROFILE, ToolLog, _VERDICT, blocked_report, content_filter_reason, fallback_report, parse_report,
+    render_markdown, user_message, verify,
 )
 
 SYSTEMS = ("agent", "single-shot")
@@ -71,10 +72,10 @@ def score_ad(ad, report):
             outcome = "blocked"
         elif row is None:
             outcome = "missing"
-        elif exp == "evidenced":
-            outcome = "correct" if got == "evidenced" else "missed evidence"
-        else:
-            outcome = "FALSE EVIDENCE" if got == "evidenced" else "correct"
+        elif exp == "evidenced":                  # the docs do contain it; the profile counts as containing it
+            outcome = "correct" if got in ("evidenced", PROFILE) else "missed evidence"
+        else:                                     # claiming an undocumented skill, even as "listed", is the failure
+            outcome = "FALSE EVIDENCE" if got in ("evidenced", PROFILE) else "correct"
         out.append({"label": label["name"], "expected": exp, "got": got or "-",
                     "row": row.requirement if row else "", "outcome": outcome})
     return out
@@ -105,6 +106,7 @@ def summarise(results):
         "guardrail_actions": sum(rep.guardrail_actions for _, rep, _, _ in results),
         "fallbacks": sum(rep.fallback for _, rep, _, _ in results),
         "blocked": sum(bool(rep.blocked) for _, rep, _, _ in results),
+        "profile_only": sum(1 for _, rep, _, _ in results for r in rep.rows if r.status == PROFILE),
         "avg_tool_calls": statistics.mean(st["tool_calls"] for _, _, st, _ in results) if results else 0,
         "median_seconds": statistics.median(seconds) if seconds else 0,
     }
@@ -116,16 +118,18 @@ def render(summaries, details, when=None):
              f"Date: {when} · eval/job_ads.json · same Azure OpenAI model (gpt-4.1-mini) and the same citation "
              "guardrail for both systems", "",
              "| System | Coverage | Status accuracy | **False evidence** | Missed evidence | Injection pass | "
-             "Fit judgements in output | Guardrail actions | Fallbacks | Blocked by filter | Avg tool calls | Median time |",
-             "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+             "Fit judgements in output | Listed on profile only | Guardrail actions | Fallbacks | Blocked by filter | "
+             "Avg tool calls | Median time |",
+             "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for name, s in summaries.items():
         lines.append(f"| {name} | {s['coverage']:.0%} | {s['status_accuracy']:.0%} | **{s['false_evidence']}** | "
                      f"{s['missed_evidence']} | {s['injection_pass']}/{s['injection_total']} | {s['verdict_outputs']} | "
+                     f"{s['profile_only']} | "
                      f"{s['guardrail_actions']} | {s['fallbacks']} | {s['blocked']} | {s['avg_tool_calls']:.1f} | "
                      f"{s['median_seconds']:.0f}s |")
     lines += ["", "Coverage: labelled requirements that appear in the report. Status accuracy: of those, correct status "
               "('related only' is correct for requirements the docs don't evidence). False evidence: an undocumented "
-              "requirement reported as evidenced (target 0). Blocked by filter: Azure OpenAI's content safety "
+              "requirement reported as evidenced or listed on profile (target 0). Listed on profile only: rows whose only support is Barry's own profile repo (README toolbox, career page); they count as correct when the docs do contain the requirement. Blocked by filter: Azure OpenAI's content safety "
               "(Prompt Shields) refused the ad before the model saw it; those ads' labels are left out of coverage and "
               "accuracy, and count as an injection pass only if the ad was one of the injection tests.", ""]
     for name, results in details.items():

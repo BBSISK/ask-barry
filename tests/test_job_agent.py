@@ -252,3 +252,24 @@ def test_platform_content_filter_becomes_a_blocked_report_not_a_crash():
 def test_other_errors_are_not_mistaken_for_the_filter():
     from app.job_agent import content_filter_reason
     assert content_filter_reason(RuntimeError("HTTP 500 upstream")) is None
+
+
+PROFILE_URL = "https://github.com/BBSISK/BBSISK/blob/abc/docs/career.md#intel-ireland-leixlip"
+
+
+def test_requirement_backed_only_by_the_profile_is_listed_not_evidenced():
+    log = ToolLog()
+    log.record("Has Barry led teams?", json.dumps({"supported": True, "sources": [{"url": PROFILE_URL}]}))
+    log.record("Has Barry used Docker?", json.dumps(fake_answer("docker")))
+    rows = parse_report(json.dumps({"requirements": [
+        {"requirement": "Team leadership", "status": "evidenced", "evidence": "Led engineering teams at Intel.",
+         "sources": [PROFILE_URL]},
+        {"requirement": "Docker", "status": "evidenced", "evidence": "Wall Inspector runs in Docker.",
+         "sources": [DOCKER_URL, PROFILE_URL]}]}))[1]
+    report = verify("", rows, log)
+    lead, docker = report.rows
+    assert lead.status == "listed_on_profile" and "only Barry's own profile says this" in lead.notes
+    assert docker.status == "evidenced"                   # a project doc shows it, so the profile link is extra
+    assert report.counts()["listed_on_profile"] == 1
+    md = render_markdown(report)
+    assert "| Team leadership | must | Listed on profile |" in md and "Listed on profile\" means" in md

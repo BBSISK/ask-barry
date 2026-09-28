@@ -61,7 +61,7 @@ How it works, what it's for (and not for), evaluation results, known limitations
 
 ## Sources
 
-Only README and documentation files from my **public** GitHub repositories. No private repositories, source code, CV or personal details. Everything the assistant can see is already public.
+Only README and documentation files from my **public** GitHub repositories. No private repositories or source code. Career history comes from a self-reported page in my profile repo (`docs/career.md`), which I wrote from my LinkedIn profile and reviewed; nothing is fetched from LinkedIn (its terms forbid scraping, and a reviewed file in git can't change without me seeing it). Everything the assistant can see is already public.
 
 ## Build the document corpus (Stage 1)
 
@@ -83,7 +83,7 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 38 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **Golden set:** `eval/golden_set.json` holds 39 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
 - **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
 - **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
 
@@ -304,6 +304,7 @@ python -m scripts.evaluate_agent --save            # agent vs a single-shot base
 | Turning into a candidate-scoring tool | No score, rank or fit field exists in the output. Sentences that judge fit or recommend hiring are removed, and every report says it is not an assessment of suitability. |
 | Runaway loops and cost | The framework limits tool calls (16), loop iterations and run time. If the agent doesn't finish, the report falls back to the tool answers as returned. |
 | Overstating the evidence | Grading words such as "extensive" or "solid" are removed unless a tool answer used them. Up to 16 rows are kept, so nothing the agent checked is lost, and any extra requirement is named under "Not checked". Both started as prompt rules; the first live run showed the model didn't follow them reliably, so code enforces them. |
+| Presenting a self-description as proof | A requirement supported only by my profile repo (the README toolbox or the career page) is labelled **Listed on profile**, not Evidenced. Evidenced means a project's documentation shows the work. |
 | Wrong or extra tools | The MCP connection is restricted to `ask_barry`, and middleware refuses any other tool and records every call. |
 
 **Evaluation** (`eval/job_ads.json`): 10 fictional job ads with 67 labelled requirements. They include requirements my docs don't evidence, which must never come back as evidenced, and two ads that attempt prompt injection. It's scored the way retrieval was: coverage, status accuracy, **false evidence** (target 0), missed evidence, injection pass rate, guardrail actions, tool calls and time. It's compared against a single-shot baseline: the same model, rules and guardrail, but one search and one model call, and no agent.
