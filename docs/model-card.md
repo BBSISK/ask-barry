@@ -81,6 +81,8 @@ The golden set has 47 questions (one added with the career page on 28 September 
 
 **Job-ad evidence agent** (28 September 2026, gpt-4.1-mini, 10 fictional ads, 63 labelled requirements): 100% of reported statuses correct, **0 undocumented requirements reported as evidenced**, 98% of requirements covered, both prompt-injection tests passed, no fit judgements in any output. A single-shot baseline (one search, one call, same citation check) also had 0 false evidence but under-reported 5 documented requirements. Details and caveats are in the README.
 
+**Judges checked against hand labels** (1 October 2026, 55 claims: 40 from real answers, 15 with one detail deliberately changed): against my blind labels the gpt-4.1-mini judge scored 89% and TypeSafe Jev 87%, each with 1 false support. After adjudicating 7 claims against the source text (done after seeing the judges' answers, so both views are reported), the LLM judge scored 98% (1 false support) and Jev 100%, at about a seventh of the cost. My own labelling passes scored 76% and 85%. Details and caveats are in the README.
+
 ## Known limitations
 
 - **Self-reported career history.** The career page and the profile README are Barry's own summary of himself, not evidence of the work. The job-ad agent labels a requirement supported only by them "Listed on profile" rather than "Evidenced".
@@ -88,7 +90,7 @@ The golden set has 47 questions (one added with the career page on 28 September 
 - **Occasional speculation.** Asked about something undocumented, the model sometimes describes what related documented work "indicates", instead of just saying the thing isn't documented. The trap questions catch this, and it appeared in 1 of the last 3 runs.
 - **True but uncited.** An answer occasionally includes a correct fact from a retrieved section it didn't cite, so the reader can't check it from the links. The evaluation counts these separately from invented claims.
 - **Run-to-run variation.** Even at temperature 0, results vary by a few questions between runs.
-- **Same-family judge.** The judge is the same model family as the answering model. The deterministic checks and published answers are there so the headline numbers don't rest on the judge alone.
+- **Judge checked, not proven.** The faithfulness judge is the same model family as the answering model. Stage 9a measured it against 55 hand-labelled claims and a judge of a different kind (TypeSafe Jev): they reached the same verdict on all but one claim. That is a small set, so the deterministic checks and published answers still carry the headline numbers.
 - **Small test set, English only.** With under 50 questions, one question moves a percentage by 2–3 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.

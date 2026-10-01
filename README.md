@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 8 complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated)
+## Current status: Stage 9a complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -20,7 +20,7 @@ A portfolio assistant that answers questions about my software projects using **
 - Azure AI Search index with embeddings
 - Retrieval comparison scored at section level
 - Grounded answering with citations, rate limiting and a web UI
-- Answer-quality evaluation with an evidence-checking LLM judge
+- Answer-quality evaluation with an evidence-checking LLM judge, cross-checked against a second judge of a different kind (TypeSafe Jev) and my own labels
 - An MCP server, so AI assistants can query it as a tool
 - Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
 
@@ -39,6 +39,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
 | 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | Done: CLI, evaluation ([results](#job-ad-evidence-agent-stage-8)) and web page (`/evidence`) |
+| 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
 
 ## Architecture
 
@@ -340,6 +341,35 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 **Share on the spot (Stage 8f):** when a map is ready, the page shows a QR code to scan from the screen, plus Share / WhatsApp / Email / Copy link buttons. The shared link carries the map itself, compressed and signed with the server's secret (HMAC-SHA256), so it works for weeks with no database and any edited link is rejected. The QR code uses a short `/s/<id>` link (a dense QR on a phone screen won't scan) that redirects to the signed one for a day.
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
+
+## Two judges compared (Stage 9a)
+
+My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.
+
+- **The judges:** the gpt-4.1-mini judge (JSON yes/no) and **TypeSafe Jev** (released September 2026, run on Cloudflare Workers AI), a decision model that returns a probability. Both get the same question: is this claim fully supported by these labelled sources?
+- **The claims:** 55 in all. 40 are sentences from Ask Barry's own answers to the golden questions; 15 are **near-misses**, a real claim with one detail changed (a date, a tool, a project name) so the sources no longer support it. The origin is hidden while labelling.
+- **The labels:** I labelled every claim twice, blind, then re-checked every disputed claim plus a random sample with the full sources. Seven claims were then adjudicated against the source text after the judges disagreed with my labels: six near-misses I had accepted, and one claim I mis-keyed.
+
+| Judge | Labels | Accuracy | **False support** | Missed support | Cohen's kappa | Cost per 1,000 judgements |
+|---|---|---|---|---|---|---|
+| gpt-4.1-mini (LLM judge) | blind | 89% | **1** | 5 | 0.66 | $0.34 |
+| gpt-4.1-mini (LLM judge) | adjudicated | 98% | **1** | 0 | 0.95 | $0.34 |
+| Jev (threshold 0.5) | blind | 87% | **1** | 6 | 0.62 | $0.05 |
+| Jev (threshold 0.5) | adjudicated | 100% | **0** | 0 | 1.00 | $0.05 |
+
+**What I take from it:**
+- **Both judges are good at the job, and close to each other.** They agree on all but one claim. The one difference: a claim that cut a two-project fact down to "a single project" got past the LLM judge, and Jev caught it.
+- **Jev is about 7 times cheaper** at similar speed (median 0.5 s vs 0.8 s), and its probability is useful: claims between 0.35 and 0.65 can go to a person. Here that was 2 of 55, and Jev was right on all the rest.
+- **I was the weakest labeller.** Against the adjudicated labels my first pass was 76% and my second 85%. Knowing the projects, I read past a single changed date or tool name. My two blind passes agreed on 43 of 54 claims (kappa 0.10). This is the error the judges exist to catch, and why a human-only check isn't enough.
+- **The "same-family judge" worry, measured:** on this set the LLM judge did not favour its own family's answers, and a judge of a different kind reached the same verdicts.
+
+**Caveats:** 55 claims, one run. 100% means no errors seen here, not that Jev is never wrong. The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`. The 0.5 threshold was picked on the same data. The near-misses were written by the gpt-4.1-mini family. For these reasons the live evaluation keeps the LLM judge with code-checked quotes, and Jev is a cheap second opinion rather than a replacement.
+
+```bash
+python -m scripts.build_judge_set          # 40 real claims + 15 near-misses -> eval/judge_set.json
+python -m scripts.label_claims             # label them (also --second-pass and --review)
+python -m scripts.evaluate_judges --save   # both judges vs the labels; --from-results re-scores without API calls
+```
 
 ## Keeping the index fresh (Stage 7)
 

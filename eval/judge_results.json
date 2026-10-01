@@ -1,0 +1,992 @@
+[
+ {
+  "id": "c01",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "The platform is delivered as a Progressive Web App hosted on Heroku, with development assisted by AI tools like Claude.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 1.17,
+   "input_tokens": 406
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.02,
+   "seconds": 1.09,
+   "input_tokens": 696
+  }
+ },
+ {
+  "id": "c02",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "AgentMath protects children's privacy by allowing students to use the platform without providing personal data through three access methods: Quick Try (no registration), anonymous guest codes that track progress without collecting names or emails, and optional Google or Microsoft sign-in using existing school accounts.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.81,
+   "input_tokens": 613
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.96,
+   "seconds": 0.61,
+   "input_tokens": 916
+  }
+ },
+ {
+  "id": "c03",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "AgentMath includes gamification features such as badges, avatars, leaderboards, and a Points for Prizes reward system to keep students engaged.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.86,
+   "input_tokens": 408
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.67,
+   "input_tokens": 706
+  }
+ },
+ {
+  "id": "c04",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In Wall Inspector, human-in-the-loop provenance tracking uses a 3-tier audit lineage for defect pins proposed by the AI.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.82,
+   "input_tokens": 847
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.61,
+   "input_tokens": 1188
+  }
+ },
+ {
+  "id": "c05",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "He learned to reset the history rather than just untracking the file if a first commit ever contained a secret.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.62,
+   "input_tokens": 493
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.61,
+   "input_tokens": 787
+  }
+ },
+ {
+  "id": "c06",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "He also led teams in high-volume manufacturing across various semiconductor technologies and managed a multinational team for equipment sales.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.04,
+   "input_tokens": 853
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.96,
+   "seconds": 0.46,
+   "input_tokens": 1252
+  }
+ },
+ {
+  "id": "c07",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "These include the PostgreSQL connection string, Cloudinary CDN key, Google Gemini Vision API key, assessor workstation credentials, and a cryptographic session signing key.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.85,
+   "input_tokens": 323
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.46,
+   "input_tokens": 619
+  }
+ },
+ {
+  "id": "c08",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "The server relays each answer in the same request and stores nothing, keeping no message text or transcriptions.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.87,
+   "input_tokens": 417
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.42,
+   "input_tokens": 708
+  }
+ },
+ {
+  "id": "c09",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "The BBSISK toolbox also lists Terraform under Cloud & DevOps skills (source 3).",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.75,
+   "input_tokens": 1111
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.57,
+   "input_tokens": 1445
+  }
+ },
+ {
+  "id": "c10",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In the Wall Inspector project, Terraform is part of the infrastructure as code and CI/CD setup managing cloud resources (source 2).",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.82,
+   "input_tokens": 1118
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.73,
+   "seconds": 0.51,
+   "input_tokens": 1452
+  }
+ },
+ {
+  "id": "c11",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry is completing a Higher Diploma in Software Development at Maynooth University.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.6,
+   "input_tokens": 564
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.99,
+   "seconds": 0.46,
+   "input_tokens": 871
+  }
+ },
+ {
+  "id": "c12",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry knows Python, Java, SQL, JavaScript, and HTML/CSS as programming languages, according to his toolbox documentation.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.88,
+   "input_tokens": 305
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.99,
+   "seconds": 0.51,
+   "input_tokens": 598
+  }
+ },
+ {
+  "id": "c13",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "These tools include `sentinel_evaluate_image`, `curriculum_cohort_intelligence`, `list_skill_specimens`, and `export_coco_dataset_stats`.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.64,
+   "input_tokens": 629
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.97,
+   "seconds": 0.48,
+   "input_tokens": 949
+  }
+ },
+ {
+  "id": "c14",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "Wall Inspector uses a managed PostgreSQL 14 database in production, connected via the DATABASE_URL environment variable.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 1.03,
+   "input_tokens": 754
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.02,
+   "seconds": 0.4,
+   "input_tokens": 1082
+  }
+ },
+ {
+  "id": "c15",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "Barry held multiple leadership roles at Intel Ireland, Leixlip, including 300mm CMP Group Leader (July 2009 – September 2016), 200mm CMP Group Leader (April 2008 – July 2009), CVD Group Leader (April 2005 – April 2008), and 300mm Implant Group Leader (October 2016 – December 2019).",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.67,
+   "input_tokens": 913
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.04,
+   "seconds": 0.46,
+   "input_tokens": 1335
+  }
+ },
+ {
+  "id": "c16",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Before becoming a software developer, Barry worked for 30 years at Intel Ireland leading engineering teams in high-volume semiconductor manufacturing.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.02,
+   "input_tokens": 580
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.83,
+   "seconds": 0.45,
+   "input_tokens": 897
+  }
+ },
+ {
+  "id": "c17",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "The RAG system is live, evaluated for answer quality, and includes a job-ad evidence agent built with the Microsoft Agent Framework.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.98,
+   "input_tokens": 1796
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.43,
+   "input_tokens": 2146
+  }
+ },
+ {
+  "id": "c18",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry has deployed a retrieval-augmented generation (RAG) system called Ask Barry to production.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.8,
+   "input_tokens": 1790
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.51,
+   "input_tokens": 2141
+  }
+ },
+ {
+  "id": "c19",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "It is a retrieval-augmented generation (RAG) assistant deployed as a live web app and accessible via an API and a RESTful server.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.9,
+   "input_tokens": 1376
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.42,
+   "seconds": 0.43,
+   "input_tokens": 1706
+  }
+ },
+ {
+  "id": "c20",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "It features a 16-week prompt cycle with recurring anchor questions, group sharing, an anonymous public feed, time capsules, and a progressive web app with Google, Microsoft, or email sign-in.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.92,
+   "input_tokens": 991
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.41,
+   "input_tokens": 1321
+  }
+ },
+ {
+  "id": "c21",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "Barry fixed this by rebuilding the system so the week is calculated purely from the number of user interactions, eliminating drift.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.83,
+   "input_tokens": 494
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.02,
+   "seconds": 0.41,
+   "input_tokens": 787
+  }
+ },
+ {
+  "id": "c22",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "AgentMath has over 3,000 curriculum-aligned assessment items.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.81,
+   "input_tokens": 498
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.41,
+   "input_tokens": 805
+  }
+ },
+ {
+  "id": "c23",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Wall Inspector runs 86 automated unit and agent tests.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.02,
+   "input_tokens": 249
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.91,
+   "seconds": 0.51,
+   "input_tokens": 528
+  }
+ },
+ {
+  "id": "c24",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "It demonstrates product thinking, reliable scheduled systems, real-world messaging integration, and advanced AI integration.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 1.02,
+   "input_tokens": 971
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.03,
+   "seconds": 0.61,
+   "input_tokens": 1300
+  }
+ },
+ {
+  "id": "c25",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Even the admin view shows only progress metrics, never story content.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.61,
+   "input_tokens": 408
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.41,
+   "input_tokens": 697
+  }
+ },
+ {
+  "id": "c26",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "Barry's projects that include an MCP server are Ask Barry and Sentinel Agent.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.71,
+   "input_tokens": 2060
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.14,
+   "seconds": 0.43,
+   "input_tokens": 2466
+  }
+ },
+ {
+  "id": "c27",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "The system is designed to avoid guessing, always citing sources, and refusing to answer unsupported questions.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.63,
+   "input_tokens": 1365
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.93,
+   "seconds": 0.44,
+   "input_tokens": 1695
+  }
+ },
+ {
+  "id": "c28",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "Barry fixed this by adding an automatic fallback to a custom free-form message, with tests covering both paths.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.63,
+   "input_tokens": 400
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.07,
+   "seconds": 0.43,
+   "input_tokens": 691
+  }
+ },
+ {
+  "id": "c29",
+  "label": "not_supported",
+  "origin": "answer",
+  "claim": "Agent of the Lost Numbers is a 3D, first-person history-of-maths adventure built in Three.js, featuring a procedurally generated maze and a room-by-room journey from Mesopotamia to Egypt with puzzles to solve.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.8,
+   "input_tokens": 531
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.74,
+   "input_tokens": 837
+  }
+ },
+ {
+  "id": "c30",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "The Intake Sentinel agent evaluates newly uploaded field photographs across four photogrammetric pillars: 90° orthogonal plane, diffuse illumination, course framing, and Laplacian focus sharpness.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.71,
+   "input_tokens": 634
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.99,
+   "seconds": 0.41,
+   "input_tokens": 956
+  }
+ },
+ {
+  "id": "c31",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "It also supports guest-to-account progress transfer to preserve data when a student later signs in properly.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.63,
+   "input_tokens": 581
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.97,
+   "seconds": 0.46,
+   "input_tokens": 883
+  }
+ },
+ {
+  "id": "c32",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Prior to Intel, he worked for 5 years at Schlumberger Industries, UK as a Process Engineer and Supplier Quality Engineer.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.26,
+   "input_tokens": 582
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.53,
+   "input_tokens": 899
+  }
+ },
+ {
+  "id": "c33",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In My Time obtains the grandparent's consent by sending them a single WhatsApp consent message, and nothing starts until the grandparent replies to that message, ensuring consent is in their hands rather than a checkbox someone else ticked.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.74,
+   "input_tokens": 366
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.46,
+   "input_tokens": 643
+  }
+ },
+ {
+  "id": "c34",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "The Ask Barry project also deploys Docker containers automatically via Azure after passing CI tests.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.74,
+   "input_tokens": 1884
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.04,
+   "seconds": 0.44,
+   "input_tokens": 2288
+  }
+ },
+ {
+  "id": "c35",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "In My Time stores the family stories it collects temporarily before deleting them.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.79,
+   "input_tokens": 409
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.01,
+   "seconds": 0.47,
+   "input_tokens": 698
+  }
+ },
+ {
+  "id": "c36",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Admin WhatsApp alerts were failing silently because WhatsApp's 24-hour session rule only delivers free-form messages while a conversation is open.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.76,
+   "input_tokens": 406
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 1.13,
+   "input_tokens": 699
+  }
+ },
+ {
+  "id": "c37",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In the Ask Barry project, he manages Azure resources with Terraform and runs CI checks with GitHub Actions.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.72,
+   "input_tokens": 1780
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.96,
+   "seconds": 0.61,
+   "input_tokens": 2165
+  }
+ },
+ {
+  "id": "c38",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry can be contacted via email at barry.b.sisk@gmail.com or through his LinkedIn profile at https://www.linkedin.com/in/barry-s-50135113/",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.12,
+   "input_tokens": 204
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.51,
+   "input_tokens": 491
+  }
+ },
+ {
+  "id": "c39",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Initially, Gemini Vision auto-suggests defect pins tagged as `auto_suggested` (unverified).",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.54,
+   "input_tokens": 844
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.45,
+   "input_tokens": 1187
+  }
+ },
+ {
+  "id": "c40",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "His infrastructure as code and CI/CD pipelines involve Terraform and GitHub Actions across projects.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.86,
+   "input_tokens": 1971
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.94,
+   "seconds": 0.43,
+   "input_tokens": 2375
+  }
+ },
+ {
+  "id": "c41",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "He also uses Docker, Render, Cloudflare, and Cloudinary for cloud and DevOps tasks.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.7,
+   "input_tokens": 1974
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.92,
+   "seconds": 0.51,
+   "input_tokens": 2380
+  }
+ },
+ {
+  "id": "c42",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry has worked with several cloud and DevOps tools including Docker, Terraform, GitHub Actions, Render, Microsoft Azure, Cloudflare, and Cloudinary.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.62,
+   "input_tokens": 1790
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.97,
+   "seconds": 0.38,
+   "input_tokens": 2179
+  }
+ },
+ {
+  "id": "c43",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Weekly prompts drifted off schedule because the system tracked each user's week position as a stored counter, which could fall out of step, causing some users to receive prompts on an 8-day cycle or for the prompt cycle to stall.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.83,
+   "input_tokens": 517
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.38,
+   "input_tokens": 811
+  }
+ },
+ {
+  "id": "c44",
+  "label": "supported",
+  "origin": "near-miss",
+  "claim": "Barry has used Terraform for infrastructure as code in a single project.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.64,
+   "input_tokens": 1105
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.05,
+   "seconds": 0.49,
+   "input_tokens": 1440
+  }
+ },
+ {
+  "id": "c45",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "Barry is open to full-time roles from June 2026.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.94,
+   "input_tokens": 388
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.02,
+   "seconds": 0.51,
+   "input_tokens": 685
+  }
+ },
+ {
+  "id": "c46",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "Barry fixed HTTPS certificate validation failures caused by the registrar's DNS handling by moving the DNS to AWS Route 53 and setting the records to DNS-only.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.82,
+   "input_tokens": 767
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.01,
+   "seconds": 0.51,
+   "input_tokens": 1082
+  }
+ },
+ {
+  "id": "c47",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Earlier, he was a Process Quality Team Lead and managed service contracts as a 200mm/300mm OEM Equipment Service Contract Manager.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.64,
+   "input_tokens": 859
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.95,
+   "seconds": 0.4,
+   "input_tokens": 1262
+  }
+ },
+ {
+  "id": "c48",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "Barry handled a leaked credential incident by rotating every exposed secret (Google, Microsoft, and Twilio), rebuilding the Git history as a single clean commit, and locking the repository down with a strict .gitignore for databases, configuration, and backups.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.7,
+   "input_tokens": 520
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.51,
+   "input_tokens": 814
+  }
+ },
+ {
+  "id": "c49",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In Wall Inspector, all credentials and cloud endpoints are injected strictly via environment variables and never hardcoded.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.72,
+   "input_tokens": 312
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.98,
+   "seconds": 0.51,
+   "input_tokens": 601
+  }
+ },
+ {
+  "id": "c50",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "In the Wall Inspector project, Barry uses managed PostgreSQL on the cloud, Cloudinary CDN, and Google Gemini Vision API.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.6,
+   "input_tokens": 1979
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.86,
+   "seconds": 0.53,
+   "input_tokens": 2384
+  }
+ },
+ {
+  "id": "c51",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "It also includes a LifeLine feature, a scrollable timeline where clips and notes are pinned to decades and themes alongside world events for context.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.67,
+   "input_tokens": 655
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.96,
+   "seconds": 0.41,
+   "input_tokens": 975
+  }
+ },
+ {
+  "id": "c52",
+  "label": "not_supported",
+  "origin": "near-miss",
+  "claim": "StoryCatcher is a module within the In My Time project that allows family members to record interviews with relatives directly on WhatsApp.",
+  "llm": {
+   "supported": false,
+   "p": 0.0,
+   "seconds": 0.84,
+   "input_tokens": 653
+  },
+  "jev": {
+   "supported": false,
+   "p": 0.05,
+   "seconds": 0.5,
+   "input_tokens": 973
+  }
+ },
+ {
+  "id": "c53",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "This solution was applied in both the In My Time and my30words projects.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.66,
+   "input_tokens": 753
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.82,
+   "seconds": 0.61,
+   "input_tokens": 1067
+  }
+ },
+ {
+  "id": "c54",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "These tests are automated and include API test suites, ensuring thorough testing of the application's security and functionality in a browser environment.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 1.03,
+   "input_tokens": 438
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.52,
+   "seconds": 0.51,
+   "input_tokens": 741
+  }
+ },
+ {
+  "id": "c55",
+  "label": "supported",
+  "origin": "answer",
+  "claim": "The database only stores timestamps and the author's position in the question sequence, with no column capable of holding an answer.",
+  "llm": {
+   "supported": true,
+   "p": 1.0,
+   "seconds": 0.59,
+   "input_tokens": 418
+  },
+  "jev": {
+   "supported": true,
+   "p": 0.97,
+   "seconds": 0.54,
+   "input_tokens": 708
+  }
+ }
+]

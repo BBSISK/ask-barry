@@ -1,0 +1,13 @@
+{
+ "date": "2026-10-01",
+ "by": "Barry, after seeing the judges' answers; each change settled by the quoted source text",
+ "items": [
+  {"id": "c15", "label": "not_supported", "reason": "Claim: Implant Group Leader until December 2019. career.md: October 2016 – August 2019."},
+  {"id": "c21", "label": "not_supported", "reason": "Claim: week calculated from the number of user interactions. Brief README: calculated purely from time (sign-up to now)."},
+  {"id": "c26", "label": "not_supported", "reason": "Claim: MCP projects are Ask Barry and Sentinel Agent. Sources: Ask Barry and Wall Inspector; Sentinel is an agent inside Wall Inspector, not a project."},
+  {"id": "c28", "label": "not_supported", "reason": "Claim: fallback to a custom free-form message. Source: fallback to a pre-approved template message."},
+  {"id": "c34", "label": "not_supported", "reason": "Claim: deploys via Azure. Flowchart: Render auto-deploys the Docker container after CI passes."},
+  {"id": "c44", "label": "not_supported", "reason": "Claim: Terraform in a single project. Sources: Ask Barry infra/ and Wall Inspector infra/main.tf (two projects). Not in the blind review sample; pass 2 label used."},
+  {"id": "c29", "label": "supported", "reason": "Review note said 'My error - should have been yes' but n was keyed; the description matches the source."}
+ ]
+}
