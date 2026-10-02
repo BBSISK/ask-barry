@@ -7,6 +7,11 @@ scoring stay identical, so a comparison measures the model, not the plumbing.
 
 Anthropic and Gemini are called over plain HTTPS (stdlib only): no extra SDKs to install, and
 the request each one receives is visible here.
+
+Amazon Bedrock (Stage 10b) is the exception: it uses boto3 (pure Python, dev-only), because AWS requests
+must be signed with your AWS credentials (Signature V4), and boto3 also handles `aws sso login` sessions,
+so no long-lived AWS keys are stored anywhere. One Bedrock provider class serves any Bedrock model through
+the Converse API (one request shape for every model): Claude Haiku 4.5 and Amazon Nova 2 Lite here.
 """
 import json
 import os
@@ -20,6 +25,9 @@ DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5"
 DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
 GEMINI_THINKING_ALLOWANCE = 2048      # Gemini's output budget can include "thinking" tokens
 RETRY_STATUSES = {429, 500, 502, 503, 504, 529}
+DEFAULT_AWS_REGION = "eu-west-1"                                  # Ireland
+DEFAULT_BEDROCK_CLAUDE = "eu.anthropic.claude-haiku-4-5-20251001-v1:0"   # EU cross-region inference profile
+DEFAULT_BEDROCK_NOVA = "eu.amazon.nova-2-lite-v1:0"
 
 
 class ProviderError(RuntimeError):
@@ -174,10 +182,68 @@ class GeminiProvider:
         return "".join(p.get("text", "") for p in parts if not p.get("thought"))
 
 
-PROVIDER_NAMES = ("azure-openai", "anthropic", "gemini")
+BEDROCK_HINTS = {
+    "AccessDeniedException": "your AWS role isn't allowed to call this model (check the IAM policy and that "
+                             "model access is enabled in the Bedrock console)",
+    "ValidationException": "the model ID or request was rejected (check the inference profile ID for your region)",
+    "ResourceNotFoundException": "model not available to this account (for Anthropic models: submit the use-case form in the Bedrock console; else check the ID and AWS_REGION)",
+    "ExpiredTokenException": "your AWS sign-in has expired: run  aws sso login --profile <your profile>",
+    "UnrecognizedClientException": "AWS doesn't recognise these credentials: run  aws sso login",
+}
 
 
-def provider_from_env(name, azure_client=None, env=None):
+@dataclass
+class BedrockProvider:
+    """Any Amazon Bedrock model via the Converse API (boto3). No JSON mode: like Claude direct, the prompt asks
+    for JSON and the parser tolerates stray text. Retries and timeouts are set on the boto3 client."""
+    client: object
+    model: str
+    name: str = "bedrock"
+    usage: Usage = field(default_factory=Usage)
+
+    def generate(self, messages, max_tokens=400):
+        system, rest = split_messages(messages)
+        start = time.time()
+        try:
+            resp = self.client.converse(
+                modelId=self.model,
+                system=[{"text": system}] if system else [],
+                messages=[{"role": m["role"], "content": [{"text": m["content"]}]} for m in rest],
+                inferenceConfig={"maxTokens": max_tokens, "temperature": 0})
+        except Exception as err:                       # botocore errors: give a readable reason, never a key
+            code = getattr(err, "response", {}).get("Error", {}).get("Code", type(err).__name__)
+            hint = BEDROCK_HINTS.get(code, "")
+            if type(err).__name__ in ("NoCredentialsError", "SSOTokenLoadError", "UnauthorizedSSOTokenError"):
+                hint = "no AWS sign-in found: run  aws sso login --profile <your profile>  and set AWS_PROFILE in .env"
+            detail = getattr(err, "response", {}).get("Error", {}).get("Message") or str(err)
+            raise ProviderError(f"Bedrock {code}: {hint + ' | AWS says: ' if hint else ''}{detail[:300]}") from None
+        u = resp.get("usage") or {}
+        self.usage = Usage(u.get("inputTokens", 0), u.get("outputTokens", 0), time.time() - start)
+        content = ((resp.get("output") or {}).get("message") or {}).get("content") or []
+        text = "".join(part.get("text", "") for part in content)
+        if not text:
+            raise ProviderError(f"Bedrock returned no text (stopReason: {resp.get('stopReason')})")
+        return text
+
+
+def bedrock_client(env=None):
+    """A bedrock-runtime client from your AWS profile (aws sso login), 45 s read timeout, 4 attempts."""
+    env = os.environ if env is None else env
+    try:
+        import boto3
+        from botocore.config import Config
+    except ImportError:
+        raise ProviderError("boto3 is not installed: pip install -r requirements-dev.txt") from None
+    session = boto3.Session(profile_name=env.get("AWS_PROFILE") or None,
+                            region_name=env.get("AWS_REGION") or DEFAULT_AWS_REGION)
+    return session.client("bedrock-runtime", config=Config(read_timeout=REQUEST_TIMEOUT, connect_timeout=10,
+                                                            retries={"total_max_attempts": 4, "mode": "standard"}))
+
+
+PROVIDER_NAMES = ("azure-openai", "anthropic", "gemini", "bedrock-claude", "bedrock-nova")
+
+
+def provider_from_env(name, azure_client=None, env=None, bedrock=None):
     """Build a provider by name from environment settings, or raise ProviderError saying what's missing."""
     env = os.environ if env is None else env
     if name == "azure-openai":
@@ -193,4 +259,9 @@ def provider_from_env(name, azure_client=None, env=None):
         if not env.get("GEMINI_API_KEY"):
             raise ProviderError("GEMINI_API_KEY is not set in .env")
         return GeminiProvider(env["GEMINI_API_KEY"], env.get("GEMINI_MODEL") or DEFAULT_GEMINI_MODEL)
+    if name in ("bedrock-claude", "bedrock-nova"):
+        key, default = (("BEDROCK_CLAUDE_MODEL", DEFAULT_BEDROCK_CLAUDE) if name == "bedrock-claude"
+                        else ("BEDROCK_NOVA_MODEL", DEFAULT_BEDROCK_NOVA))
+        client = bedrock_client(env) if bedrock is None else bedrock
+        return BedrockProvider(client, env.get(key) or default, name=name)
     raise ProviderError(f"unknown provider {name!r}; choose from {', '.join(PROVIDER_NAMES)}")

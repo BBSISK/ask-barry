@@ -8,7 +8,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TRAP_TERMS = ("kubernetes", "aws", "swift", "kotlin", "react", "phd", "mongodb", "kafka", "yolov8")
+TRAP_TERMS = ("kubernetes", "swift", "kotlin", "react", "phd", "mongodb", "kafka", "yolov8", "scrum", "agile")
+# "aws" left the list on 3 Oct 2026: trap-02 became answerable (aws-01) once Stage 10 documented real AWS work.
 
 
 def indexed_docs():

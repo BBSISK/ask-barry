@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-09-27",
+  "updated": "2026-10-03",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -463,10 +463,16 @@
       "expected": []
     },
     {
-      "id": "trap-02",
-      "type": "trap",
+      "id": "aws-01",
+      "type": "answerable",
       "question": "Does Barry have AWS experience?",
-      "expected": []
+      "expected": [
+        "ask-barry/README.md"
+      ],
+      "evidence": [
+        "Amazon Bedrock"
+      ],
+      "history": "Was trap-02 until Stage 10 documented real AWS work: Bedrock models evaluated through a least-privilege IAM role (3 Oct 2026). Replaced by trap-10."
     },
     {
       "id": "trap-03",
@@ -544,6 +550,13 @@
         ]
       },
       "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."
+    },
+    {
+      "id": "trap-10",
+      "type": "trap",
+      "question": "Has Barry worked in an Agile or Scrum team?",
+      "expected": [],
+      "history": "Added 3 Oct 2026 to replace trap-02. Barry confirmed no Agile/Scrum experience yet. Near-misses in the docs (Lean and Kaizen at Intel, 'iterative delivery', a 'sprint' maths lesson) make it a real test. Retire it when that experience is documented."
     }
   ]
 }

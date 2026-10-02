@@ -1,12 +1,15 @@
 """Check which answer-generation providers are set up, with one tiny request each (fractions of a cent).
 
 Usage:
-    python -m scripts.check_providers
+    python -m scripts.check_providers                              # all providers
+    python -m scripts.check_providers bedrock-claude bedrock-nova   # just these
 
 Settings in .env (keys never printed):
     ANTHROPIC_API_KEY, optional ANTHROPIC_MODEL   (default claude-haiku-4-5)
     GEMINI_API_KEY,    optional GEMINI_MODEL      (default gemini-3.5-flash)
     Azure OpenAI uses the AZURE_* settings the app already has.
+    Bedrock: sign in first with  aws sso login --profile <profile>; then AWS_PROFILE, optional AWS_REGION
+    (default eu-west-1), BEDROCK_CLAUDE_MODEL, BEDROCK_NOVA_MODEL (EU inference profile IDs by default).
 """
 import json
 import sys
@@ -40,15 +43,19 @@ def check(name, build, log=print):
     return True
 
 
-def main():
+def main(argv=None):
     try:
         from dotenv import load_dotenv
         load_dotenv()
     except ImportError:
         pass
     from app.providers import PROVIDER_NAMES, provider_from_env
+    names = (sys.argv[1:] if argv is None else argv) or list(PROVIDER_NAMES)
+    unknown = [n for n in names if n not in PROVIDER_NAMES]
+    if unknown:
+        sys.exit(f"Unknown provider(s): {', '.join(unknown)}. Choose from: {', '.join(PROVIDER_NAMES)}")
     print("Answer-generation providers:")
-    ready = [check(name, provider_from_env) for name in PROVIDER_NAMES]
+    ready = [check(name, provider_from_env) for name in names]
     if not all(ready):
         sys.exit("\nFix the NOT READY lines above, then run this again.")
     print("\nAll providers ready.")

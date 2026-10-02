@@ -214,3 +214,61 @@ def test_unavailable_provider_is_reported_as_not_run_not_as_regressions():
                                 ("g", "m-g", dead[0], s_dead, dead[1])], "judge-m", when="2026-09-27")
     assert "| g | `m-g` | not run: every call failed |" in report and "first error: ProviderError: boom" in report
     assert "| ID | a |" in report                                         # the dead provider isn't compared
+
+
+class FakeBedrock:
+    """Stands in for boto3's bedrock-runtime client."""
+    def __init__(self, reply=None, error=None):
+        self.calls, self.reply, self.error = [], reply, error
+
+    def converse(self, **kwargs):
+        self.calls.append(kwargs)
+        if self.error:
+            raise self.error
+        return self.reply
+
+
+def test_bedrock_converse_request_shape_and_usage():
+    from app.providers import BedrockProvider
+    client = FakeBedrock({"output": {"message": {"role": "assistant", "content": [{"text": ANSWER_JSON}]}},
+                          "usage": {"inputTokens": 900, "outputTokens": 40}, "stopReason": "end_turn"})
+    p = BedrockProvider(client, "eu.amazon.nova-2-lite-v1:0", name="bedrock-nova")
+    assert p.generate(MESSAGES, max_tokens=300) == ANSWER_JSON
+    call = client.calls[0]
+    assert call["modelId"] == "eu.amazon.nova-2-lite-v1:0" and call["inferenceConfig"] == {"maxTokens": 300, "temperature": 0}
+    assert call["system"][0]["text"] and all(m["role"] != "system" for m in call["messages"])
+    assert call["messages"][0]["content"] == [{"text": MESSAGES[-1]["content"]}]
+    assert (p.usage.input_tokens, p.usage.output_tokens) == (900, 40)
+
+
+def test_bedrock_errors_are_readable_and_never_crash_the_eval():
+    from app.providers import BedrockProvider
+
+    class ClientError(Exception):
+        def __init__(self, code):
+            self.response = {"Error": {"Code": code, "Message": "secret-free message"}}
+
+    class NoCredentialsError(Exception):
+        pass
+    with pytest.raises(ProviderError, match="AccessDeniedException: your AWS role"):
+        BedrockProvider(FakeBedrock(error=ClientError("AccessDeniedException")), "m").generate(MESSAGES)
+    with pytest.raises(ProviderError, match="aws sso login"):
+        BedrockProvider(FakeBedrock(error=NoCredentialsError()), "m").generate(MESSAGES)
+    with pytest.raises(ProviderError, match="no text"):
+        BedrockProvider(FakeBedrock({"output": {"message": {"content": []}}, "stopReason": "max_tokens"}), "m").generate(MESSAGES)
+
+
+def test_bedrock_providers_from_env_use_eu_profiles_by_default():
+    fake = FakeBedrock()
+    claude = provider_from_env("bedrock-claude", env={}, bedrock=fake)
+    nova = provider_from_env("bedrock-nova", env={"BEDROCK_NOVA_MODEL": "eu.amazon.nova-x"}, bedrock=fake)
+    assert claude.model.startswith("eu.anthropic.claude-haiku-4-5") and claude.name == "bedrock-claude"
+    assert nova.model == "eu.amazon.nova-x" and nova.name == "bedrock-nova"
+
+
+def test_bedrock_client_uses_profile_region_and_timeouts():
+    pytest.importorskip("boto3")
+    from app.providers import bedrock_client
+    c = bedrock_client(env={"AWS_REGION": "eu-west-1"})
+    assert c.meta.region_name == "eu-west-1" and c.meta.config.read_timeout == 45
+    assert c.meta.config.retries["total_max_attempts"] == 4 and c.meta.config.retries["mode"] == "standard"

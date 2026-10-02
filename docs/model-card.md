@@ -57,7 +57,7 @@ The job-ad page doesn't store or log the pasted ad either (it may be someone els
 
 ## Evaluation
 
-The golden set has 47 questions (one added with the career page on 28 September 2026; the results below predate it). 39 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
+The golden set has 48 questions (one added with the career page on 28 September 2026, and one trap swapped for a new one in Stage 10 when its skill became documented; the results below predate these changes). 40 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
 
 **Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
@@ -83,6 +83,8 @@ The golden set has 47 questions (one added with the career page on 28 September 
 
 **Judges checked against hand labels** (1 October 2026, 55 claims: 40 from real answers, 15 with one detail deliberately changed): against my blind labels the gpt-4.1-mini judge scored 89% and TypeSafe Jev 87%, each with 1 false support. After adjudicating 7 claims against the source text (done after seeing the judges' answers, so both views are reported), the LLM judge scored 98% (1 false support) and Jev 100%, at about a seventh of the cost. My own labelling passes scored 76% and 85%. Details and caveats are in the README.
 
+**Same evaluation on AWS Bedrock** (3 October 2026, 47 questions, identical retrieved sections): the live gpt-4.1-mini, Claude Haiku 4.5 and Amazon Nova 2 Lite each passed 45 of 47 with every trap question passed. Reading the failures by hand, the live model's were all true-but-uncited, while Claude and Nova each attributed one real fact to the wrong project. The live app stays on Azure OpenAI. The AWS models are called only from local evaluation scripts, through an IAM role limited to those two models.
+
 ## Known limitations
 
 - **Self-reported career history.** The career page and the profile README are Barry's own summary of himself, not evidence of the work. The job-ad agent labels a requirement supported only by them "Listed on profile" rather than "Evidenced".
@@ -91,6 +93,7 @@ The golden set has 47 questions (one added with the career page on 28 September 
 - **True but uncited.** An answer occasionally includes a correct fact from a retrieved section it didn't cite, so the reader can't check it from the links. The evaluation counts these separately from invented claims.
 - **Run-to-run variation.** Even at temperature 0, results vary by a few questions between runs.
 - **Judge checked, not proven.** The faithfulness judge is the same model family as the answering model. Stage 9a measured it against 55 hand-labelled claims and a judge of a different kind (TypeSafe Jev): they reached the same verdict on all but one claim. That is a small set, so the deterministic checks and published answers still carry the headline numbers.
+- **Wrong-project attribution is under-classified by the judge.** A claim that pins a real fact on the wrong project was scored as "true but uncited" or as an unmatched quote, not as invented. It still counts as a failure, but the failure reasons need a human read.
 - **Small test set, English only.** With under 50 questions, one question moves a percentage by 2–3 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.

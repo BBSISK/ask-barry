@@ -2,3 +2,4 @@
 pytest>=8.0
 python-dotenv>=1.0   # lets `flask run` read your local .env
 cryptography<49      # pulled in by mcp; 49+ has no pre-built wheel for Intel Macs
+boto3[crt]>=1.40     # Stage 10b: Amazon Bedrock comparison; [crt] is needed for `aws login` sign-ins (local scripts only, not production)

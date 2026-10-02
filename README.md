@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry-7dkz.onrender.com
 
-## Current status: Stage 9a complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels)
+## Current status: Stage 10b complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -40,6 +40,8 @@ A portfolio assistant that answers questions about my software projects using **
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
 | 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | Done: CLI, evaluation ([results](#job-ad-evidence-agent-stage-8)) and web page (`/evidence`) |
 | 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
+| 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
+| 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
 
 ## Architecture
 
@@ -370,6 +372,39 @@ python -m scripts.build_judge_set          # 40 real claims + 15 near-misses -> 
 python -m scripts.label_claims             # label them (also --second-pass and --review)
 python -m scripts.evaluate_judges --save   # both judges vs the labels; --from-results re-scores without API calls
 ```
+
+## Azure and AWS Bedrock compared (Stage 10)
+
+Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through **Amazon Bedrock** on AWS, so the comparison measures the model and the cloud, not the plumbing.
+
+**10a, the AWS account, set up the way a team would** (eu-west-1, Ireland):
+- The root user is locked with MFA and used only for account-level jobs; budget alerts email at the first cent and at $5 a month.
+- Day-to-day work uses an IAM user with MFA. The code never uses it directly: it assumes an IAM role, `AskBarryBedrock`, whose inline policy allows `bedrock:InvokeModel` on exactly two models (Claude Haiku 4.5 and Amazon Nova 2 Lite, through their EU cross-region inference profiles) and nothing else.
+- No AWS keys are stored anywhere. `aws login` gives the command line a short-lived session, and boto3 turns it into one-hour role credentials (`AWS_PROFILE` in `.env`).
+- I kept the account on the free plan: enabling IAM Identity Center would have created an AWS Organization, which moves the account to paid and ends the free-tier credits, so a plain IAM user and role do the same job here.
+
+**10b, Bedrock in the provider comparison:** `app/providers.py` gained a `BedrockProvider` that calls the Bedrock **Converse API** through boto3, one request shape for any Bedrock model. Errors come back readable (expired sign-in, access denied, Anthropic's one-time use-case form) instead of as stack traces.
+
+```bash
+aws login --profile <your IAM user profile>
+python -m scripts.check_providers bedrock-claude bedrock-nova
+python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedrock-nova --save
+```
+
+**Result (3 October 2026, 47 questions, the same retrieved sections for every model, judge gpt-4.1-mini):**
+
+| Model | Cloud | Passing | Faithful | True-but-uncited | Trap questions | Median latency | Tokens out per answer |
+|---|---|---|---|---|---|---|---|
+| `gpt-4.1-mini` (live) | Azure OpenAI | 45 of 47 | 95% | 2 | 8 of 8 | 1.2s | 77 |
+| Claude Haiku 4.5 | AWS Bedrock | 45 of 47 | 95% | 1 | 8 of 8 | 1.8s | 112 |
+| Amazon Nova 2 Lite | AWS Bedrock | 45 of 47 | 95% | 2 | 8 of 8 | 0.7s | 76 |
+
+**What I take from it:**
+- **The scores tie; reading the failures separates them.** All of the live model's failures were true but uncited. Claude and Nova each had one claim that **attached a real fact to the wrong project**: Claude said this project deploys a Docker container (the Docker deployment belongs to another project), and Nova put one project's localisation into another (in both of its runs). That is a more serious error than a missing citation.
+- **The judge under-classified both.** It filed one as "true but uncited" and the other as an unmatched quote, so wrong-project attribution is now a known limit of the judge (model card), and a candidate check for the evaluator.
+- **Nova was the fastest** (0.7 s median), Claude wrote the longest answers, and no model invented any of the trap skills.
+- **The live app stays on Azure OpenAI:** equal accuracy, its failures were the least serious, and it needs no second cloud.
+- Single runs: the live model scored 43 and Nova 46 in a first run the day before, so gaps of one to three questions are noise.
 
 ## Keeping the index fresh (Stage 7)
 
