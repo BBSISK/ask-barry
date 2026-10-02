@@ -197,7 +197,7 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 
 ## Deployment
 
-`render.yaml` defines the Render web service (free plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+`render.yaml` defines the Render web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 

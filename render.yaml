@@ -3,7 +3,7 @@ services:
   - type: web
     name: ask-barry
     runtime: python
-    plan: free
+    plan: starter
     region: frankfurt
     buildCommand: pip install -r requirements.txt
     # ONE worker: the job-ad agent keeps its jobs in process memory (Stage 8d). Threads serve the page's
