@@ -1,5 +1,8 @@
-"""HTTP routes: the question page, the answer API, the job-ad evidence agent and the health check."""
+"""HTTP routes: the question page, the answer API, the job-ad evidence agent, health and readiness checks."""
+import concurrent.futures
 import logging
+import os
+import time
 
 from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
 
@@ -17,6 +20,41 @@ def is_github_link(url):
     """Shared evidence maps only ever link to github.com (the sources the agent verified)."""
     return isinstance(url, str) and url.startswith("https://github.com/")
 log = logging.getLogger(__name__)
+
+
+def get_search_client():
+    """Azure AI Search client: injected (tests), from answerer, or from environment."""
+    client = current_app.extensions.get("search_client")
+    if client is not None:
+        return client
+    answerer = current_app.extensions.get("answerer")
+    if answerer is not None and hasattr(answerer, "retriever"):
+        retriever_client = getattr(answerer.retriever, "client", None)
+        if retriever_client is not None:
+            return retriever_client
+    if current_app.config["ANSWERING_FROM_ENV"] and azure_configured():
+        from .azure_search import search_client_from_env
+        client = search_client_from_env()
+        current_app.extensions["search_client"] = client
+        return client
+    return None
+
+
+def get_model_provider():
+    """Default model provider: injected (tests), from answerer, or from environment."""
+    provider = current_app.extensions.get("model_provider")
+    if provider is not None:
+        return provider
+    answerer = current_app.extensions.get("answerer")
+    if answerer is not None and hasattr(answerer, "provider"):
+        return answerer.provider
+    if current_app.config["ANSWERING_FROM_ENV"] and azure_configured():
+        from .answering import azure_chat_client
+        from .providers import AzureOpenAIProvider
+        provider = AzureOpenAIProvider(azure_chat_client(), os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"])
+        current_app.extensions["model_provider"] = provider
+        return provider
+    return None
 
 
 def get_answerer():
@@ -243,3 +281,116 @@ def health():
         features={"search": live, "embeddings": live, "generation": live, "job_agent": bool(agent_available())},
         retrieval="azure-hybrid" if live else None,
     )
+
+
+READY_TIMEOUT = 3.0
+READY_PING_MESSAGES = [
+    {"role": "system", "content": 'Reply with a JSON object only: {"ok": true}'},
+    {"role": "user", "content": "ping"},
+]
+
+
+def check_search_live(client, timeout=READY_TIMEOUT):
+    if client is None:
+        raise RuntimeError("search client not configured")
+    if hasattr(client, "search") and callable(client.search):
+        try:
+            hits = client.search(search_text="*", top=1, select=["id"], connection_timeout=timeout, read_timeout=timeout)
+        except TypeError:
+            try:
+                hits = client.search(search_text="*", top=1, select=["id"])
+            except TypeError:
+                hits = client.search(search_text="*")
+        if hasattr(hits, "__iter__"):
+            next(iter(hits), None)
+        return
+    if hasattr(client, "get_document_count") and callable(client.get_document_count):
+        try:
+            client.get_document_count(connection_timeout=timeout, read_timeout=timeout)
+        except TypeError:
+            client.get_document_count()
+        return
+    raise RuntimeError("search client has no search or get_document_count method")
+
+
+def check_provider_live(provider, timeout=READY_TIMEOUT):
+    if provider is None:
+        raise RuntimeError("model provider not configured")
+    if hasattr(provider, "generate") and callable(provider.generate):
+        try:
+            provider.generate(READY_PING_MESSAGES, max_tokens=16)
+        except TypeError:
+            provider.generate(READY_PING_MESSAGES)
+        return
+    if hasattr(provider, "chat") and hasattr(provider.chat, "completions"):
+        model = getattr(provider, "model", None) or os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4.1-mini")
+        try:
+            provider.chat.completions.create(
+                model=model,
+                messages=READY_PING_MESSAGES,
+                max_completion_tokens=16,
+                response_format={"type": "json_object"},
+                timeout=timeout,
+            )
+        except TypeError:
+            try:
+                provider.chat.completions.create(
+                    model=model,
+                    messages=READY_PING_MESSAGES,
+                    max_completion_tokens=16,
+                )
+            except TypeError:
+                provider.chat.completions.create(
+                    model=model,
+                    messages=READY_PING_MESSAGES,
+                )
+        return
+    if callable(provider):
+        try:
+            provider(READY_PING_MESSAGES)
+        except TypeError:
+            provider()
+        return
+    raise RuntimeError("model provider has no generate or chat method")
+
+
+@bp.get("/ready")
+def ready():
+    """Readiness probe: makes cheap live calls to Azure AI Search and the default model provider."""
+    search_client = get_search_client()
+    provider = get_model_provider()
+
+    timeout = current_app.config.get("READY_TIMEOUT", READY_TIMEOUT)
+    failed = []
+
+    start = time.monotonic()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        search_future = executor.submit(check_search_live, search_client, timeout)
+        provider_future = executor.submit(check_provider_live, provider, timeout)
+
+        try:
+            search_future.result(timeout=timeout)
+        except Exception:
+            log.warning("readiness check failed for search", exc_info=True)
+            failed.append("search")
+
+        remaining = max(0.1, timeout - (time.monotonic() - start))
+        try:
+            provider_future.result(timeout=remaining)
+        except Exception:
+            log.warning("readiness check failed for model provider", exc_info=True)
+            failed.append("provider")
+
+    if failed:
+        return jsonify(
+            status="unavailable",
+            ready=False,
+            failed=failed,
+            error=f"Dependency check failed: {', '.join(failed)}",
+        ), 503
+
+    return jsonify(
+        status="ready",
+        ready=True,
+        checks={"search": "ok", "provider": "ok"},
+    ), 200

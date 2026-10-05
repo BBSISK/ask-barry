@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from app import create_app
@@ -15,6 +17,69 @@ def test_health_reports_no_ai_features_yet(client):
     # Honesty check: nothing claims to be live before it is built.
     features = client.get("/health").get_json()["features"]
     assert features == {"search": False, "embeddings": False, "generation": False, "job_agent": False}
+
+
+def test_ready_ok():
+    mock_search = MagicMock()
+    mock_search.search.return_value = [{"id": "chunk-1"}]
+    mock_provider = MagicMock()
+    mock_provider.generate.return_value = '{"ok": true}'
+
+    app = create_app("testing", search_client=mock_search, model_provider=mock_provider)
+    client = app.test_client()
+
+    resp = client.get("/ready")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data["status"] == "ready"
+    assert data["ready"] is True
+    assert data["checks"] == {"search": "ok", "provider": "ok"}
+    assert mock_search.search.called
+    assert mock_provider.generate.called
+
+
+def test_ready_search_down():
+    mock_search = MagicMock()
+    mock_search.search.side_effect = RuntimeError("Azure AI Search unavailable: secret-api-key-12345")
+    mock_provider = MagicMock()
+    mock_provider.generate.return_value = '{"ok": true}'
+
+    app = create_app("testing", search_client=mock_search, model_provider=mock_provider)
+    client = app.test_client()
+
+    resp = client.get("/ready")
+    assert resp.status_code == 503
+    data = resp.get_json()
+    assert data["status"] == "unavailable"
+    assert data["ready"] is False
+    assert "search" in data["failed"]
+    assert "provider" not in data["failed"]
+    assert "search" in data["error"]
+    assert "secret-api-key-12345" not in resp.get_data(as_text=True)
+    assert "Traceback" not in resp.get_data(as_text=True)
+    assert "RuntimeError" not in resp.get_data(as_text=True)
+
+
+def test_ready_provider_down():
+    mock_search = MagicMock()
+    mock_search.search.return_value = [{"id": "chunk-1"}]
+    mock_provider = MagicMock()
+    mock_provider.generate.side_effect = RuntimeError("Azure OpenAI rate limited: secret-openai-key-abcde")
+
+    app = create_app("testing", search_client=mock_search, model_provider=mock_provider)
+    client = app.test_client()
+
+    resp = client.get("/ready")
+    assert resp.status_code == 503
+    data = resp.get_json()
+    assert data["status"] == "unavailable"
+    assert data["ready"] is False
+    assert "provider" in data["failed"]
+    assert "search" not in data["failed"]
+    assert "provider" in data["error"]
+    assert "secret-openai-key-abcde" not in resp.get_data(as_text=True)
+    assert "Traceback" not in resp.get_data(as_text=True)
+    assert "RuntimeError" not in resp.get_data(as_text=True)
 
 
 def test_index_page_renders(client):
