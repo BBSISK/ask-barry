@@ -11,7 +11,6 @@ A portfolio assistant that answers questions about my software projects using **
 - Azure OpenAI (`gpt-4.1-mini`) writes a short answer that must cite the retrieved sections.
 - The code refuses any answer without a valid citation.
 - `/health` reports search, embeddings and generation as `true` when the Azure settings are present.
-- `/ready` verifies operational readiness with cheap live calls to Azure AI Search and the default model provider (`gpt-4.1-mini`) with short timeouts.
 
 **Built so far** ([model card](docs/model-card.md)):
 - Flask app with CI and Render deployment
@@ -201,13 +200,6 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 ## Deployment
 
 `render.yaml` defines the Render web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
-
-### Health and readiness probes
-
-- **`GET /health`** (liveness): Used by Render's health check and by CI. Reports honestly what is configured and live (status `ok`, stage, feature flags and retrieval mode) without making downstream network calls.
-- **`GET /ready`** (readiness): Makes cheap live calls with short timeouts (3s) to both Azure AI Search (querying the index) and the default model provider (`gpt-4.1-mini`).
-  - Returns `200` with JSON `{"status": "ready", "ready": true, "checks": {"search": "ok", "provider": "ok"}}` if both respond.
-  - Returns `503` with JSON naming which dependency failed (e.g. `{"status": "unavailable", "ready": false, "failed": ["search"], "error": "Dependency check failed: search"}`), with no secrets or stack traces leaked.
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 

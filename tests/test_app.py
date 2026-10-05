@@ -107,3 +107,20 @@ def test_production_starts_with_secret_key(monkeypatch):
 def test_unknown_config_rejected():
     with pytest.raises(ValueError):
         create_app("staging")
+
+
+def test_ready_returns_within_timeout_when_a_dependency_hangs():
+    import time
+    mock_search = MagicMock()
+    mock_search.search.return_value = [{"id": "chunk-1"}]
+    mock_provider = MagicMock()
+    mock_provider.generate.side_effect = lambda *a, **k: time.sleep(6)
+
+    app = create_app("testing", search_client=mock_search, model_provider=mock_provider)
+    started = time.monotonic()
+    resp = app.test_client().get("/ready")
+    elapsed = time.monotonic() - started
+
+    assert resp.status_code == 503
+    assert resp.get_json()["failed"] == ["provider"]
+    assert elapsed < 4.5, f"/ready took {elapsed:.1f}s; the timeout should cap it near 3s"

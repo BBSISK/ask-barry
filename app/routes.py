@@ -364,7 +364,8 @@ def ready():
     failed = []
 
     start = time.monotonic()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+    try:
         search_future = executor.submit(check_search_live, search_client, timeout)
         provider_future = executor.submit(check_provider_live, provider, timeout)
 
@@ -380,6 +381,9 @@ def ready():
         except Exception:
             log.warning("readiness check failed for model provider", exc_info=True)
             failed.append("provider")
+    finally:
+        # Don't wait for a hung dependency call: the timeout must cap the response time.
+        executor.shutdown(wait=False, cancel_futures=True)
 
     if failed:
         return jsonify(
