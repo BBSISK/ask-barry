@@ -124,3 +124,22 @@ def test_ready_returns_within_timeout_when_a_dependency_hangs():
     assert resp.status_code == 503
     assert resp.get_json()["failed"] == ["provider"]
     assert elapsed < 4.5, f"/ready took {elapsed:.1f}s; the timeout should cap it near 3s"
+
+
+def test_index_shows_ten_example_questions_all_from_the_golden_set():
+    """ASK-39: the chips are what visitors try first, so each must be a question whose answer is evaluated."""
+    import json
+    import re
+    from pathlib import Path
+
+    from tests.test_answering import StubAnswerer
+
+    html = create_app("testing", answerer=StubAnswerer()).test_client().get("/").get_data(as_text=True)
+    block = html.split('class="examples"', 1)[1].split("</div>", 1)[0]
+    chips = [re.sub(r"\s+", " ", c).strip() for c in re.findall(r"<button[^>]*>(.*?)</button>", block, flags=re.S)]
+    assert len(chips) == 10 and len(set(chips)) == 10
+
+    golden = json.loads((Path(__file__).resolve().parents[1] / "eval" / "golden_set.json").read_text(encoding="utf-8"))
+    answerable = {q["question"] for q in golden["questions"] if q["type"] == "answerable"}
+    for chip in chips:
+        assert chip in answerable, f"not an evaluated, answerable golden-set question: {chip}"
