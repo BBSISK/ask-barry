@@ -154,23 +154,20 @@ class Answerer:
         return Answer(question, text, supported, sources, len(results), self.deployment, cited_texts, uncited_texts)
 
 
-AZURE_SETTINGS = (
-    "AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_EMBED_DEPLOYMENT",
-    "AZURE_OPENAI_CHAT_DEPLOYMENT", "AZURE_SEARCH_ENDPOINT", "AZURE_SEARCH_API_KEY",
-)
-
-
 def azure_configured(env=None):
+    """True when every setting the current AZURE_AUTH_MODE needs is present (see app/azure_auth.py)."""
+    from app.azure_auth import required_settings
     env = os.environ if env is None else env
-    return all(env.get(name, "").strip() for name in AZURE_SETTINGS)
+    return all(env.get(name, "").strip() for name in required_settings(env))
 
 
 def azure_chat_client(max_retries=2):
     """OpenAI client for the Azure v1 endpoint. Retries back off on 429 rate limits."""
     from openai import OpenAI
 
+    from app.azure_auth import openai_api_key
     from app.embeddings import openai_base_url
-    return OpenAI(api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    return OpenAI(api_key=openai_api_key(),
                   base_url=openai_base_url(os.environ["AZURE_OPENAI_ENDPOINT"]),
                   max_retries=max_retries)
 

@@ -28,8 +28,10 @@ class AzureOpenAIEmbedder:
         self.deployment = deployment or os.environ["AZURE_OPENAI_EMBED_DEPLOYMENT"]
         if client is None:
             from openai import OpenAI
+
+            from app.azure_auth import openai_api_key
             client = OpenAI(
-                api_key=api_key or os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=api_key or openai_api_key(),
                 base_url=openai_base_url(endpoint or os.environ["AZURE_OPENAI_ENDPOINT"]),
             )
         self.client = client

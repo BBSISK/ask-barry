@@ -2,6 +2,7 @@ Flask>=3.0,<4
 gunicorn>=22.0
 openai>=1.40               # Azure OpenAI via the v1 endpoint (Stage 3+)
 azure-search-documents>=11.5   # Azure AI Search (Stage 3+)
+azure-identity>=1.19           # Entra ID sign-in, no API keys (ASK-8)
 mcp>=1.27,<2                      # Ask Barry MCP server; the Stage 8 agent calls it on the live site too
 agent-framework-core>=1.19,<2     # Stage 8 job-ad evidence agent (Microsoft Agent Framework)
 agent-framework-openai>=1.14,<2   # its OpenAI / Azure OpenAI chat client

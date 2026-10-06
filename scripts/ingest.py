@@ -91,8 +91,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     load_env()
-    missing = [n for n in ("AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_EMBED_DEPLOYMENT",
-                           "AZURE_SEARCH_ENDPOINT", "AZURE_SEARCH_API_KEY") if not os.getenv(n)]
+    from app.azure_auth import required_settings
+    missing = [n for n in required_settings() if n != "AZURE_OPENAI_CHAT_DEPLOYMENT" and not os.getenv(n)]
     if missing:
         sys.exit(f"Missing settings: {', '.join(missing)}.\n"
                  "  Locally: add them to .env (check with python -m scripts.check_azure).\n"

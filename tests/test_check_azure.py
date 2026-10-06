@@ -21,9 +21,24 @@ def test_chat_deployment_is_optional():
 
 def test_missing_settings_lists_blank_and_absent():
     env = {name: "x" for name in REQUIRED}
-    env["AZURE_SEARCH_API_KEY"] = "   "
+    env["AZURE_SEARCH_ENDPOINT"] = "   "
     del env["AZURE_OPENAI_ENDPOINT"]
-    assert missing_settings(env) == ["AZURE_OPENAI_ENDPOINT", "AZURE_SEARCH_API_KEY"]
+    assert missing_settings(env) == ["AZURE_OPENAI_ENDPOINT", "AZURE_SEARCH_ENDPOINT"]
+
+
+def test_entra_mode_needs_no_keys():
+    env = {name: "x" for name in REQUIRED}
+    assert missing_settings(env) == []
+    assert missing_settings({**env, "AZURE_AUTH_MODE": "entra"}) == []
+
+
+def test_key_mode_needs_both_keys():
+    env = {name: "x" for name in REQUIRED} | {"AZURE_AUTH_MODE": "key", "AZURE_SEARCH_API_KEY": "  "}
+    assert missing_settings(env) == ["AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY"]
+
+
+def test_client_secret_is_never_printed_in_full():
+    assert "SECRET" not in describe("AZURE_CLIENT_SECRET", "abcdSECRETxyz1234")
 
 
 def test_secrets_are_never_printed_in_full():

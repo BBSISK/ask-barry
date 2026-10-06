@@ -1,4 +1,7 @@
-"""Stage 3 smoke test: prove the Azure resources are reachable with your keys.
+"""Stage 3 smoke test: prove the Azure resources are reachable with your sign-in.
+
+Signs in the same way the app does (AZURE_AUTH_MODE, see app/azure_auth.py): Entra ID by default
+(run `az login` first), or API keys with AZURE_AUTH_MODE=key.
 
 Usage (after filling in the AZURE_* values in .env):
     python -m scripts.check_azure
@@ -14,17 +17,16 @@ import sys
 
 REQUIRED = (
     "AZURE_OPENAI_ENDPOINT",
-    "AZURE_OPENAI_API_KEY",
     "AZURE_OPENAI_EMBED_DEPLOYMENT",
     "AZURE_SEARCH_ENDPOINT",
-    "AZURE_SEARCH_API_KEY",
 )
 # Optional until Stage 5 (answers). Left blank, the chat check is skipped, e.g.
 # while a quota request for the chat model is pending.
 OPTIONAL = ("AZURE_OPENAI_CHAT_DEPLOYMENT",)
-SECRET_NAMES = {"AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY"}
+SECRET_NAMES = {"AZURE_OPENAI_API_KEY", "AZURE_SEARCH_API_KEY", "AZURE_CLIENT_SECRET"}
 EXPECTED_EMBED_DIMS = 1536   # text-embedding-3-small
 
+from app.azure_auth import KEY_SETTINGS, auth_mode, openai_api_key, search_credential  # noqa: E402
 from app.embeddings import openai_base_url  # noqa: E402  (re-exported for tests)
 
 
@@ -37,8 +39,13 @@ def load_env():
     load_dotenv()
 
 
+def required(env):
+    """REQUIRED, plus the two API keys in key mode. Entra mode needs no secrets here."""
+    return REQUIRED + (KEY_SETTINGS if auth_mode(env) == "key" else ())
+
+
 def missing_settings(env):
-    return [name for name in REQUIRED if not env.get(name, "").strip()]
+    return [name for name in required(env) if not env.get(name, "").strip()]
 
 
 def describe(name, value):
@@ -66,10 +73,9 @@ def check_chat(client, deployment):
     return f"model replied {text[:40]!r}" if text else "call succeeded (empty reply; fine for a smoke test)"
 
 
-def check_search(endpoint, key):
-    from azure.core.credentials import AzureKeyCredential
+def check_search(endpoint, credential):
     from azure.search.documents.indexes import SearchIndexClient
-    stats = SearchIndexClient(endpoint, AzureKeyCredential(key)).get_service_statistics()
+    stats = SearchIndexClient(endpoint, credential).get_service_statistics()
     counters = stats["counters"] if isinstance(stats, dict) else stats.counters
     indexes = counters["index_counter"] if isinstance(counters, dict) else counters.index_counter
     usage = indexes["usage"] if isinstance(indexes, dict) else indexes.usage
@@ -79,8 +85,14 @@ def check_search(endpoint, key):
 def main():
     load_env()
     env = os.environ
+    mode = auth_mode(env)
+    if mode == "entra":
+        who = "service principal (AZURE_CLIENT_ID)" if env.get("AZURE_CLIENT_ID") else "your az login"
+        print(f"Sign-in: Entra ID, as {who}")
+    else:
+        print("Sign-in: API keys (AZURE_AUTH_MODE=key)")
     print("Settings:")
-    for name in REQUIRED + OPTIONAL:
+    for name in required(env) + OPTIONAL:
         value = env.get(name, "")
         blank = "not set (optional until Stage 5)" if name in OPTIONAL else "MISSING"
         print(f"  {name:<32} {describe(name, value) if value else blank}")
@@ -89,12 +101,12 @@ def main():
         sys.exit(f"\nAdd these to .env first: {', '.join(missing)}")
 
     from openai import OpenAI
-    client = OpenAI(api_key=env["AZURE_OPENAI_API_KEY"], base_url=openai_base_url(env["AZURE_OPENAI_ENDPOINT"]))
+    client = OpenAI(api_key=openai_api_key(env), base_url=openai_base_url(env["AZURE_OPENAI_ENDPOINT"]))
 
     chat_deployment = env.get("AZURE_OPENAI_CHAT_DEPLOYMENT", "").strip()
     checks = [
         ("Azure OpenAI embeddings", lambda: check_embeddings(client, env["AZURE_OPENAI_EMBED_DEPLOYMENT"])),
-        ("Azure AI Search", lambda: check_search(env["AZURE_SEARCH_ENDPOINT"], env["AZURE_SEARCH_API_KEY"])),
+        ("Azure AI Search", lambda: check_search(env["AZURE_SEARCH_ENDPOINT"], search_credential(env))),
     ]
     if chat_deployment:
         checks.insert(1, ("Azure OpenAI chat", lambda: check_chat(client, chat_deployment)))

@@ -37,6 +37,7 @@ jobs:
         run: python -m scripts.chunk_corpus
       - name: Sync Azure AI Search (refuses to delete more than 30% of the index)
         env:
+          AZURE_AUTH_MODE: key             # keys until this job signs in with GitHub OIDC (ASK-8 follow-up)
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}
@@ -45,6 +46,7 @@ jobs:
         run: python -m scripts.ingest
       - name: Check retrieval quality on the golden set (fails, and emails you, if recall drops)
         env:
+          AZURE_AUTH_MODE: key             # keys until this job signs in with GitHub OIDC (ASK-8 follow-up)
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}

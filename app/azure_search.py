@@ -165,20 +165,22 @@ SEARCH_RETRIES = 2
 
 
 def search_client_from_env(index_name=None):
-    from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchClient
+
+    from app.azure_auth import search_credential
     return SearchClient(
         endpoint=os.environ["AZURE_SEARCH_ENDPOINT"],
         index_name=index_name or os.environ.get("AZURE_SEARCH_INDEX", "ask-barry-chunks"),
-        credential=AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"]),
+        credential=search_credential(),
         connection_timeout=SEARCH_CONNECT_TIMEOUT, read_timeout=SEARCH_READ_TIMEOUT, retry_total=SEARCH_RETRIES,
     )
 
 
 def index_client_from_env():
-    from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
-    return SearchIndexClient(os.environ["AZURE_SEARCH_ENDPOINT"], AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"]))
+
+    from app.azure_auth import search_credential
+    return SearchIndexClient(os.environ["AZURE_SEARCH_ENDPOINT"], search_credential())
 
 
 class AzureSearchRetriever:

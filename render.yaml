@@ -16,20 +16,25 @@ services:
         value: production
       - key: SECRET_KEY
         generateValue: true         # Render generates it; never stored in the repo
-      # Stage 5: Azure settings. "sync: false" = the values are entered in the
-      # Render dashboard, never committed. Use a Search QUERY key here (read-only),
-      # not the admin key used locally for ingestion.
-      - key: AZURE_OPENAI_ENDPOINT
+      # Azure settings. "sync: false" = the values are entered in the Render dashboard, never
+      # committed, and a NEW service created from this file starts with them EMPTY (6 Oct 2026).
+      # ASK-8: no API keys. The app signs in with Entra ID as the ask-barry-render service principal,
+      # which can only read the index and call the models (roles in infra/identity.tf).
+      - key: AZURE_AUTH_MODE
+        value: entra
+      - key: AZURE_TENANT_ID
         sync: false
-      - key: AZURE_OPENAI_API_KEY
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
         sync: false
       - key: AZURE_OPENAI_EMBED_DEPLOYMENT
         value: text-embedding-3-small
       - key: AZURE_OPENAI_CHAT_DEPLOYMENT
         value: gpt-4.1-mini
       - key: AZURE_SEARCH_ENDPOINT
-        sync: false
-      - key: AZURE_SEARCH_API_KEY
         sync: false
       - key: AZURE_SEARCH_INDEX
         value: ask-barry-chunks
