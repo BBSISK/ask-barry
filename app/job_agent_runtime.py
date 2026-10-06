@@ -72,8 +72,9 @@ RUN_TIMEOUT = LIMITS["max_duration_seconds"] + 30     # hard stop for one job ad
 def openai_async_client():
     from openai import AsyncOpenAI
 
+    from app.azure_auth import openai_async_api_key
     from app.embeddings import openai_base_url
-    return AsyncOpenAI(api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    return AsyncOpenAI(api_key=openai_async_api_key(),
                        base_url=openai_base_url(os.environ["AZURE_OPENAI_ENDPOINT"]),
                        timeout=MODEL_CALL_TIMEOUT, max_retries=3)
 

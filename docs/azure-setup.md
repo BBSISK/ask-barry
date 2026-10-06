@@ -91,6 +91,34 @@ PASS  Azure OpenAI chat: model replied 'ready'
 PASS  Azure AI Search: reachable, 0 index(es) so far
 ```
 
+## Step 8: Sign in with Entra ID instead of keys (ASK-8)
+
+Keys are all-or-nothing: anyone holding the Search admin key can delete the index. With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs:
+
+| Where | Signs in as | Roles |
+|---|---|---|
+| Your laptop | you, via `az login` | OpenAI User, Search Index Data Contributor, Search Service Contributor |
+| Render | the `ask-barry-render` service principal | Cognitive Services OpenAI User, Search Index Data Reader |
+| Azure compute (later) | a managed identity: no secret at all | same as Render |
+
+Render isn't Azure, so it can't have a managed identity. A service principal still needs one secret, but it is scoped to two read-and-call roles, expires, and can be rotated without touching the Azure resources.
+
+1. **Create the identity and roles** (`infra/identity.tf`):
+   ```bash
+   az login
+   cd infra && terraform init -upgrade && terraform plan
+   ```
+   Expect only additions (the app registration, its service principal, five role assignments), nothing changed or destroyed. Then `terraform apply`.
+2. **Check Search accepts tokens.** `az search service show -n ask-barry-search -g rg-ask-barry --query authOptions` should mention `aadOrApiKey`. If it says `apiKeyOnly`:
+   `az search service update -n ask-barry-search -g rg-ask-barry --auth-options aadOrApiKey --aad-auth-failure-mode http401WithBearerChallenge`
+3. **Try it locally.** In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.
+4. **Create the Render secret** with the CLI, so it never enters Terraform state:
+   ```bash
+   az ad app credential reset --id "$(terraform output -raw render_client_id)" --display-name render --years 1 --query password -o tsv
+   ```
+5. **Render → Environment:** set `AZURE_TENANT_ID` and `AZURE_CLIENT_ID` (from `terraform output`) and `AZURE_CLIENT_SECRET`. After the deploy, `/ready` must say `ready`; then delete `AZURE_OPENAI_API_KEY` and `AZURE_SEARCH_API_KEY` from Render.
+6. **Turn keys off** (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them. The nightly index refresh still uses keys (`AZURE_AUTH_MODE: key`) until it signs in with GitHub OIDC instead.
+
 ---
 
 ## Troubleshooting
@@ -98,6 +126,7 @@ PASS  Azure AI Search: reachable, 0 index(es) so far
 | Symptom | Likely cause |
 |---|---|
 | `401` / `Access denied` | Wrong key, or a key from a different resource |
+| `401` / `403` in Entra mode | Role assignment not applied yet (wait 5–10 min), not `az login`-ed, or Search still `apiKeyOnly` (Step 8) |
 | `404` / `DeploymentNotFound` | The deployment *name* in `.env` doesn't match the name you gave it in Foundry |
 | `429` | Rate limit too low, or quota exhausted; wait a minute |
 | Quota insufficient when deploying | Azure for Students limitation (use Option B), **or** a new Pay-As-You-Go subscription with a 0 allowance for that model (common in 2026). In Foundry → Manage quota, turn on **Show all** to see each model's allowance, deploy a model that has some, or use **Request quota** (ask for ~10K tokens per minute; approval takes hours to days). Embeddings are enough for Stage 4 |
