@@ -54,9 +54,17 @@
     <button id="ask-btn" type="submit">Ask</button>
   </form>
   <div class="examples" aria-label="Example questions">
+    {# Each one is an answerable golden-set question, so its answer quality is evaluated (tests/test_app.py). #}
     <button type="button">What cloud tools has Barry used?</button>
-    <button type="button">How does In My Time protect privacy?</button>
-    <button type="button">Has Barry worked with MCP?</button>
+    <button type="button">Has Barry deployed a RAG system to production?</button>
+    <button type="button">Which of Barry's projects include an MCP server?</button>
+    <button type="button">What is Wall Inspector and who is it for?</button>
+    <button type="button">Does In My Time store the family stories it collects?</button>
+    <button type="button">Does Barry have AWS experience?</button>
+    <button type="button">Has Barry used Docker?</button>
+    <button type="button">Has Barry used Terraform for infrastructure as code?</button>
+    <button type="button">How did Barry handle a leaked credential incident?</button>
+    <button type="button">Where did Barry work before becoming a software developer?</button>
   </div>
   <div id="result" aria-live="polite"></div>
   {% if agent_available %}
