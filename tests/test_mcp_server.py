@@ -67,7 +67,7 @@ def test_empty_question_is_rejected_without_calling_the_api():
 def test_default_url_and_env_override(monkeypatch):
     poster = fake_poster()
     ask("q", poster=poster)
-    assert poster.calls[-1][0] == "https://ask-barry-7dkz.onrender.com/api/ask"
+    assert poster.calls[-1][0] == "https://ask-barry.onrender.com/api/ask"
     monkeypatch.setenv("ASK_BARRY_URL", "http://127.0.0.1:5000")
     ask("q", poster=poster)
     assert poster.calls[-1][0] == "http://127.0.0.1:5000/api/ask"

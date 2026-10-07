@@ -1,6 +1,6 @@
 # Ask Barry: model card
 
-Last reviewed: 27 September 2026 · Live: https://ask-barry-7dkz.onrender.com · Source: https://github.com/BBSISK/ask-barry
+Last reviewed: 27 September 2026 · Live: https://ask-barry.onrender.com · Source: https://github.com/BBSISK/ask-barry
 
 ## What it is
 
