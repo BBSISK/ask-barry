@@ -2,7 +2,7 @@
 
 A portfolio assistant that answers questions about my software projects using **only** the documentation in my public GitHub repositories, and cites the repo, file and section behind every answer. If the documentation doesn't support a claim, it says so rather than guessing.
 
-**Live:** https://ask-barry-7dkz.onrender.com
+**Live:** https://ask-barry.onrender.com
 
 ## Current status: Stage 10b complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock)
 

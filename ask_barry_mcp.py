@@ -24,7 +24,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 from pydantic import BaseModel, Field
 
-DEFAULT_URL = "https://ask-barry-7dkz.onrender.com"
+DEFAULT_URL = "https://ask-barry.onrender.com"
 TIMEOUT_SECONDS = 75          # the free host can take ~30 s to wake up
 USER_AGENT = "ask-barry-mcp/1.0"
 
