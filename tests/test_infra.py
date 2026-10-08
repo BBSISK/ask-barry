@@ -88,8 +88,9 @@ def test_client_secret_is_never_in_terraform_state():
 def test_github_identity_trusts_only_this_repos_main_branch():
     text = tf("identity.tf")
     assert 'issuer         = "https://token.actions.githubusercontent.com"' in text
-    assert 'subject        = "repo:${var.github_repo}:ref:refs/heads/main"' in text
-    assert 'default     = "BBSISK/ask-barry"' in tf("variables.tf")
+    assert 'subject        = "repo:${var.github_oidc_repo}:ref:refs/heads/main"' in text
+    # GitHub's subject claim pins owner and repo by immutable numeric ID (seen on the 8 Oct run).
+    assert 'default     = "BBSISK@34174669/ask-barry@1390554004"' in tf("variables.tf")
     assert "pull_request" not in text and "*" not in re.findall(r'subject\s+= "([^"]+)"', text)[0]
 
 

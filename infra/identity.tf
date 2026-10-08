@@ -67,6 +67,8 @@ resource "azurerm_role_assignment" "me_search_service" {
 # --- GitHub Actions, nightly index refresh (ASK-34): no secret at all ---------------------------
 # GitHub gives each workflow run a short-lived OIDC token. Entra trusts that token ONLY when it
 # comes from this repo's main branch, so a fork, a pull request or another repo can't use it.
+# GitHub's subject claim names the repo by owner AND numeric ID ("owner@id/repo@id"), so even a
+# deleted-and-recreated repo with the same name can't reuse this trust (found on the first run, 8 Oct).
 
 resource "azuread_application" "github" {
   display_name = "ask-barry-github"
@@ -84,7 +86,7 @@ resource "azuread_application_federated_identity_credential" "github_main" {
   description    = "GitHub Actions on ${var.github_repo}, main branch only"
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:${var.github_repo}:ref:refs/heads/main"
+  subject        = "repo:${var.github_oidc_repo}:ref:refs/heads/main"
 }
 
 resource "azurerm_role_assignment" "github_openai_user" {
