@@ -117,7 +117,8 @@ Render isn't Azure, so it can't have a managed identity. A service principal sti
    az ad app credential reset --id "$(terraform output -raw render_client_id)" --display-name render --years 1 --query password -o tsv
    ```
 5. **Render → Environment:** set `AZURE_TENANT_ID` and `AZURE_CLIENT_ID` (from `terraform output`) and `AZURE_CLIENT_SECRET`. After the deploy, `/ready` must say `ready`; then delete `AZURE_OPENAI_API_KEY` and `AZURE_SEARCH_API_KEY` from Render.
-6. **Turn keys off** (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them. The nightly index refresh still uses keys (`AZURE_AUTH_MODE: key`) until it signs in with GitHub OIDC instead.
+6. **The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all.** Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → **Variables**, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run the workflow by hand once, then delete the old key secrets.
+7. **Turn keys off** (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them, then rotate the old keys so any copy left anywhere is useless.
 
 ---
 

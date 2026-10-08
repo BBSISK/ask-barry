@@ -68,3 +68,19 @@ def test_client_secret_is_never_in_terraform_state():
     text = tf("identity.tf")
     assert "azuread_application_password" not in text and "azuread_service_principal_password" not in text
     assert "client_secret" not in tf("outputs.tf") and "password" not in tf("outputs.tf")
+
+
+# --- ASK-34: GitHub Actions signs in with OIDC ----------------------------------------------------
+
+def test_github_identity_trusts_only_this_repos_main_branch():
+    text = tf("identity.tf")
+    assert 'issuer         = "https://token.actions.githubusercontent.com"' in text
+    assert 'subject        = "repo:${var.github_repo}:ref:refs/heads/main"' in text
+    assert 'default     = "BBSISK/ask-barry"' in tf("variables.tf")
+    assert "pull_request" not in text and "*" not in re.findall(r'subject\s+= "([^"]+)"', text)[0]
+
+
+def test_github_identity_gets_only_what_the_nightly_refresh_needs():
+    github_roles = {role for role, who in role_assignments().values() if "service_principal.github" in who}
+    assert github_roles == {"Cognitive Services OpenAI User", "Search Index Data Contributor",
+                            "Search Service Contributor"}

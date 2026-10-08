@@ -63,3 +63,47 @@ resource "azurerm_role_assignment" "me_search_service" {
   principal_id         = data.azuread_client_config.current.object_id
   principal_type       = "User"
 }
+
+# --- GitHub Actions, nightly index refresh (ASK-34): no secret at all ---------------------------
+# GitHub gives each workflow run a short-lived OIDC token. Entra trusts that token ONLY when it
+# comes from this repo's main branch, so a fork, a pull request or another repo can't use it.
+
+resource "azuread_application" "github" {
+  display_name = "ask-barry-github"
+  owners       = [data.azuread_client_config.current.object_id]
+}
+
+resource "azuread_service_principal" "github" {
+  client_id = azuread_application.github.client_id
+  owners    = [data.azuread_client_config.current.object_id]
+}
+
+resource "azuread_application_federated_identity_credential" "github_main" {
+  application_id = azuread_application.github.id
+  display_name   = "github-main"
+  description    = "GitHub Actions on ${var.github_repo}, main branch only"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.github_repo}:ref:refs/heads/main"
+}
+
+resource "azurerm_role_assignment" "github_openai_user" {
+  scope                = azurerm_cognitive_account.ai_services.id
+  role_definition_name = "Cognitive Services OpenAI User" # embeds new and changed sections
+  principal_id         = azuread_service_principal.github.object_id
+  principal_type       = "ServicePrincipal"
+}
+
+resource "azurerm_role_assignment" "github_search_writer" {
+  scope                = azurerm_search_service.search.id
+  role_definition_name = "Search Index Data Contributor" # uploads and deletes chunks
+  principal_id         = azuread_service_principal.github.object_id
+  principal_type       = "ServicePrincipal"
+}
+
+resource "azurerm_role_assignment" "github_search_service" {
+  scope                = azurerm_search_service.search.id
+  role_definition_name = "Search Service Contributor" # creates or updates the index schema
+  principal_id         = azuread_service_principal.github.object_id
+  principal_type       = "ServicePrincipal"
+}
