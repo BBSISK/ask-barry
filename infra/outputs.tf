@@ -21,3 +21,10 @@ output "render_client_id" {
   description = "ask-barry-render app registration (AZURE_CLIENT_ID on Render)."
   value       = azuread_application.render.client_id
 }
+
+# ASK-34: set as the repository VARIABLE AZURE_CLIENT_ID (Settings > Secrets and variables > Actions > Variables).
+
+output "github_client_id" {
+  description = "ask-barry-github app registration, used by the nightly refresh workflow."
+  value       = azuread_application.github.client_id
+}

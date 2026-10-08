@@ -44,3 +44,9 @@ variable "embedding_capacity" {
   type        = number
   default     = 10
 }
+
+variable "github_repo" {
+  description = "owner/name of the repo whose main-branch workflows may sign in to Azure (ASK-34)."
+  type        = string
+  default     = "BBSISK/ask-barry"
+}

@@ -96,8 +96,8 @@ def main(argv=None):
     if missing:
         sys.exit(f"Missing settings: {', '.join(missing)}.\n"
                  "  Locally: add them to .env (check with python -m scripts.check_azure).\n"
-                 "  In GitHub Actions: add them as repository secrets under "
-                 "Settings > Secrets and variables > Actions (the Search key secret is AZURE_SEARCH_ADMIN_KEY).")
+                 "  In GitHub Actions: endpoints are repository secrets and AZURE_CLIENT_ID / AZURE_TENANT_ID are "
+                 "repository variables (Settings > Secrets and variables > Actions); sign-in is OIDC, no keys.")
 
     index_name = os.getenv("AZURE_SEARCH_INDEX", "ask-barry-chunks")
     chunks = load_chunks(args.chunks)
