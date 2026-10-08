@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-10-03",
+  "updated": "2026-10-08",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -552,11 +552,33 @@
       "history": "Was trap-08 until Stage 5 went live and was documented (27 Sep 2026)."
     },
     {
+      "id": "agile-01",
+      "type": "answerable",
+      "question": "Does Barry plan his own projects in sprints?",
+      "expected": [
+        "BBSISK/manufacturing-to-software.md"
+      ],
+      "evidence": [
+        "Solo two-week sprints"
+      ],
+      "checks": {
+        "must_include": [
+          "Jira"
+        ],
+        "must_not_include": [
+          "years of Agile",
+          "years of Scrum",
+          "Scrum team member"
+        ]
+      },
+      "history": "Added 8 Oct 2026 alongside the trap-10 rewrite: solo two-week sprints in Jira on Ask Barry since October 2026, documented in BBSISK/manufacturing-to-software.md. The answer must mention Jira and must not inflate this into team or long-standing Agile experience."
+    },
+    {
       "id": "trap-10",
       "type": "trap",
       "question": "Has Barry worked in an Agile or Scrum team?",
       "expected": [],
-      "history": "Added 3 Oct 2026 to replace trap-02. Barry confirmed no Agile/Scrum experience yet. Near-misses in the docs (Lean and Kaizen at Intel, 'iterative delivery', a 'sprint' maths lesson) make it a real test. Retire it when that experience is documented."
+      "history": "Added 3 Oct 2026 to replace trap-02. Barry confirmed no Agile/Scrum experience yet. Near-misses in the docs (Lean and Kaizen at Intel, 'iterative delivery', a 'sprint' maths lesson) make it a real test. 8 Oct 2026: kept as a trap after BBSISK/manufacturing-to-software.md documented solo two-week Jira sprints on Ask Barry. That is not team experience, and the doc says so ('not yet in a Scrum team'), so a grounded 'no, solo sprints only' passes and any claim of team experience fails. The solo practice is tested by agile-01. Retire this trap when team experience is documented."
     }
   ]
 }

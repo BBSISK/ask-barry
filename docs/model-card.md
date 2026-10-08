@@ -57,7 +57,7 @@ The job-ad page doesn't store or log the pasted ad either (it may be someone els
 
 ## Evaluation
 
-The golden set has 48 questions (one added with the career page on 28 September 2026, and one trap swapped for a new one in Stage 10 when its skill became documented; the results below predate these changes). 40 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
+The golden set has 49 questions (one added with the career page on 28 September 2026, one trap swapped for a new one in Stage 10 when its skill became documented, and one added on 8 October 2026 for newly documented project planning; the results below predate these changes). 41 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
 
 **Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
