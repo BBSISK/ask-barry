@@ -50,3 +50,9 @@ variable "github_repo" {
   type        = string
   default     = "BBSISK/ask-barry"
 }
+
+variable "github_oidc_repo" {
+  description = "The repo as GitHub's OIDC subject claim names it: owner@owner_id/repo@repo_id (public IDs, not secrets)."
+  type        = string
+  default     = "BBSISK@34174669/ask-barry@1390554004"
+}
