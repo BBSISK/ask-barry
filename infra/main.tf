@@ -26,7 +26,7 @@ resource "azurerm_cognitive_account" "ai_services" {
   kind                          = "AIServices"
   sku_name                      = "S0"
   custom_subdomain_name         = var.ai_services_name
-  local_auth_enabled            = true
+  local_auth_enabled            = false # ASK-22: Entra ID only; API keys are rejected
   public_network_access_enabled = true
   project_management_enabled    = true
 
@@ -94,8 +94,7 @@ resource "azurerm_search_service" "search" {
   resource_group_name           = azurerm_resource_group.ask_barry.name
   location                      = var.search_location
   sku                           = "free"
-  local_authentication_enabled  = true
-  authentication_failure_mode   = "http401WithBearerChallenge"
+  local_authentication_enabled  = false # ASK-22: Entra ID only (auth_failure_mode only applies with keys on)
   public_network_access_enabled = true
 
   # Azure reports the free semantic ranker as "free", but the provider rejects that setting on

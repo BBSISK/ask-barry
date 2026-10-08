@@ -142,7 +142,7 @@ flask --app wsgi run                                       # web UI at http://12
   - Rate limits: 6 questions per minute per IP, and 300 a day overall.
   - Questions are capped at 300 characters, and the app doesn't log question text.
   - Model output is rendered as text, never HTML.
-  - In production the app uses a read-only Search query key.
+  - No API keys: in production the app signs in with Entra ID and can only read the index (see [Security](#security)).
 
 ## Answer-quality evaluation (Stage 6)
 
@@ -271,9 +271,10 @@ The Azure resources were first created by hand in the portal ([guide](docs/azure
 | Foundry / Azure AI Services resource (S0, system-assigned identity) | `azurerm_cognitive_account` |
 | `gpt-4.1-mini` and `text-embedding-3-small` deployments (Global Standard) | `azurerm_cognitive_deployment` × 2 |
 | Azure AI Search `ask-barry-search` (Free, Switzerland West) | `azurerm_search_service` |
+| Two app identities and their least-privilege roles (see [Security](#security)) | `azuread_application`, `azurerm_role_assignment` |
 
 - **Safe by design:** every resource has `prevent_destroy`. The first plan found two portal settings the code was missing (the network rule and the search auth-failure mode). After adding them, the plan was *5 to import, 0 to add, 0 to change, 0 to destroy*, and `apply` imported all five without changing anything in Azure (27 September 2026).
-- **No secrets:** Terraform never reads or outputs keys, and the subscription ID comes from the signed-in Azure CLI, not the repo. State stays out of git and can be rebuilt from the import blocks at any time.
+- **No secrets:** Terraform never reads or outputs keys, and the subscription ID comes from the signed-in Azure CLI, not the repo. State stays out of git. The five imported resources can be rebuilt from the import blocks; the identities and role assignments in `infra/identity.tf` are created by Terraform, so the state file is backed up outside the repo.
 - **Checked in CI:** every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.
 - **Left out on purpose:** the Foundry project and the budget alert, which were created in the portal. The config comments explain why.
 
@@ -411,10 +412,22 @@ python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedro
 A GitHub Action (`.github/workflows/refresh-index.yml`) runs every night and on demand. It fetches the public docs, chunks them and syncs Azure AI Search, so answers keep up with README changes without a manual step.
 - **Cheap when nothing changed:** only new or changed sections are re-embedded.
 - **Safe when unattended:** the sync refuses to run on an empty corpus, or if it would delete more than 30% of the index (for example after a rate-limited fetch). A deliberate large removal needs `--allow-large-delete` run by hand.
-- **Secrets:** Azure settings come from GitHub Actions secrets. The Search admin key lives only there, because this job writes to the index. The live app uses a read-only query key.
+- **No stored secret:** the job signs in with GitHub OIDC as `ask-barry-github`. Entra trusts that token only from this repo's `main` branch, so GitHub holds no Azure key or password at all.
 
 The evaluation also checks citation completeness. The judge sees the retrieved sections the answer did *not* cite, so a claim supported only by one of those is reported as **"true but uncited"**, separately from an invented claim. Both count as failures, because a reader can only check what is cited.
 
 ## Security
 
 Secrets are environment variables only. The app refuses to start in production without `SECRET_KEY`.
+
+**No API keys anywhere.** API key access is switched off on both Azure resources, so a leaked key would be useless. Everything signs in with Microsoft Entra ID (`DefaultAzureCredential`, see `app/azure_auth.py`), and Azure role assignments decide what each identity may do:
+
+| Who | Signs in as | Can do |
+|---|---|---|
+| Live app on Render | `ask-barry-render` service principal | Call the models; read the search index |
+| Nightly index refresh (GitHub Actions) | `ask-barry-github`, via OIDC: no secret | Call the models; write the index |
+| Me, locally | my `az login` | What local development and ingestion need |
+
+- **Least privilege, as code:** the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.
+- **One secret left, and why:** Render isn't Azure, so the live app can't have a managed identity. Its service principal has one client secret, kept only in Render's environment, created with the Azure CLI so it never enters Terraform state, and set to expire after a year.
+- **Next step:** when the app moves to Azure compute, a managed identity replaces that last secret.
