@@ -98,3 +98,12 @@ def test_github_identity_gets_only_what_the_nightly_refresh_needs():
     github_roles = {role for role, who in role_assignments().values() if "service_principal.github" in who}
     assert github_roles == {"Cognitive Services OpenAI User", "Search Index Data Contributor",
                             "Search Service Contributor"}
+
+
+# --- ASK-22: keys switched off --------------------------------------------------------------------
+
+def test_api_keys_are_switched_off_on_both_resources():
+    main = tf("main.tf")
+    assert re.search(r"local_auth_enabled\s+= false", main)
+    assert re.search(r"local_authentication_enabled\s+= false", main)
+    assert "authentication_failure_mode" not in main   # the provider allows it only when keys are on
