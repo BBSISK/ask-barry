@@ -15,6 +15,7 @@ Everything about the person and their profession comes from the profile pack; no
 """
 import hashlib
 import json
+import time
 from datetime import datetime, timezone
 
 from app.quotes import quote_in_sources
@@ -24,6 +25,7 @@ PER_QUERY = 6              # sections retrieved per query
 MAX_SECTIONS = 10          # sections judged per skill or card (keeps the nightly cost small)
 MAX_EVIDENCE = 8           # evidence links kept per skill in the output
 MAX_QUOTE_WORDS = 40
+SEARCH_TRIES = 3           # a search that times out is retried (Azure AI Search can be slow under load)
 VOTES = 3                  # judge answers per section; the section gets the median (ASK-42 stability check)
 
 
@@ -109,11 +111,23 @@ Reply with JSON only: {{"example": false, "title": "", "summary": "", "quote": "
 
 # --- retrieval ------------------------------------------------------------------------------------------------
 
+def search(retriever, query, k, tries=SEARCH_TRIES, wait=5, sleep=time.sleep, log=print):
+    """retriever.search with a few retries, so one slow reply doesn't end a whole build."""
+    for attempt in range(1, tries + 1):
+        try:
+            return retriever.search(query, k=k)
+        except Exception as err:                       # timeouts and throttling from the search service
+            if attempt == tries:
+                raise
+            log(f"  search for {query!r} failed ({type(err).__name__}); retry {attempt} of {tries - 1}")
+            sleep(wait * attempt)
+
+
 def find_sections(retriever, queries, k=PER_QUERY, limit=MAX_SECTIONS):
     """Union of the top-k sections for each query, best rank first, no duplicates."""
     best = {}
     for query in queries:
-        for result in retriever.search(query, k=k):
+        for result in search(retriever, query, k):
             cid = result.chunk.get("chunk_id") or section_label(result.chunk)
             if cid not in best or result.rank < best[cid][0]:
                 best[cid] = (result.rank, len(best), result.chunk)
@@ -161,6 +175,8 @@ def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, 
     for rank, chunk in enumerate(find_sections(retriever, skill["queries"])):
         if pack.is_self_description(chunk.get("repo", "")):
             continue                                   # a self-description isn't evidence of use
+        if pack.is_planned(chunk.get("heading", "")):
+            continue                                   # nor is a plan
         verdict = vote(skill, chunk, judge, votes, log)
         tier, quote = verdict["tier"], verdict["quote"]
         if not tier:
@@ -190,7 +206,7 @@ def _recheck(card, story, sections, retriever, log):
     The section is looked for among this build's sections first, then by searching for the quote itself."""
     pool = list(sections)
     if not any(story_id(card["id"], c) == story["id"] for c in pool):
-        pool += [r.chunk for r in retriever.search(story["quote"], k=PER_QUERY)]
+        pool += [r.chunk for r in search(retriever, story["quote"], PER_QUERY)]
     for chunk in pool:
         if story_id(card["id"], chunk) == story["id"]:
             if quote_in_sources(story["quote"], section_text(chunk)):

@@ -5,6 +5,7 @@ against a few rules a schema can't express (unique ids, tiers 1-4 in order). Err
 field, so someone setting up their own pack can fix it without reading code.
 """
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -44,6 +45,12 @@ class Pack:
 
     def is_self_description(self, repo):
         return repo in (self.profile.get("self_description_repos") or [])
+
+    def is_planned(self, heading):
+        """True if a section heading marks plans rather than done work (words from planned_headings)."""
+        words = self.profile.get("planned_headings") or []
+        text = str(heading or "").lower()
+        return any(re.search(rf"\b{re.escape(w.lower())}\b", text) for w in words)
 
 
 def schema(name):

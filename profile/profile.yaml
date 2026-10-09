@@ -12,6 +12,10 @@ github_owner: BBSISK
 # ladder tier. They can still supply evidence cards (e.g. leadership roles).
 self_description_repos: [BBSISK]
 
+# Section headings with these words describe plans, not done work, so they never fill a ladder tier
+# (the judge is told the same, but a heading like "Architecture (planned)" still swayed it some nights).
+planned_headings: [planned, roadmap, future, ideas for later]
+
 # Friendly project names for repo names, shown as chips on the ladder.
 projects:
   ask-barry: Ask Barry
@@ -19,4 +23,5 @@ projects:
   inmytime-showcase: In My Time
   my30words_showcase: Brief
   agentmath_showcase: AgentMath
+  housing-pipeline-ireland: Housing Pipeline Ireland
   BBSISK: Profile
