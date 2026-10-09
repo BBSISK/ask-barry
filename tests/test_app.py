@@ -126,8 +126,9 @@ def test_ready_returns_within_timeout_when_a_dependency_hangs():
     assert elapsed < 4.5, f"/ready took {elapsed:.1f}s; the timeout should cap it near 3s"
 
 
-def test_index_shows_ten_example_questions_all_from_the_golden_set():
-    """ASK-39: the chips are what visitors try first, so each must be a question whose answer is evaluated."""
+def test_index_shows_six_example_questions_all_from_the_golden_set():
+    """ASK-39: the chips are what visitors try first, so each must be a question whose answer is evaluated.
+    ASK-51: cut from 10 to 6 so the capability and job-ad tiles fit on one screen (Docker and Terraform kept)."""
     import json
     import re
     from pathlib import Path
@@ -137,9 +138,24 @@ def test_index_shows_ten_example_questions_all_from_the_golden_set():
     html = create_app("testing", answerer=StubAnswerer()).test_client().get("/").get_data(as_text=True)
     block = html.split('class="examples"', 1)[1].split("</div>", 1)[0]
     chips = [re.sub(r"\s+", " ", c).strip() for c in re.findall(r"<button[^>]*>(.*?)</button>", block, flags=re.S)]
-    assert len(chips) == 10 and len(set(chips)) == 10
+    assert len(chips) == 6 and len(set(chips)) == 6
+    assert "Has Barry used Docker?" in chips and "Has Barry used Terraform for infrastructure as code?" in chips
 
     golden = json.loads((Path(__file__).resolve().parents[1] / "eval" / "golden_set.json").read_text(encoding="utf-8"))
     answerable = {q["question"] for q in golden["questions"] if q["type"] == "answerable"}
     for chip in chips:
         assert chip in answerable, f"not an evaluated, answerable golden-set question: {chip}"
+
+
+def test_capability_and_job_ad_are_prominent_image_tiles_above_the_question_box():
+    """ASK-51: occasional visitors missed the two small text links at the foot of the page."""
+    from tests.test_answering import StubAnswerer
+    html = create_app("testing", answerer=StubAnswerer()).test_client().get("/").get_data(as_text=True)
+    tiles = html.split('class="tiles"', 1)[1].split("</nav>", 1)[0]
+    assert 'href="/capability"' in tiles and "<svg" in tiles and "aria-label=" in tiles
+    assert html.index('class="tiles"') < html.index('id="ask-form"')
+
+
+def test_capability_tile_is_shown_even_when_answering_is_off():
+    html = create_app("testing").test_client().get("/").get_data(as_text=True)
+    assert 'href="/capability"' in html and 'href="/evidence"' not in html

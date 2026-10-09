@@ -39,6 +39,23 @@
     .meta a, footer a { color: var(--accent); }
     .error { color:#c5221f; }
     footer { color:var(--muted); font-size:.85rem; margin-top:2.5rem; border-top:1px solid var(--line); padding-top:1rem; }
+    /* ASK-51: the two pages a first-time visitor should find without reading */
+    .tiles { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin:0 0 1.75rem; }
+    .tile { display:flex; flex-direction:column; text-decoration:none; color:var(--fg); background:var(--card); border:1.5px solid var(--line); border-radius:.9rem; overflow:hidden; transition:border-color .15s, transform .15s; }
+    .tile:hover, .tile:focus-visible { border-color:var(--accent); transform:translateY(-2px); }
+    .tile:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .tile svg { display:block; width:100%; height:auto; background:var(--bg); border-bottom:1px solid var(--line); }
+    .tile .body { padding:.75rem .9rem .9rem; }
+    .tile strong { display:block; font-size:1.05rem; }
+    .tile span { display:block; color:var(--muted); font-size:.9rem; line-height:1.4; margin-top:.2rem; }
+    .tile .go { color:var(--accent); font-weight:600; margin-top:.45rem; }
+    .t-on { fill:var(--accent); } .t-mid { fill:var(--accent); opacity:.5; } .t-off { fill:var(--line); }
+    .t-ink { fill:var(--muted); } .t-gap { stroke:#c5221f; stroke-width:2.5; stroke-linecap:round; }
+    .t-line { stroke:var(--line); stroke-width:6; stroke-linecap:round; } .t-doc { fill:var(--card); stroke:var(--line); stroke-width:2; }
+    .t-arrow { stroke:var(--accent); stroke-width:2; fill:none; } .t-check { stroke:var(--on-accent); stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    h2.ask { font-size:1.05rem; margin:0 0 .5rem; }
+    @media (prefers-reduced-motion: reduce) { .tile { transition:none; } .tile:hover { transform:none; } }
+    @media (max-width: 34rem) { .tiles { grid-template-columns:1fr; } }
     @media (max-width: 30rem) { form { flex-direction: column; } }
   </style>
 </head>
@@ -47,7 +64,32 @@
   <h1>{{ app_name }}</h1>
   <p class="lede">An <strong>AI assistant</strong> for questions about Barry Sisk's software projects. Answers come <strong>only</strong> from the documentation in his public GitHub repositories, with links to the sources. If the documentation doesn't support something, it says so.</p>
 
+  <nav class="tiles" aria-label="Explore Barry's evidence">
+    <a class="tile" href="/capability" aria-label="Capability ladder: how far each skill goes, with evidence and gaps">
+      <svg viewBox="0 0 320 120" role="img" aria-hidden="true" focusable="false">
+        <rect class="t-ink" x="20" y="18" width="60" height="8" rx="4"/><rect class="t-on" x="96" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="146" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="196" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="246" y="14" width="44" height="16" rx="4"/>
+        <rect class="t-ink" x="20" y="42" width="48" height="8" rx="4"/><rect class="t-on" x="96" y="38" width="44" height="16" rx="4"/><rect class="t-on" x="146" y="38" width="44" height="16" rx="4"/><rect class="t-on" x="196" y="38" width="44" height="16" rx="4"/><rect class="t-off" x="246" y="38" width="44" height="16" rx="4"/>
+        <rect class="t-ink" x="20" y="66" width="56" height="8" rx="4"/><rect class="t-mid" x="96" y="62" width="44" height="16" rx="4"/><rect class="t-off" x="146" y="62" width="44" height="16" rx="4"/><rect class="t-off" x="196" y="62" width="44" height="16" rx="4"/><rect class="t-off" x="246" y="62" width="44" height="16" rx="4"/>
+        <rect class="t-ink" x="20" y="90" width="40" height="8" rx="4"/><rect class="t-off" x="96" y="86" width="44" height="16" rx="4"/><rect class="t-off" x="146" y="86" width="44" height="16" rx="4"/><rect class="t-off" x="196" y="86" width="44" height="16" rx="4"/><path class="t-gap" d="M262 88l12 12M274 88l-12 12"/>
+      </svg>
+      <div class="body"><strong>Capability ladder</strong><span>Every skill from used to tested, each step linked to its evidence. Gaps shown too.</span><span class="go">See the ladder &rarr;</span></div>
+    </a>
+    {% if agent_available %}
+    <a class="tile" href="/evidence" aria-label="Paste a job ad: an AI agent maps each requirement to Barry's evidence">
+      <svg viewBox="0 0 320 120" role="img" aria-hidden="true" focusable="false">
+        <rect class="t-doc" x="28" y="12" width="104" height="96" rx="8"/><line class="t-line" x1="44" y1="34" x2="112" y2="34"/><line class="t-line" x1="44" y1="54" x2="104" y2="54"/><line class="t-line" x1="44" y1="74" x2="116" y2="74"/><line class="t-line" x1="44" y1="94" x2="92" y2="94"/>
+        <path class="t-arrow" d="M144 60h40m-8-7l8 7l-8 7"/>
+        <circle class="t-on" cx="212" cy="34" r="11"/><path class="t-check" d="M206 34l4 4l8-8"/><rect class="t-ink" x="232" y="30" width="60" height="8" rx="4"/>
+        <circle class="t-on" cx="212" cy="60" r="11"/><path class="t-check" d="M206 60l4 4l8-8"/><rect class="t-ink" x="232" y="56" width="48" height="8" rx="4"/>
+        <circle class="t-off" cx="212" cy="86" r="11"/><rect class="t-ink" x="232" y="82" width="54" height="8" rx="4"/>
+      </svg>
+      <div class="body"><strong>Paste a job ad</strong><span>An AI agent maps each requirement to evidence in Barry's documentation, with links.</span><span class="go">Map a job ad &rarr;</span></div>
+    </a>
+    {% endif %}
+  </nav>
+
   {% if available %}
+  <h2 class="ask">Or ask a question</h2>
   <form id="ask-form">
     <label for="q" class="visually-hidden" style="position:absolute;left:-9999px">Your question</label>
     <input id="q" name="question" type="text" maxlength="300" autocomplete="off" placeholder="e.g. How does Wall Inspector deploy to production?" required>
@@ -58,19 +100,11 @@
     <button type="button">What cloud tools has Barry used?</button>
     <button type="button">Has Barry deployed a RAG system to production?</button>
     <button type="button">Which of Barry's projects include an MCP server?</button>
-    <button type="button">What is Wall Inspector and who is it for?</button>
-    <button type="button">Does In My Time store the family stories it collects?</button>
-    <button type="button">Does Barry have AWS experience?</button>
     <button type="button">Has Barry used Docker?</button>
     <button type="button">Has Barry used Terraform for infrastructure as code?</button>
     <button type="button">How did Barry handle a leaked credential incident?</button>
-    <button type="button">Where did Barry work before becoming a software developer?</button>
   </div>
   <div id="result" aria-live="polite"></div>
-  {% if agent_available %}
-  <p class="meta"><a href="/capability">Capability</a>: how far each skill goes, with the evidence for every step and the gaps shown.</p>
-  <p class="meta">Recruiting? <a href="/evidence">Paste a job ad</a> and an AI agent maps each requirement to evidence in Barry's documentation, with links.</p>
-  {% endif %}
   {% else %}
   <div class="card unsupported">Answering isn't switched on for this server yet.</div>
   {% endif %}
