@@ -106,11 +106,15 @@ jobs:
       - name: Commit if the content changed (the build time alone doesn't count)
         run: |
           changed=$(python - <<'PY'
+          # Standard library only: this job installs nothing and must not run the app's code.
+          # Same rule as same_content() in app/capability/builder.py (tests check they agree).
           import json, pathlib
-          from app.capability.builder import same_content
           def load(p):
               p = pathlib.Path(p)
               return json.loads(p.read_text()) if p.exists() else None
+          def same_content(a, b):
+              strip = lambda d: {k: v for k, v in (d or {}).items() if k != "generated_at"}
+              return json.dumps(strip(a), sort_keys=True) == json.dumps(strip(b), sort_keys=True)
           diff = [n for n in ("capability.json", "capability_suggestions.json")
                   if not same_content(load(f"build/{n}"), load(f"data/{n}"))]
           print(" ".join(diff))

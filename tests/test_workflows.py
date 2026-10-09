@@ -1,5 +1,6 @@
 """The nightly refresh workflow must pass every setting the ingest step needs, stay read-only,
 and sign in to Azure with GitHub OIDC rather than stored keys (ASK-34)."""
+import json
 import re
 from pathlib import Path
 
@@ -70,3 +71,35 @@ def test_capability_is_built_after_the_quality_check_and_published_by_a_separate
     commit = publish["steps"][-1]["run"]
     assert "same_content" in commit and "No change: nothing to commit." in commit
     assert "git add data/capability.json data/capability_suggestions.json" in commit
+
+
+def test_the_publish_check_runs_with_the_standard_library_only(tmp_path):
+    """The publish job installs nothing, so its change check must not import the app (it once did: no flask)."""
+    import re
+    import subprocess
+    import sys
+    import yaml
+    commit = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))["jobs"]["publish-capability"]["steps"][-1]["run"]
+    script = re.search(r"<<'PY'\n(.*?)\n\s*PY\n", commit, re.S).group(1)
+    script = "\n".join(line[len("          "):] if line.startswith("          ") else line
+                       for line in script.splitlines())
+    assert "from app" not in script and "import app" not in script
+    (tmp_path / "build").mkdir()
+    (tmp_path / "data").mkdir()
+
+    def run():
+        out = subprocess.run([sys.executable, "-I", "-S", "-"], input=script, text=True, cwd=tmp_path,
+                             capture_output=True, check=True)       # -S: no site-packages, like the runner
+        return out.stdout.strip()
+
+    old = {"generated_at": "2026-10-09T03:30:00Z", "skills": [{"id": "x", "tier": 2}]}
+    for name in ("capability.json", "capability_suggestions.json"):
+        (tmp_path / "data" / name).write_text(json.dumps(old))
+        (tmp_path / "build" / name).write_text(json.dumps({**old, "generated_at": "2026-10-10T03:30:00Z"}))
+    assert run() == ""                                               # only the time changed
+    (tmp_path / "build" / "capability.json").write_text(json.dumps({**old, "skills": [{"id": "x", "tier": 3}]}))
+    assert run() == "capability.json"
+
+    from app.capability.builder import same_content                 # and it agrees with the app's rule
+    a, b = old, {**old, "generated_at": "later"}
+    assert same_content(a, b) and not same_content(a, {**old, "skills": []})
