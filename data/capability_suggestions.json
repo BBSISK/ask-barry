@@ -1,0 +1,490 @@
+{
+  "generated_at": "2026-10-09T11:00:21Z",
+  "cards": [
+    {
+      "card": "problem-solving",
+      "title": "Problem solving & debugging",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "problem-solving:d01d06712f",
+          "title": "Problem solving and root cause analysis",
+          "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Scheduling bug traced to its root cause and rebuilt; search regression measured, three fixes compared, simplest shipped",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:1162028e47",
+          "title": "Fixing silent alert failures",
+          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#problems-i-solved-along-the-way",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template",
+          "approved": true
+        },
+        {
+          "id": "problem-solving:8d011cfc3a",
+          "title": "Fixed prompt scheduling bugs",
+          "summary": "Barry rebuilt the prompt scheduling system to calculate weeks purely from time, preventing schedule drift and back-filled existing users with a migration.",
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I rebuilt it so the week is calculated purely from time (from sign-up to now), so the schedule can no longer drift, and I back-filled existing users with a one-off migration.",
+          "approved": true
+        },
+        {
+          "id": "problem-solving:ab6ed376a9",
+          "title": "Built AgentMath for tailored learning",
+          "summary": "Barry built AgentMath to address mixed-ability challenges and provide real-time insights into student struggles during Junior Cycle maths teaching.",
+          "repo": "agentmath_showcase",
+          "path": "README.md",
+          "heading": "🕵️ AgentMath > The problem",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#the-problem",
+          "project": "AgentMath",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I built AgentMath while teaching Junior Cycle maths, to give every student practice at the right level and to give me, as the teacher, a clear view of where each student and the class were struggling.",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:113994a61c",
+          "title": "Fixing data quality issues",
+          "summary": "Barry identified key data quality issues in property sales data and implemented fixes including address normalization, excluding non-market prices, and adjusting for VAT in new-build prices.",
+          "repo": "housing-pipeline-ireland",
+          "path": "docs/data-profile.md",
+          "heading": "Data profile — Sprint 1 > Property Price Register (HOUSE-8) > Top 5 quality issues",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/docs/data-profile.md#top-5-quality-issues",
+          "project": "housing-pipeline-ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Fix: normalise addresses (Sprint 3), geocode them with Azure Maps and keep a confidence score... exclude \"not full market price\" sales from price statistics... keep the flag, add a VAT-inclusive price (×1.135) for comparisons",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:b12b8bcd4e",
+          "title": "Improved evaluator with tests",
+          "summary": "Barry improved the answer-quality evaluator by requesting evidence from the judge, fixing formatting and token limit issues, and adding unit tests to prevent false negatives.",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Answer-quality evaluation (Stage 6) > Results (27 Sep 2026)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/33a7600b81dde56e156fc3a9b06f7d3f6602a0a9/README.md#results-27-sep-2026",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Test the evaluator too. Early versions failed correct answers because of formatting (backticks, HTML in diagrams), a token limit that cut off the judge's output, and a judge that couldn't see the source labels the answering model saw. Each fix",
+          "approved": false
+        }
+      ]
+    },
+    {
+      "card": "security-mindset",
+      "title": "Security mindset",
+      "approved_but_not_found": [
+        "security-mindset:b913ad81a3"
+      ],
+      "candidates": [
+        {
+          "id": "security-mindset:8d011cfc3a",
+          "title": "Handled credential exposure incident",
+          "summary": "Barry rotated all exposed API secrets, rebuilt Git history as a single clean commit, and locked the repository with a strict .gitignore after a secret scanner flagged credentials in an early commit.",
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "an automated secret scanner flagged API credentials in an early commit. I rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down",
+          "approved": true
+        },
+        {
+          "id": "security-mindset:0dad7318bc",
+          "title": "Privacy by design in server architecture",
+          "summary": "Barry designed the server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#privacy-by-design-the-shallow-room",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The server relays each answer in the same request and stores nothing. It keeps no message text and no transcriptions, and media is forwarded by reference and never downloaded.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:7848f34d39",
+          "title": "Designing for end-of-life privacy",
+          "summary": "Barry designed a system that never assumes user death, pausing and sending a check-in only to the custodian, with closing steps starting after family confirmation.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Privacy by design: the \"shallow room\" > Designing for the end of life",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#designing-for-the-end-of-life",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The system never assumes a death. If an author goes quiet, it pauses patiently, then sends one gently worded check-in to the custodian, never to the author.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:91c9e9ba4b",
+          "title": "Implementing Least Privilege Access",
+          "summary": "Barry configured identities and roles in code to enforce least privilege, disabled API key access, and used Azure Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Security",
+          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#security",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "API key access is switched off on both Azure resources, so a leaked key would be useless. Everything signs in with Microsoft Entra ID (`DefaultAzureCredential`, see `app/azure_auth.py`), and Azure role assignments decide what each identity may do",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:1162028e47",
+          "title": "Alerts failed silently fixed",
+          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#problems-i-solved-along-the-way",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:3a075dfa62",
+          "title": "Implemented keyless security",
+          "summary": "Barry implemented keyless security from the first commit, using managed identities and least-privilege roles defined in Terraform, with tests ensuring no key-style settings are used.",
+          "repo": "housing-pipeline-ireland",
+          "path": "README.md",
+          "heading": "Housing Pipeline Ireland > Security",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
+          "project": "housing-pipeline-ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Keyless from the first commit. No API keys or passwords anywhere... Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:b75a31933f",
+          "title": "Azure sign-in with Entra ID",
+          "summary": "Barry configured Azure to sign in using Entra ID instead of keys, created identities and roles, updated search service authentication, tested locally, managed secrets securely, and set up GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential that Entra accepts only from this repo's main branch.",
+          "approved": true
+        }
+      ]
+    },
+    {
+      "card": "data-manipulation",
+      "title": "Data manipulation",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "data-manipulation:9edbd02b52",
+          "title": "Real-time fault detection at factory scale",
+          "summary": "Barry led a factory-wide program for real-time fault detection using data pipelines and anomaly detection, implementing nightly ingestion re-processes and fault classification to improve yield and system reliability.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > Real-time fault detection at factory scale",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#real-time-fault-detection-at-factory-scale",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Ask Barry's nightly ingestion re-processes only what changed; Nightly job fails and emails me when quality drops below its limit; Labelled evaluation sets; every failure classified by type",
+          "approved": false
+        }
+      ]
+    },
+    {
+      "card": "written-communication",
+      "title": "Written communication",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "written-communication:d922c7514f",
+          "title": "Documented Azure model deployment steps",
+          "summary": "Barry documented step-by-step instructions for deploying Foundry resources and models on Azure, including project creation, model deployment, and handling quota limits.",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 4: Foundry resource and model deployments",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ba39a931b28da61684b20536d601f69359e6abb0/docs/azure-setup.md#step-4-foundry-resource-and-model-deployments",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "1. Go to https://ai.azure.com (Microsoft Foundry portal) and sign in. 2. Create a new project. Let it create a new Foundry resource in rg-ask-barry and your region. 3. In the project, open Models + endpoints → Deploy model → Deploy",
+          "approved": false
+        }
+      ]
+    },
+    {
+      "card": "teaching-mentoring",
+      "title": "Teaching & mentoring",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "teaching-mentoring:ab6ed376a9",
+          "title": "Built AgentMath for teaching",
+          "summary": "Barry built AgentMath while teaching Junior Cycle maths to provide tailored practice and real-time insight into student struggles.",
+          "repo": "agentmath_showcase",
+          "path": "README.md",
+          "heading": "🕵️ AgentMath > The problem",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#the-problem",
+          "project": "AgentMath",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I built AgentMath while teaching Junior Cycle maths, to give every student practice at the right level and to give me, as the teacher, a clear view of where each student and the class were struggling.",
+          "approved": true
+        },
+        {
+          "id": "teaching-mentoring:fa7966fadc",
+          "title": "Teaching Maths and Supporting Students",
+          "summary": "Taught maths to Junior Cycle and Leaving Certificate students, supported small-group resource teaching, and completed a programme to increase Higher Level maths uptake.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Post-primary maths teacher, Pobalscoil Iosolde, Palmerstown, Dublin (October 2024 – August 2026)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#post-primary-maths-teacher-pobalscoil-iosolde-palmerstown-dublin-october-2024--august-2026",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Taught maths to Junior Cycle and Leaving Certificate students, and supported small-group resource maths teaching. Completed the Trinity Access IMPACT Maths programme, which aims to increase the number of students taking Higher Level Junior Cycle maths",
+          "approved": true
+        },
+        {
+          "id": "teaching-mentoring:e9fd13724a",
+          "title": "Led training and mentoring teams",
+          "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers. Provided mentoring, documentation, onboarding, and grew junior engineers. Taught IT and AI to over 300 students in Tanzania.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers | Mentoring, documentation, onboarding, growing junior engineers | A README and model card for every project; two years teaching; IT and AI training for",
+          "approved": false
+        }
+      ]
+    },
+    {
+      "card": "leadership",
+      "title": "Leadership",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "leadership:e9fd13724a",
+          "title": "Led Engineering and Training Teams",
+          "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers",
+          "approved": false
+        },
+        {
+          "id": "leadership:5299616047",
+          "title": "Led 7nm Start-up and CMP Teams",
+          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and cost in a high-volume manufacturing environment.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#cmp-chemical-mechanical-polish-area-manager-714nm-and-lead-7nm-start-up-equipment-qualification-programme-august-2019--october-2024",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods, including Kaizen waste reduction and value stream mapping... Led strategic",
+          "approved": true
+        },
+        {
+          "id": "leadership:d362007369",
+          "title": "Leadership in Equipment Qualification",
+          "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led the 7nm start-up equipment qualification programme",
+          "approved": false
+        },
+        {
+          "id": "leadership:d0a57cfcea",
+          "title": "Managed OEM Service Contracts",
+          "summary": "Managed service contracts for semiconductor equipment suppliers, aligned their objectives with Intel's, intervened when performance fell short, and measured quality of installation and sustaining work.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#200mm300mm-oem-equipment-service-contract-manager-june-2000--april-2005",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Managed service contracts for installing and maintaining semiconductor manufacturing equipment from equipment suppliers (OEMs). Responsible for the lithography and dry etch supplier companies: kept their objectives aligned with Intel's, intervened when performance fell short, and measured the quality of their",
+          "approved": false
+        },
+        {
+          "id": "leadership:035538d07a",
+          "title": "Led Process Quality Team",
+          "summary": "Led a four-shift team of 10 technicians and 5 engineers as Process Quality Team Lead, focusing on continuous improvement and 7-step problem solving.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > Process Engineer (October 1994 – June 2000)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#process-engineer-october-1994--june-2000",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Outgoing Quality Engineer, and Process Quality Team Lead for a four-shift team of 10 technicians and 5 engineers. Focused on continuous improvement and 7-step problem solving.",
+          "approved": true
+        },
+        {
+          "id": "leadership:d01d06712f",
+          "title": "Leadership in Strategic Planning",
+          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification to software product roadmap and sprint goals.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Programme lead on factory-wide planning for the 7nm production ramp; translated factory objectives into SMART MBOs for every team member; PMP certified (2019)",
+          "approved": false
+        },
+        {
+          "id": "leadership:b50611f1aa",
+          "title": "Led Semiconductor Manufacturing Teams",
+          "summary": "Led teams in high-volume semiconductor manufacturing across multiple technologies and processes, including new-technology start-ups.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#intel-ireland-leixlip-october-1994--october-2024",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "most of them in leadership roles in high-volume manufacturing (HVM), across the 65nm, 22nm, 14nm and 7nm technologies... I worked on new-technology start-ups and built teams to meet the demands of high-volume manufacturing.",
+          "approved": false
+        },
+        {
+          "id": "leadership:73f7ff9703",
+          "title": "Led 300mm Implant Team",
+          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost. Completed ROI analyses and led a multinational team selling obsolete equipment.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#300mm-implant-group-leader-october-2016--august-2019",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost. Completed return-on-investment (ROI) analyses for equipment selection and capital projects. Led a multinational team that sold obsolete manufacturing equipment",
+          "approved": true
+        },
+        {
+          "id": "leadership:f149434714",
+          "title": "Implemented secure Azure sign-in",
+          "summary": "Barry replaced all-or-nothing keys with Entra ID sign-in using DefaultAzureCredential, assigning scoped roles per environment to improve security and manageability.",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "approved": false
+        }
+      ]
+    },
+    {
+      "card": "teamwork",
+      "title": "Teamwork & collaboration",
+      "approved_but_not_found": [],
+      "candidates": [
+        {
+          "id": "teamwork:e9fd13724a",
+          "title": "Led engineering and training teams",
+          "summary": "Barry led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers",
+          "approved": false
+        },
+        {
+          "id": "teamwork:73f7ff9703",
+          "title": "Led multinational team selling equipment",
+          "summary": "Led a multinational team that sold obsolete manufacturing equipment from 14nm production lines.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#300mm-implant-group-leader-october-2016--august-2019",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led a multinational team that sold obsolete manufacturing equipment from the 14nm production lines.",
+          "approved": true
+        },
+        {
+          "id": "teamwork:b75a31933f",
+          "title": "Azure sign-in setup with Entra ID",
+          "summary": "Barry configured Azure sign-in using Entra ID by creating identities and roles, updating search service authentication, testing locally, managing secrets securely, and enabling GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Create the identity and roles... Check Search accepts tokens... Try it locally... Create the Render secret... Render → Environment... The nightly index refresh signs in with GitHub OIDC... Terraform creates the ask-barry-github app registration with a federated credential...",
+          "approved": false
+        },
+        {
+          "id": "teamwork:d362007369",
+          "title": "Mapping manufacturing teamwork to software",
+          "summary": "Barry mapped manufacturing teamwork practices like quality systems and change control to software delivery processes, implementing automated testing, code reviews, and staged rollouts to ensure quality and stability.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Strict, multi-level change control based on risk assessment; stepped approvals for controlled experiments, with Watch It plans after release | Code review and pull requests; risk-based approvals; staged rollouts; post-release monitoring with rollback",
+          "approved": false
+        }
+      ]
+    }
+  ]
+}
