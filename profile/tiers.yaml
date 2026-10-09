@@ -1,0 +1,27 @@
+# The four universal tiers (Learned -> Applied -> Delivered -> Proven), in this profession's words.
+# "criteria" is what the judge must see in a section to award the tier. Higher tiers include the lower ones.
+tiers:
+  - level: 1
+    universal: Learned
+    label: Used
+    criteria: >-
+      The section shows the person, or one of their projects, actually using or working with the skill.
+      A plan, an idea, a wish list or a "next step" does not count.
+  - level: 2
+    universal: Applied
+    label: Built
+    criteria: >-
+      The section shows the person built, wrote or configured something themselves with the skill
+      (code, configuration, a pipeline, a feature), not just used a finished product.
+  - level: 3
+    universal: Delivered
+    label: In production
+    criteria: >-
+      The section shows the skill as part of a live, deployed system or an automated job that runs for
+      real (a live site, a production deployment, a scheduled pipeline), not only local or planned work.
+  - level: 4
+    universal: Proven
+    label: Tested / evaluated
+    criteria: >-
+      The section shows the skill-related work was tested or measured: automated tests that cover it,
+      an evaluation with results, or a quality or security check that runs and is reported.

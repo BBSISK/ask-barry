@@ -1,0 +1,26 @@
+{
+  "profile_id": "barry-sisk",
+  "status": "DRAFT: proposed by Claude from the public READMEs on 9 Oct 2026. Barry to confirm or change each tier before the first evaluation counts.",
+  "tiers": {"0": "Not evidenced", "1": "Used", "2": "Built", "3": "In production", "4": "Tested / evaluated"},
+  "skills": {
+    "python-flask": 4,
+    "cloud": 4,
+    "infrastructure-as-code": 4,
+    "ci-cd": 4,
+    "containers": 3,
+    "rag-llm": 4,
+    "agents-mcp": 4,
+    "testing-evaluation": 4,
+    "databases-sql": 3,
+    "security-identity": 4,
+    "kubernetes": 0,
+    "java": 0,
+    "front-end-frameworks": 0,
+    "data-streaming": 0
+  },
+  "traps": ["kubernetes", "front-end-frameworks", "data-streaming"],
+  "notes": {
+    "traps": "Same skills as the golden set's trap questions: anything above 0 is over-claiming.",
+    "java": "Expected 0 until Java work is in public docs (HDip coursework isn't indexed)."
+  }
+}

@@ -24,6 +24,9 @@ class Config:
     SCAN_RATE_PER_HOUR = int(os.getenv("SCAN_RATE_PER_HOUR", "8"))
     SCAN_RATE_PER_DAY = int(os.getenv("SCAN_RATE_PER_DAY", "60"))
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024        # Flask rejects bigger uploads with 413 before reading them
+    # ASK-42: where capability.json is read from (a path, or an https URL such as the raw file on main, so the
+    # nightly rebuild shows without a redeploy). Blank means data/capability.json in this checkout.
+    CAPABILITY_SOURCE = os.getenv("CAPABILITY_SOURCE") or None
 
 
 class DevelopmentConfig(Config):

@@ -86,7 +86,8 @@ def run_client(fn):
 
 def test_tool_is_listed_read_only_with_schemas():
     tools = run_client(lambda c: c.list_tools()).tools
-    assert [t.name for t in tools] == ["ask_barry"]
+    assert [t.name for t in tools] == ["ask_barry", "get_capability"]
+    assert all(t.annotations.readOnlyHint is True for t in tools)
     tool = tools[0]
     assert tool.annotations.readOnlyHint is True and tool.annotations.destructiveHint is False
     assert tool.inputSchema["required"] == ["question"]
@@ -113,3 +114,54 @@ def test_check_mode_prints_json(capsys, monkeypatch):
     monkeypatch.setattr(server, "post_json", fake_poster())
     server.main(["--check", "What is Wall Inspector?"])
     assert json.loads(capsys.readouterr().out)["supported"] is True
+
+
+# --- ASK-42: get_capability reads the same capability.json as the page -----------------------------------------
+
+CAP = {"schema_version": "1.0", "profile_id": "p", "person": {"name": "Barry Sisk", "short_name": "Barry"},
+       "generated_at": "2026-10-09T03:30:00Z", "sources": {"repos": ["wall_inspector"]},
+       "tiers": [{"level": n, "universal": u, "label": l} for n, u, l in
+                 [(1, "Learned", "Used"), (2, "Applied", "Built"), (3, "Delivered", "In production"),
+                  (4, "Proven", "Tested / evaluated")]],
+       "skills": [{"id": "containers", "name": "Containers (Docker)", "tier": 3, "first_evidence": "2025-11",
+                   "projects_by_tier": {"3": ["Wall Inspector"]},
+                   "evidence": [{"tier": 3, "repo": "wall_inspector", "path": "README.md", "heading": "Deployment",
+                                 "url": "https://github.com/BBSISK/wall_inspector/blob/abc/README.md#d",
+                                 "quote": "Render auto-deploys the Docker container", "source_type": "github_readme",
+                                 "verified_by": "self", "project": "Wall Inspector"}]},
+                  {"id": "java", "name": "Java", "tier": 0, "first_evidence": None, "projects_by_tier": {},
+                   "evidence": []}],
+       "cards": []}
+
+
+def fake_getter(status=200, body=None):
+    calls = []
+
+    def getter(url, timeout=None):
+        calls.append(url)
+        return status, CAP if body is None else body
+    getter.calls = calls
+    return getter
+
+
+def test_capability_calls_the_api_and_labels_tiers():
+    getter = fake_getter()
+    result = server.capability(getter=getter)
+    assert getter.calls == ["https://ask-barry.onrender.com/api/capability"]
+    assert [(s.id, s.tier_label) for s in result.skills] == [("containers", "In production"), ("java", "Not evidenced")]
+    assert result.skills[0].projects == ["Wall Inspector"] and result.evidence_as_of == "2026-10-09"
+    server.capability("Containers (Docker)", getter=getter)
+    assert getter.calls[-1].endswith("/api/capability?skill=Containers%20%28Docker%29")
+
+
+def test_capability_unknown_skill_lists_the_skills():
+    with pytest.raises(server.AskBarryError, match="Skills: containers, java"):
+        server.capability("juggling", getter=fake_getter(404, {"error": "No skill 'juggling'.", "skills": ["containers", "java"]}))
+
+
+def test_get_capability_over_the_protocol(monkeypatch):
+    monkeypatch.setattr(server, "get_json", fake_getter())
+    result = run_client(lambda c: c.call_tool("get_capability", {}))
+    assert result.isError is False
+    assert result.structuredContent["skills"][0]["tier_label"] == "In production"
+    assert "not a self-rating" in result.structuredContent["note"]

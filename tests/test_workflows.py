@@ -12,7 +12,7 @@ ENTRA_SETTINGS = ("AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_EMBED_DEPLOYMENT", "AZU
 def test_refresh_workflow_passes_every_ingest_setting_from_secrets():
     text = WORKFLOW.read_text(encoding="utf-8")
     for name in ENTRA_SETTINGS:
-        assert text.count(f"{name}: ${{{{ secrets.") == 2, f"{name} missing from a step in refresh-index.yml"
+        assert text.count(f"{name}: ${{{{ secrets.") == 3, f"{name} missing from a step in refresh-index.yml"
 
 
 def test_refresh_workflow_runs_the_pipeline_in_order_and_is_read_only():
@@ -39,7 +39,7 @@ def test_refresh_workflow_signs_in_with_oidc_and_holds_no_keys():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "id-token: write" in text
     assert "API_KEY" not in text and "ADMIN_KEY" not in text and "AZURE_AUTH_MODE: key" not in text
-    assert text.count("AZURE_AUTH_MODE: entra") == 2
+    assert text.count("AZURE_AUTH_MODE: entra") == 3          # sync, quality check, capability build
     # The IDs come from repository variables: identifiers, not secrets.
     assert "client-id: ${{ vars.AZURE_CLIENT_ID }}" in text and "secrets.AZURE_CLIENT_SECRET" not in text
 
@@ -56,3 +56,17 @@ def test_refresh_workflow_checks_retrieval_with_the_production_retriever():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "--retriever azure-hybrid-noname --min-section-recall" in text
     assert text.index("python -m scripts.ingest") < text.index("python -m scripts.evaluate_retrieval")
+
+
+def test_capability_is_built_after_the_quality_check_and_published_by_a_separate_job():
+    """ASK-42: only the publish job can write to the repo, and it commits only when the content changed."""
+    import yaml
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert text.index("scripts.evaluate_retrieval") < text.index("scripts.build_capability")
+    jobs = yaml.safe_load(text)["jobs"]
+    assert "permissions" not in jobs["refresh"]                       # inherits read-only contents
+    publish = jobs["publish-capability"]
+    assert publish["needs"] == "refresh" and publish["permissions"] == {"contents": "write"}
+    commit = publish["steps"][-1]["run"]
+    assert "same_content" in commit and "No change: nothing to commit." in commit
+    assert "git add data/capability.json data/capability_suggestions.json" in commit

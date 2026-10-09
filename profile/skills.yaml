@@ -1,0 +1,96 @@
+# Skills shown on the capability ladder, in display order before sorting by tier.
+#   id           stable key (lowercase, hyphens); used in URLs, labels and the MCP tool
+#   name         shown on the page
+#   description  what counts as this skill, for the judge (one line, plain words)
+#   queries      2-3 searches run through the production retriever to find evidence
+#   match        words or phrases that link a job-ad requirement to this skill ("Against a job ad" view)
+#   esco_uri     optional ESCO skill URI (filled in under ASK-44; left out rather than guessed)
+#
+# Transparency rule (Product Owner, 9 Oct 2026): in-demand skills without evidence stay on this list and show
+# as "Not evidenced". Nothing is hidden.
+skills:
+  - id: python-flask
+    name: Python & Flask
+    description: Writing Python, including Flask web applications and back-end services.
+    queries: ["Python Flask web application", "Python back end and scripts"]
+    match: [python, flask, django, fastapi, back end, backend]
+
+  - id: cloud
+    name: Cloud (Azure & AWS)
+    description: Using Microsoft Azure or Amazon Web Services cloud services, including AI services.
+    queries: ["Azure OpenAI and Azure AI Search", "AWS Bedrock and IAM", "cloud services setup"]
+    match: [azure, aws, amazon web services, cloud, gcp, google cloud]
+
+  - id: infrastructure-as-code
+    name: Infrastructure as code
+    description: Describing and managing cloud infrastructure in code, for example with Terraform.
+    queries: ["Terraform infrastructure as code", "Terraform import and plan"]
+    match: [terraform, infrastructure as code, iac, bicep, cloudformation, pulumi]
+
+  - id: ci-cd
+    name: CI/CD & DevOps
+    description: Automated build, test and deployment pipelines and the practices around them.
+    queries: ["GitHub Actions CI pipeline", "automatic deployment after tests pass"]
+    match: [ci/cd, ci, cd, continuous integration, continuous delivery, devops, github actions, pipeline]
+
+  - id: containers
+    name: Containers (Docker)
+    description: Packaging and running applications in containers, for example with Docker.
+    queries: ["Docker container", "docker-compose local stack"]
+    match: [docker, container, containers, containerisation, containerization]
+
+  - id: rag-llm
+    name: RAG & LLM apps
+    description: Building applications on large language models, including retrieval-augmented generation.
+    queries: ["retrieval-augmented generation with citations", "LLM answers grounded in sources"]
+    match: [rag, retrieval, llm, large language model, generative ai, genai, openai, prompt]
+
+  - id: agents-mcp
+    name: Agents & MCP
+    description: AI agents that plan and call tools, and Model Context Protocol (MCP) servers and clients.
+    queries: ["AI agent calling tools", "MCP server"]
+    match: [agent, agents, agentic, mcp, model context protocol, tool calling]
+
+  - id: testing-evaluation
+    name: Testing & evaluation
+    description: Automated tests and measured evaluation of software or AI quality.
+    queries: ["automated tests pytest", "evaluation results golden set"]
+    match: [testing, tests, test, pytest, unit test, evaluation, qa, quality assurance]
+
+  - id: databases-sql
+    name: Databases & SQL
+    description: Designing and using databases, including writing SQL.
+    queries: ["PostgreSQL database", "SQL queries and data model"]
+    match: [sql, database, databases, postgresql, postgres, mysql, sqlite]
+
+  - id: security-identity
+    name: Security & identity
+    description: Securing applications and data, including authentication, secrets handling and access control.
+    queries: ["security and secrets handling", "Entra ID and least privilege access"]
+    match: [security, secure, identity, authentication, oauth, entra, iam, secrets, privacy]
+
+  # In-demand skills kept on the list on purpose, so gaps are visible (they show as "Not evidenced" until the
+  # public docs show them).
+  - id: kubernetes
+    name: Kubernetes
+    description: Running containers on Kubernetes clusters.
+    queries: ["Kubernetes cluster"]
+    match: [kubernetes, k8s, aks, eks, gke]
+
+  - id: java
+    name: Java
+    description: Writing Java applications.
+    queries: ["Java application"]
+    match: [java, spring, spring boot]
+
+  - id: front-end-frameworks
+    name: Front-end frameworks
+    description: Building browser front ends with a framework such as React, Angular or Vue.
+    queries: ["React front end"]
+    match: [react, angular, vue, front end, frontend, typescript]
+
+  - id: data-streaming
+    name: Data streaming
+    description: Event or message streaming platforms such as Apache Kafka.
+    queries: ["Kafka event streaming"]
+    match: [kafka, streaming, event streaming, event hubs, kinesis]

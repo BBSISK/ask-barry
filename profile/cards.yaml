@@ -1,0 +1,52 @@
+# Evidence cards: professional skills shown as documented examples, not ratings.
+#
+# How a card fills (option A, Product Owner, 9 Oct 2026): every night the builder searches the index with each
+# card's queries and drafts short examples from the sections it finds, each with a quote checked against the
+# source. Drafts go to data/capability_suggestions.json. An example goes live only after its id is copied into
+# "approved" below. Until a card has an approved example, it shows as a gap with its gap_note.
+#
+# Adding a card needs no code change: add an entry here and it appears after the next nightly build.
+cards:
+  - id: problem-solving
+    title: Problem solving & debugging
+    queries: ["root cause and fix", "bug found and fixed", "problem I solved"]
+    approved: []
+    gap_note: No approved examples yet.
+
+  - id: security-mindset
+    title: Security mindset
+    queries: ["leaked credential response", "security and privacy by design"]
+    approved: []
+    gap_note: No approved examples yet.
+
+  - id: data-manipulation
+    title: Data manipulation
+    queries: ["cleaning and transforming data", "data export format", "dataset preparation and processing"]
+    approved: []
+    gap_note: >-
+      Not yet evidenced in the public docs. Examples will come from data projects as they are published.
+
+  - id: written-communication
+    title: Written communication
+    queries: ["model card", "setup guide and documentation"]
+    approved: []
+    gap_note: No approved examples yet.
+
+  - id: teaching-mentoring
+    title: Teaching & mentoring
+    queries: ["teaching maths", "students learning"]
+    approved: []
+    gap_note: No approved examples yet.
+
+  - id: leadership
+    title: Leadership
+    queries: ["leading engineering teams", "manager role"]
+    approved: []
+    gap_note: No approved examples yet.
+
+  - id: teamwork
+    title: Teamwork & collaboration
+    queries: ["worked with a team", "collaboration with colleagues"]
+    approved: []
+    gap_note: >-
+      Projects so far are mostly solo. Team-based software work is the next step.
