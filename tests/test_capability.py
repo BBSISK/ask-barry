@@ -30,7 +30,7 @@ CHUNKS = [
     chunk("wi-docker", "wall_inspector", "Deployment",
           "Render auto-deploys the Docker container after GitHub Actions runs 63 tests."),
     chunk("wi-compose", "wall_inspector", "Quick start", "Run the whole stack locally with docker-compose up."),
-    chunk("ab-k8s-plan", "ask-barry", "Roadmap", "Ideas for later: maybe try Kubernetes one day."),
+    chunk("ab-k8s-plan", "ask-barry", "Notes", "Ideas for later: maybe try Kubernetes one day."),
     chunk("profile-toolbox", "BBSISK", "Toolbox", "Cloud and DevOps: Docker, Terraform, Kubernetes."),
     chunk("ab-incident", "ask-barry", "Readiness bug",
           "The readiness check waited 8 seconds for a hung provider. I fixed the thread pool shutdown and "
@@ -75,7 +75,7 @@ DOCKER_TIERS = {
     ("Containers (Docker)", "Deployment"): (3, "Render auto-deploys the Docker container"),
     ("Containers (Docker)", "Quick start"): (2, "Run the whole stack locally with docker-compose up"),
     ("Containers (Docker)", "Toolbox"): (4, "Docker, Terraform"),               # self-description: must not count
-    ("Kubernetes", "Roadmap"): (1, "maybe try Kubernetes one day"),          # planned: the judge should say 0,
+    ("Kubernetes", "Notes"): (1, "maybe try Kubernetes one day"),          # planned: the judge should say 0,
 }                                                                            # but see test_planned_work...
 STORY = {"example": True, "title": "Readiness check hung", "quote": "I fixed the thread pool shutdown",
          "summary": "The readiness check waited 8 seconds; the thread pool shutdown was fixed and a test added."}
@@ -163,12 +163,41 @@ def test_an_invented_quote_counts_for_nothing():
 
 
 def test_planned_work_depends_on_the_judge_but_the_quote_must_still_be_real():
-    # The fake judge wrongly gives the roadmap line tier 1. The quote is real, so it would count: that is why
+    # The fake judge wrongly gives the "ideas for later" line tier 1. Its heading doesn't say it's a plan. The quote is real, so it would count: that is why
     # the real judge's rules say plans count as 0, and why the trap skills are in the hand-labelled check.
     cap, _ = build()
     assert skill(cap, "kubernetes")["tier"] == 1
     cap, _ = build(tiers={k: v for k, v in DOCKER_TIERS.items() if k[0] != "Kubernetes"})
     assert skill(cap, "kubernetes")["tier"] == 0
+
+
+def test_a_section_headed_as_a_plan_never_fills_a_tier_whatever_the_judge_says():
+    roadmap = [c if c["chunk_id"] != "ab-k8s-plan" else {**c, "heading": "Architecture (planned)"} for c in CHUNKS]
+    tiers = {**DOCKER_TIERS, ("Kubernetes", "Architecture (planned)"): (3, "maybe try Kubernetes one day")}
+    cap, _ = build(tiers=tiers, retriever=FakeRetriever(roadmap))
+    assert skill(cap, "kubernetes")["tier"] == 0
+    pack = load_pack()
+    assert pack.is_planned("Roadmap") and pack.is_planned("Housing > Architecture (planned)")
+    assert not pack.is_planned("Deployment") and not pack.is_planned("Unplanned outage fix")
+
+
+def test_a_slow_search_is_retried_and_a_dead_one_still_fails():
+    from app.capability.builder import search
+
+    class Flaky:
+        def __init__(self, fails):
+            self.fails, self.calls = fails, 0
+
+        def search(self, query, k=5):
+            self.calls += 1
+            if self.calls <= self.fails:
+                raise TimeoutError("read timed out")
+            return ["ok"]
+
+    flaky = Flaky(2)
+    assert search(flaky, "q", 5, sleep=lambda _: None, log=lambda *_: None) == ["ok"] and flaky.calls == 3
+    with pytest.raises(TimeoutError):
+        search(Flaky(3), "q", 5, sleep=lambda _: None, log=lambda *_: None)
 
 
 def test_skills_without_evidence_stay_on_the_list_as_not_evidenced():

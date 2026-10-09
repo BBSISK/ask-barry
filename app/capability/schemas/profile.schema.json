@@ -47,6 +47,13 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "planned_headings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   }
 }
