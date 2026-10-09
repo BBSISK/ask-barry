@@ -199,7 +199,9 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 
 ## Deployment
 
-`render.yaml` defines the Render web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+Ask Barry is a Flask app running in production on Render at [ask-barry.onrender.com](https://ask-barry.onrender.com), served by gunicorn (`gunicorn wsgi:app`). `render.yaml` defines the web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+
+CI runs the full pytest suite on every push. It includes tests that call the Flask routes (the home page, `/evidence`, `/capability`, the JSON APIs, `/health` and `/ready`) through Flask's test client, so a broken route blocks the deploy.
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 
