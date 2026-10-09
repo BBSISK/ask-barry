@@ -340,6 +340,66 @@ def test_evaluator_scores_against_labels_and_fails_on_a_claimed_trap():
     assert compare(cap, clean) == [{"skill": "kubernetes", "first": 1, "second": 0}]
 
 
+def test_report_shows_instability_and_fails():
+    from scripts.evaluate_capability import compare, render, score
+    cap, _ = build()
+    clean, _ = build(tiers={k: v for k, v in DOCKER_TIERS.items() if k[0] != "Kubernetes"})
+    labels = {"skills": {"containers": 3}, "traps": []}
+    unstable = render(score(cap, labels), cap, labels, diffs=compare(cap, clean))
+    assert "Stable across two builds: **no** (kubernetes 1 vs 0)" in unstable and "**FAIL**" in unstable
+    stable = render(score(cap, labels), cap, labels, diffs=[])
+    assert "Stable across two builds: **yes**" in stable and "**PASS**" in stable
+
+
+# --- voting: one borderline answer can't move a tier ------------------------------------------------------------
+
+class ScriptedJudge:
+    """Gives the answers in order, one per call."""
+
+    def __init__(self, *answers):
+        self.answers, self.calls = list(answers), 0
+
+    def judge(self, skill, chunk):
+        self.calls += 1
+        return self.answers.pop(0)
+
+
+SECTION = {"repo": "ask-barry", "path": "README.md", "heading": "Deploy", "text": "Deployed on Render with Flask."}
+SKILL = {"id": "python-flask", "name": "Python & Flask"}
+
+
+def test_two_matching_answers_settle_it_without_a_third_call():
+    from app.capability.builder import vote
+    judge = ScriptedJudge({"tier": 3, "quote": "Deployed on Render"}, {"tier": 3, "quote": "Deployed on Render"})
+    assert vote(SKILL, SECTION, judge, log=lambda *_: None)["tier"] == 3 and judge.calls == 2
+
+
+def test_the_middle_answer_wins_when_answers_differ():
+    from app.capability.builder import vote
+    lines = []
+    up = ScriptedJudge({"tier": 3, "quote": "Deployed on Render"}, {"tier": 1, "quote": "Render with Flask"},
+                       {"tier": 4, "quote": "Deployed on Render"})
+    assert vote(SKILL, SECTION, up, log=lines.append)["tier"] == 3 and up.calls == 3
+    assert "answers 3, 1, 4 -> 3" in lines[0]
+    down = ScriptedJudge({"tier": 3, "quote": "Deployed on Render"}, {"tier": 0, "quote": ""}, {"tier": 0, "quote": ""})
+    assert vote(SKILL, SECTION, down, log=lambda *_: None)["tier"] == 0
+
+
+def test_an_answer_with_an_invented_quote_counts_as_zero():
+    from app.capability.builder import vote
+    judge = ScriptedJudge({"tier": 4, "quote": "evaluated with 500 tests"}, {"tier": 2, "quote": "Flask"},
+                          {"tier": 4, "quote": "evaluated with 500 tests"})
+    lines = []
+    assert vote(SKILL, SECTION, judge, log=lines.append)["tier"] == 0
+    assert "quote not found for 4" in lines[0]
+
+
+def test_one_vote_is_the_old_behaviour():
+    from app.capability.builder import vote
+    judge = ScriptedJudge({"tier": 2, "quote": "Render with Flask"})
+    assert vote(SKILL, SECTION, judge, votes=1, log=lambda *_: None)["tier"] == 2 and judge.calls == 1
+
+
 def test_draft_labels_cover_every_skill_on_barrys_list():
     labels = json.loads((ROOT / "eval" / "capability_labels.json").read_text())
     assert set(labels["skills"]) == {s["id"] for s in load_pack().skills}

@@ -2,8 +2,10 @@
 
 For each skill: run its queries through the production retriever, then for each section found ask the judge
 one narrow question: "what is the highest tier this section shows for this skill?", with a quote. The quote
-must really be in the section (checked in code, as in the Stage 6 evaluator), or the section counts for
-nothing. The skill's tier is the highest tier any verified section shows. No scores, no averages.
+must really be in the section (checked in code, as in the Stage 6 evaluator), or that answer counts as 0.
+The question is asked up to three times per section and the section gets the middle answer (the median), so
+one borderline answer can't move a skill up or down. Two matching answers settle it without a third call.
+The skill's tier is the highest tier any section gets. No scores, no averages.
 
 Cards work the same way: each card's queries find sections, a writer drafts a short example with a quote,
 the quote is checked, and only examples the person has approved (cards.yaml) go live. The rest are written
@@ -22,6 +24,7 @@ PER_QUERY = 6              # sections retrieved per query
 MAX_SECTIONS = 10          # sections judged per skill or card (keeps the nightly cost small)
 MAX_EVIDENCE = 8           # evidence links kept per skill in the output
 MAX_QUOTE_WORDS = 40
+VOTES = 3                  # judge answers per section; the section gets the median (ASK-42 stability check)
 
 
 def section_label(chunk):
@@ -131,16 +134,35 @@ def _source_fields(pack, chunk):
             "source_type": "github_readme", "verified_by": "self"}
 
 
-def build_skill(pack, skill, retriever, judge, first_committed=None, log=print):
+def vote(skill, chunk, judge, votes=VOTES, log=print):
+    """Ask the judge up to `votes` times; return the median answer. A quote that isn't in the section makes
+    that answer 0. Stops early once one answer has a majority."""
+    answers = []
+    for _ in range(max(1, votes)):
+        verdict = judge.judge(skill, chunk)
+        if verdict["tier"] and not quote_in_sources(verdict["quote"], section_text(chunk)):
+            verdict = {"tier": 0, "quote": "", "discarded": verdict["tier"]}
+        answers.append(verdict)
+        tiers = [a["tier"] for a in answers]
+        if max(tiers.count(t) for t in tiers) * 2 > votes:
+            break
+    ordered = sorted(answers, key=lambda a: a["tier"])
+    chosen = ordered[(len(ordered) - 1) // 2]          # the median; with an even count, the lower middle
+    tiers = [a["tier"] for a in answers]
+    if len(set(tiers)) > 1 or any("discarded" in a for a in answers):
+        shown = ", ".join(f"{a['tier']}" + (f" (quote not found for {a['discarded']})" if "discarded" in a else "")
+                          for a in answers)
+        log(f"  {skill['id']}: {section_label(chunk)} answers {shown} -> {chosen['tier']}")
+    return chosen
+
+
+def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, votes=VOTES):
     evidence = []
     for rank, chunk in enumerate(find_sections(retriever, skill["queries"])):
         if pack.is_self_description(chunk.get("repo", "")):
             continue                                   # a self-description isn't evidence of use
-        verdict = judge.judge(skill, chunk)
+        verdict = vote(skill, chunk, judge, votes, log)
         tier, quote = verdict["tier"], verdict["quote"]
-        if tier and not quote_in_sources(quote, section_text(chunk)):
-            log(f"  {skill['id']}: quote not found in {section_label(chunk)}; tier {tier} discarded")
-            tier = 0
         if not tier:
             continue
         item = {"tier": tier, **_source_fields(pack, chunk), "quote": quote}
@@ -187,13 +209,13 @@ def build_card(pack, card, retriever, writer, log=print):
     return live, suggestion
 
 
-def build_capability(pack, retriever, judge, writer, first_committed=None, now=None, log=print):
+def build_capability(pack, retriever, judge, writer, first_committed=None, now=None, log=print, votes=VOTES):
     """-> (capability dict, suggestions dict). Deterministic given the same retriever and model answers."""
     now = now or datetime.now(timezone.utc)
     skills, cards, suggestions = [], [], []
     for skill in pack.skills:
         log(f"skill {skill['id']}")
-        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log))
+        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes))
     for card in pack.cards:
         log(f"card {card['id']}")
         live, suggestion = build_card(pack, card, retriever, writer, log)

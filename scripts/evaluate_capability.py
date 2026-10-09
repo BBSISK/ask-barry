@@ -1,10 +1,11 @@
 """Check capability.json against hand labels, and two builds against each other (ASK-42).
 
     python -m scripts.evaluate_capability                         # data/capability.json vs eval/capability_labels.json
-    python -m scripts.evaluate_capability --stability other.json  # do two builds give the same tiers?
+    python -m scripts.evaluate_capability --stability other.json  # also: do two builds give the same tiers?
     python -m scripts.evaluate_capability --save                  # also write docs/eval/<date>-capability.md
 
-Pass criteria (ASK-42): at least 80% of labelled skills exactly right, and no trap skill above "Not evidenced".
+Pass criteria (ASK-42): at least 80% of labelled skills exactly right, no trap skill above "Not evidenced",
+and, when a second build is given, the same tier for every skill in both builds.
 """
 import argparse
 import json
@@ -44,7 +45,7 @@ def passed(result, min_match=MIN_MATCH):
     return result["exact"] >= min_match and not result["trap_failures"]
 
 
-def render(result, capability, labels, when=None):
+def render(result, capability, labels, when=None, diffs=None):
     label = lambda t: "–" if t is None else f"{t} {result['names'].get(t, 'Not evidenced')}"   # noqa: E731
     lines = [f"# Capability ladder vs hand labels: {when or date.today().isoformat()}", "",
              f"Build generated {capability['generated_at']} · {result['n']} labelled skills", "",
@@ -52,7 +53,10 @@ def render(result, capability, labels, when=None):
              f"- Exact tier: **{result['exact']:.0%}** (pass mark {MIN_MATCH:.0%})",
              f"- Within one tier: {result['within_one']:.0%}",
              f"- Trap skills claimed: **{len(result['trap_failures'])}** {result['trap_failures'] or ''}",
-             f"- Result: **{'PASS' if passed(result) else 'FAIL'}**", "",
+             *([f"- Stable across two builds: **{'yes' if not diffs else 'no'}**"
+                + ("" if not diffs else " (" + ", ".join(f"{d['skill']} {d['first']} vs {d['second']}" for d in diffs) + ")")]
+               if diffs is not None else []),
+             f"- Result: **{'PASS' if passed(result) and not diffs else 'FAIL'}**", "",
              "| Skill | Expected | Built | |", "|---|---|---|---|"]
     lines += [f"| {r['skill']} | {label(r['expected'])} | {label(r['got'])} | {'✔' if r['ok'] else '✕'} |"
               for r in result["rows"]]
@@ -70,23 +74,19 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     capability = json.loads(Path(args.capability).read_text(encoding="utf-8"))
+    diffs = None
     if args.stability:
         diffs = compare(capability, json.loads(Path(args.stability).read_text(encoding="utf-8")))
-        for d in diffs:
-            print(f"  {d['skill']}: {d['first']} vs {d['second']}")
-        print("Stable: same tier for every skill." if not diffs else f"Unstable: {len(diffs)} skill(s) differ.")
-        sys.exit(1 if diffs else 0)
-
     labels = json.loads(Path(args.labels).read_text(encoding="utf-8"))
     result = score(capability, labels)
-    report = render(result, capability, labels)
+    report = render(result, capability, labels, diffs=diffs)
     print(report)
     if args.save:
         out = ROOT / "docs" / "eval" / f"{date.today().isoformat()}-capability.md"
+        out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(report, encoding="utf-8")
         print(f"Saved {out}")
-    sys.exit(0 if passed(result) else 1)
-
+    sys.exit(0 if passed(result) and not diffs else 1)
 
 if __name__ == "__main__":
     main()

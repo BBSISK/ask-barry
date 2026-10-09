@@ -19,7 +19,7 @@ import urllib.request
 from functools import lru_cache
 from pathlib import Path
 
-from app.capability.builder import TierJudge, StoryWriter, build_capability
+from app.capability.builder import VOTES, TierJudge, StoryWriter, build_capability
 from app.capability.pack import DEFAULT_PACK, PackError, load_pack
 from app.capability.store import problems
 
@@ -95,6 +95,7 @@ def main(argv=None):
     parser.add_argument("--out", default=str(ROOT / "data" / "capability.json"))
     parser.add_argument("--suggestions", default=str(ROOT / "data" / "capability_suggestions.json"))
     parser.add_argument("--no-dates", action="store_true", help="skip GitHub first-commit lookups")
+    parser.add_argument("--votes", type=int, default=VOTES, help="judge answers per section (median wins)")
     args = parser.parse_args(argv)
 
     load_env()
@@ -109,7 +110,8 @@ def main(argv=None):
         first = github_first_commit(pack.profile["github_owner"], os.getenv("GITHUB_TOKEN"))
 
     capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
-                                               StoryWriter(provider, pack), first_committed=first)
+                                               StoryWriter(provider, pack), first_committed=first,
+                                               votes=args.votes)
     found = problems(capability)
     if found:
         sys.exit("Refusing to write an invalid capability.json:\n  " + "\n  ".join(found[:10]))
