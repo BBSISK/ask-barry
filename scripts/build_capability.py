@@ -95,6 +95,8 @@ def main(argv=None):
     parser.add_argument("--out", default=str(ROOT / "data" / "capability.json"))
     parser.add_argument("--suggestions", default=str(ROOT / "data" / "capability_suggestions.json"))
     parser.add_argument("--no-dates", action="store_true", help="skip GitHub first-commit lookups")
+    parser.add_argument("--previous", default=str(ROOT / "data" / "capability.json"),
+                        help="last published build; approved examples keep their wording from it")
     parser.add_argument("--votes", type=int, default=VOTES, help="judge answers per section (median wins)")
     args = parser.parse_args(argv)
 
@@ -109,9 +111,15 @@ def main(argv=None):
         import os
         first = github_first_commit(pack.profile["github_owner"], os.getenv("GITHUB_TOKEN"))
 
+    previous = None
+    if Path(args.previous).is_file():
+        previous = json.loads(Path(args.previous).read_text(encoding="utf-8"))
+        if problems(previous):
+            print(f"Ignoring {args.previous}: it isn't a valid capability.json")
+            previous = None
     capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
                                                StoryWriter(provider, pack), first_committed=first,
-                                               votes=args.votes)
+                                               votes=args.votes, previous=previous)
     found = problems(capability)
     if found:
         sys.exit("Refusing to write an invalid capability.json:\n  " + "\n  ".join(found[:10]))

@@ -81,11 +81,12 @@ STORY = {"example": True, "title": "Readiness check hung", "quote": "I fixed the
          "summary": "The readiness check waited 8 seconds; the thread pool shutdown was fixed and a test added."}
 
 
-def build(pack=None, tiers=DOCKER_TIERS, stories=None, first=None, retriever=None):
+def build(pack=None, tiers=DOCKER_TIERS, stories=None, first=None, retriever=None, previous=None, log=None):
     pack = pack or load_pack()
     provider = FakeProvider(tiers, stories)
     return build_capability(pack, retriever or FakeRetriever(), TierJudge(provider, pack),
-                            StoryWriter(provider, pack), first_committed=first, now=NOW, log=lambda *_: None)
+                            StoryWriter(provider, pack), first_committed=first, now=NOW,
+                            log=log or (lambda *_: None), previous=previous)
 
 
 def skill(cap, sid):
@@ -214,6 +215,47 @@ def test_cards_show_only_approved_examples_and_suggest_the_rest(tmp_path):
     assert card["stories"][0]["url"].startswith("https://github.com/")
     assert next(s for s in sugg["cards"] if s["card"] == "problem-solving")["approved_but_not_found"] == \
         ["problem-solving:gone"]
+
+
+def approve_first_candidate(tmp_path, stories):
+    """Build once, approve the first problem-solving candidate, return (pack, approved id, published build)."""
+    _, sugg = build(stories=stories)
+    sid = next(s for s in sugg["cards"] if s["card"] == "problem-solving")["candidates"][0]["id"]
+    folder = copy_pack(tmp_path)
+    cards = yaml.safe_load((folder / "cards.yaml").read_text())
+    cards["cards"][0]["approved"] = [sid]
+    (folder / "cards.yaml").write_text(yaml.safe_dump(cards))
+    pack = load_pack(folder)
+    published, _ = build(pack=pack, stories=stories)
+    return pack, sid, published
+
+
+def test_an_approved_example_stays_live_when_tonights_draft_misses_it(tmp_path):
+    pack, sid, published = approve_first_candidate(tmp_path, {("Problem solving & debugging", "Readiness bug"): STORY})
+    cap, sugg = build(pack=pack, stories={}, previous=published)            # the writer finds nothing tonight
+    card = next(c for c in cap["cards"] if c["id"] == "problem-solving")
+    assert [st["id"] for st in card["stories"]] == [sid] and card["gap"] is False
+    assert next(s for s in sugg["cards"] if s["card"] == "problem-solving")["approved_but_not_found"] == []
+
+
+def test_an_approved_example_keeps_its_approved_wording(tmp_path):
+    pack, sid, published = approve_first_candidate(tmp_path, {("Problem solving & debugging", "Readiness bug"): STORY})
+    redrafted = {("Problem solving & debugging", "Readiness bug"): {**STORY, "title": "A different title"}}
+    cap, _ = build(pack=pack, stories=redrafted, previous=published)
+    story = next(c for c in cap["cards"] if c["id"] == "problem-solving")["stories"][0]
+    assert story["title"] == "Readiness check hung"
+
+
+def test_an_approved_example_is_dropped_when_its_source_changes(tmp_path):
+    pack, sid, published = approve_first_candidate(tmp_path, {("Problem solving & debugging", "Readiness bug"): STORY})
+    edited = [c if c["chunk_id"] != "ab-incident" else {**c, "text": "The readiness bug was fixed in October."}
+              for c in CHUNKS]
+    lines = []
+    cap, sugg = build(pack=pack, stories={}, previous=published, retriever=FakeRetriever(edited), log=lines.append)
+    card = next(c for c in cap["cards"] if c["id"] == "problem-solving")
+    assert card["gap"] is True and card["stories"] == []
+    assert next(s for s in sugg["cards"] if s["card"] == "problem-solving")["approved_but_not_found"] == [sid]
+    assert any("no longer matches its source" in line for line in lines)
 
 
 def test_a_card_example_with_an_invented_quote_is_dropped():

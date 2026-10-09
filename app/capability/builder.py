@@ -185,10 +185,30 @@ def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, 
     return out
 
 
-def build_card(pack, card, retriever, writer, log=print):
-    """Returns (card for capability.json, every candidate for the suggestions file)."""
+def _recheck(card, story, sections, retriever, log):
+    """An approved example from the last build stays live, word for word, while its quote is still in its section.
+    The section is looked for among this build's sections first, then by searching for the quote itself."""
+    pool = list(sections)
+    if not any(story_id(card["id"], c) == story["id"] for c in pool):
+        pool += [r.chunk for r in retriever.search(story["quote"], k=PER_QUERY)]
+    for chunk in pool:
+        if story_id(card["id"], chunk) == story["id"]:
+            if quote_in_sources(story["quote"], section_text(chunk)):
+                return story
+            break
+    log(f"  card {card['id']}: approved example {story['id']} no longer matches its source; dropped")
+    return None
+
+
+def build_card(pack, card, retriever, writer, log=print, previous=None):
+    """Returns (card for capability.json, every candidate for the suggestions file).
+
+    previous: {story id: story} from the last published build. An approved example that was already live keeps
+    its approved wording (re-checked against the source), so the page doesn't change because a draft did."""
+    previous = previous or {}
+    sections = find_sections(retriever, card["queries"])
     candidates = []
-    for chunk in find_sections(retriever, card["queries"]):
+    for chunk in sections:
         draft = writer.write(card, chunk)
         if not (draft["example"] and draft["summary"]):
             continue
@@ -199,18 +219,31 @@ def build_card(pack, card, retriever, writer, log=print):
                            "summary": draft["summary"], **_source_fields(pack, chunk), "quote": draft["quote"]})
     approved = list(card.get("approved") or [])
     by_id = {c["id"]: c for c in candidates}
-    stories = [by_id[i] for i in approved if i in by_id]
+    stories = []
+    for sid in approved:
+        kept = _recheck(card, previous[sid], sections, retriever, log) if sid in previous else None
+        story = kept or by_id.get(sid)
+        if story:
+            stories.append(story)
     live = {"id": card["id"], "title": card["title"], "gap": not stories, "stories": stories}
     if not stories and card.get("gap_note"):
         live["gap_note"] = card["gap_note"]
+    found = {st["id"] for st in stories}
     suggestion = {"card": card["id"], "title": card["title"],
-                  "approved_but_not_found": [i for i in approved if i not in by_id],
+                  "approved_but_not_found": [i for i in approved if i not in found],
                   "candidates": [{**c, "approved": c["id"] in approved} for c in candidates]}
     return live, suggestion
 
 
-def build_capability(pack, retriever, judge, writer, first_committed=None, now=None, log=print, votes=VOTES):
-    """-> (capability dict, suggestions dict). Deterministic given the same retriever and model answers."""
+def previous_stories(capability):
+    """{story id: story} from an earlier capability.json (or {} if there isn't one)."""
+    return {st["id"]: st for c in (capability or {}).get("cards", []) for st in c.get("stories", [])}
+
+
+def build_capability(pack, retriever, judge, writer, first_committed=None, now=None, log=print, votes=VOTES,
+                     previous=None):
+    """-> (capability dict, suggestions dict). Deterministic given the same retriever and model answers.
+    previous: the last published capability.json, so approved examples keep their approved wording."""
     now = now or datetime.now(timezone.utc)
     skills, cards, suggestions = [], [], []
     for skill in pack.skills:
@@ -218,7 +251,7 @@ def build_capability(pack, retriever, judge, writer, first_committed=None, now=N
         skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes))
     for card in pack.cards:
         log(f"card {card['id']}")
-        live, suggestion = build_card(pack, card, retriever, writer, log)
+        live, suggestion = build_card(pack, card, retriever, writer, log, previous_stories(previous))
         cards.append(live)
         suggestions.append(suggestion)
     repos = sorted({e["repo"] for s in skills for e in s["evidence"]} |
