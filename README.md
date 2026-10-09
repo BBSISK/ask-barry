@@ -199,7 +199,9 @@ flask --app wsgi run          # open http://127.0.0.1:5000
 
 ## Deployment
 
-`render.yaml` defines the Render web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+Ask Barry is a Flask app running in production on Render at [ask-barry.onrender.com](https://ask-barry.onrender.com), served by gunicorn (`gunicorn wsgi:app`). `render.yaml` defines the web service (starter plan). Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`).
+
+CI runs the full pytest suite on every push. It includes tests that call the Flask routes (the home page, `/evidence`, `/capability`, the JSON APIs, `/health` and `/ready`) through Flask's test client, so a broken route blocks the deploy.
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 
@@ -415,6 +417,16 @@ A GitHub Action (`.github/workflows/refresh-index.yml`) runs every night and on 
 - **No stored secret:** the job signs in with GitHub OIDC as `ask-barry-github`. Entra trusts that token only from this repo's `main` branch, so GitHub holds no Azure key or password at all.
 
 The evaluation also checks citation completeness. The judge sees the retrieved sections the answer did *not* cite, so a claim supported only by one of those is reported as **"true but uncited"**, separately from an invented claim. Both count as failures, because a reader can only check what is cited.
+
+## Capability ladder and evidence cards (ASK-42)
+
+[/capability](https://ask-barry.onrender.com/capability) shows how far each skill goes in my public projects, in four tiers: **Used · Built · In production · Tested / evaluated**. Every filled tier links to the section that proves it, with a quote. Professional skills are shown as **evidence cards**: short documented examples, not ratings. Skills and cards without evidence are shown as gaps on purpose.
+
+- **How a tier is decided:** each skill's searches run through the production retriever. For every section found, the model answers one narrow question, "the highest tier this section shows", and must quote the proof. Code checks that the quote is really in the section, or that answer counts as 0. The question is asked up to three times per section and the middle answer wins, because two builds from the same index once disagreed by two tiers on one skill: a single borderline answer was deciding it. A skill's tier is the highest checked tier; there are no scores or averages. My own profile README and career summary never fill a tier, because a self-description isn't evidence of use.
+- **Nightly, not per visit:** the refresh workflow builds `data/capability.json` after the index sync and a separate job commits it only when the content changed. The live app reads that file from `main`, so the page updates without a redeploy and git history records how the ladder changed. Visitors trigger no model calls.
+- **Cards need my approval:** the builder drafts examples into `data/capability_suggestions.json`; one goes live only once its id is in `profile/cards.yaml`. After that it keeps the wording I approved: each night the builder only re-checks that its quote is still in the source, and drops it if not, so a redraft can't change or remove it.
+- **Built for anyone's evidence:** everything about me lives in the `profile/` pack (skills, tier wording and criteria, cards), checked against JSON Schemas. A test builds and shows a made-up profile for a different profession with no code change.
+- **Checked:** hand-labelled expected tiers (`python -m scripts.evaluate_capability`, pass mark 80% plus no over-claimed gap skills), a stability check that fails unless two builds give every skill the same tier, and a `get_capability` MCP tool that serves the same JSON.
 
 ## Security
 

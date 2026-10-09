@@ -1,0 +1,22 @@
+# Profile pack (ASK-42 / ASK-43): who this capability page is about and where the evidence comes from.
+# Everything person-specific lives in this folder, so anyone can run Ask Barry on their own evidence
+# by replacing it. Nothing about the person or their profession is written in code.
+profile_id: barry-sisk
+person:
+  name: Barry Sisk
+  short_name: Barry
+github_owner: BBSISK
+
+# Repos whose text is the person describing themselves (profile README, career summary). A self-description
+# isn't evidence of use (the same rule as the job-ad agent's "Listed on profile"), so these never fill a
+# ladder tier. They can still supply evidence cards (e.g. leadership roles).
+self_description_repos: [BBSISK]
+
+# Friendly project names for repo names, shown as chips on the ladder.
+projects:
+  ask-barry: Ask Barry
+  wall_inspector: Wall Inspector
+  inmytime-showcase: In My Time
+  my30words_showcase: Brief
+  agentmath_showcase: AgentMath
+  BBSISK: Profile

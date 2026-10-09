@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile pack: tiers.yaml",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tiers"
+  ],
+  "properties": {
+    "tiers": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "level",
+          "universal",
+          "label",
+          "criteria"
+        ],
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "universal": {
+            "enum": [
+              "Learned",
+              "Applied",
+              "Delivered",
+              "Proven"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criteria": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

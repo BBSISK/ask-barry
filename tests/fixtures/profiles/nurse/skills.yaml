@@ -1,0 +1,16 @@
+skills:
+  - id: wound-care
+    name: Wound care
+    description: Assessing and dressing wounds.
+    queries: ["wound care"]
+    match: [wound, dressing]
+  - id: medication-safety
+    name: Medication safety
+    description: Safe administration and checking of medicines.
+    queries: ["medication administration"]
+    match: [medication, medicines]
+  - id: triage
+    name: Emergency triage
+    description: Prioritising patients in an emergency department.
+    queries: ["triage"]
+    match: [triage, emergency]

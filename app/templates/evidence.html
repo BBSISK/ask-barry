@@ -173,6 +173,9 @@
       "\"Listed on profile\" means only Barry's own profile or career summary says it. " +
       "\"Not documented\" means Barry's public docs don't show it, not that he lacks the skill. " +
       "This is not an assessment of suitability for the role."));
+    const ladder = el("p", { class: "meta" });
+    ladder.append(el("a", { href: `/capability?job=${encodeURIComponent(job.id)}` }, "See these skills on the capability ladder →"));
+    card.append(ladder);
     result.replaceChildren(card);
   }
 

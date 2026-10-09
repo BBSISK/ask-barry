@@ -1,0 +1,10 @@
+# A made-up profile pack for a different person and profession (ASK-42 swap test): the same engine must
+# build and show it with no code change.
+profile_id: aoife-test-nurse
+person:
+  name: Aoife Example
+  short_name: Aoife
+github_owner: aoife-example
+self_description_repos: [aoife-example]
+projects:
+  ward-audit: Ward audit project

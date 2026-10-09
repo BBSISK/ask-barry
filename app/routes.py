@@ -102,6 +102,43 @@ def evidence_page():
     )
 
 
+@bp.get("/capability")
+def capability_page():
+    """The capability ladder and evidence cards (ASK-42). ?job=<id> shows it against a finished job-ad map."""
+    from .capability import view
+    data = current_app.extensions["capability"].get()
+    context = {"app_name": current_app.config["APP_NAME"], "cap": data, "job_title": None,
+               "unmatched": [], "fit": None, "required": []}
+    if data:
+        job_id = request.args.get("job", "")
+        job = current_app.extensions["jobstore"].get(job_id) if job_id else None
+        if job is not None and job.status == "done" and job.report and not job.report.get("blocked"):
+            requirements = [r.get("requirement", "") for r in job.report.get("requirements") or []]
+            required, unmatched = view.match_job(data, requirements)
+            context.update(job_title=job.report.get("role_title") or "this job ad", required=required,
+                           unmatched=unmatched, fit=view.fit_summary(data, required))
+        context["rows"] = view.ladder(data, context["required"])
+    return render_template("capability.html", **context)
+
+
+@bp.get("/api/capability")
+def capability_api():
+    """The same capability.json the page uses (read-only). ?skill=<id or name> returns one skill."""
+    from .capability import view
+    data = current_app.extensions["capability"].get()
+    if not data:
+        return jsonify(error="The capability profile hasn't been generated yet."), 503
+    skill_ref = request.args.get("skill", "").strip()
+    if not skill_ref:
+        return jsonify(data)
+    skill, _ = view.evidence_for(data, skill_ref)
+    if skill is None:
+        return jsonify(error=f"No skill '{skill_ref[:60]}' on this profile.",
+                       skills=[s["id"] for s in data["skills"]]), 404
+    return jsonify({**{k: data[k] for k in ("schema_version", "profile_id", "person", "generated_at", "tiers")},
+                    "skills": [skill], "cards": []})
+
+
 CONNECT_SECTIONS = [
     {"title": "Start here", "cards": [
         {"title": "Paste a job ad", "text": "My AI agent maps each requirement to evidence in my project docs, with links",

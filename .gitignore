@@ -31,3 +31,5 @@ reports/
 sample_job_ad.txt
 # Stage 8: job ads collected for batch runs (third-party text)
 ads/
+# ASK-42: local capability builds before publishing
+build/

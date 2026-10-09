@@ -92,3 +92,10 @@ def test_no_module_reads_the_api_keys_directly():
                  for folder in ("app", "scripts") for p in (ROOT / folder).rglob("*.py")
                  if p.name != "azure_auth.py" and pattern.search(p.read_text(encoding="utf-8"))]
     assert offenders == []
+
+
+def test_az_login_gets_a_generous_timeout_for_slow_laptops():
+    assert azure_auth.cli_timeout({}) == 60
+    assert azure_auth.cli_timeout({"AZURE_CLI_TIMEOUT": "120"}) == 120
+    assert azure_auth.cli_timeout({"AZURE_CLI_TIMEOUT": "3"}) == 10          # never below the library default
+    assert azure_auth.cli_timeout({"AZURE_CLI_TIMEOUT": "soon"}) == 60

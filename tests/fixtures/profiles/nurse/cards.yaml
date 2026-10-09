@@ -1,0 +1,6 @@
+cards:
+  - id: patient-advocacy
+    title: Patient advocacy
+    queries: ["patient advocacy"]
+    approved: []
+    gap_note: No approved examples yet.

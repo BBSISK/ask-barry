@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capability{% if cap %} · {{ cap.person.name }}{% endif %} · {{ app_name }}</title>
+  <meta name="description" content="How far each skill goes, tier by tier, with a link to the evidence for every step. Gaps are shown on purpose.">
+  <style>
+    :root { --page:#fbfbfa; --surface:#fff; --line:#e3e3e0; --track:#ebe9e4; --text:#1d1d1f; --text-2:#4f5257; --muted:#6b6f75;
+            --l1:#b7d3f2; --l2:#7fb0e8; --l3:#3f86d9; --l4:#1c5aa8; --accent:#2f5bd3; --critical:#c62f2f;
+            --chip:#eef3fa; --chip-ink:#1c4f8f; --sel:rgba(47,91,211,.07); --ink-light:#0b2c52; --ink-dark:#fff; }
+    @media (prefers-color-scheme: dark) {
+      :root { --page:#141416; --surface:#1d1e21; --line:#2e3035; --track:#2b2c30; --text:#ececec; --text-2:#c3c6cc; --muted:#a0a4ab;
+              --l1:#2a4566; --l2:#2f6aae; --l3:#4b93e6; --l4:#9cc6f5; --accent:#8fa9ff; --critical:#ef6a6a;
+              --chip:#22324a; --chip-ink:#bcd6f5; --sel:rgba(143,169,255,.1); --ink-light:#e8f1fc; --ink-dark:#0b2c52; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--page); color:var(--text); font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 64rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.8rem; margin: 0 0 .25rem; }
+    h2 { font-size: 1.25rem; margin: 0 0 .25rem; }
+    a { color: var(--accent); }
+    .lede { color: var(--text-2); margin: 0 0 1rem; max-width: 46rem; }
+    .meta { color: var(--muted); font-size: .85rem; }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:.8rem; padding:1rem; }
+    section + section { margin-top: 1.5rem; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:center; justify-content:space-between; margin:.75rem 0; }
+    .seg { display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+    .seg a { padding:.35rem .9rem; font-size:.9rem; text-decoration:none; color:var(--text-2); }
+    .seg a[aria-current="page"] { background:var(--accent); color:#fff; }
+    @media (prefers-color-scheme: dark) { .seg a[aria-current="page"] { color:#10152b; } }
+    .legend { display:flex; flex-wrap:wrap; gap:.3rem .9rem; font-size:.85rem; color:var(--text-2); }
+    .legend i { display:inline-block; width:1.3rem; height:.6rem; border-radius:3px; margin-right:.3rem; vertical-align:-1px; }
+    .jobbar { background:var(--chip); color:var(--chip-ink); border-radius:.5rem; padding:.5rem .75rem; font-size:.9rem; margin:.5rem 0; }
+    .scroll { overflow-x:auto; }
+    table.ladder { width:100%; border-collapse:separate; border-spacing:0; }
+    .ladder th { font-size:.8rem; color:var(--muted); font-weight:600; text-align:left; padding:0 .4rem .4rem; white-space:nowrap; }
+    .ladder td { padding:.45rem .4rem; border-top:1px solid var(--line); vertical-align:middle; }
+    .skill { font-weight:600; }
+    .req { font-size:.72rem; font-weight:600; color:var(--accent); border:1px solid currentColor; border-radius:999px; padding:0 .4rem; margin-left:.35rem; white-space:nowrap; }
+    .steps { display:grid; grid-template-columns:repeat(4, 1fr); gap:3px; min-width:12rem; }
+    .step { height:1.4rem; border-radius:4px; background:var(--track); border:0; padding:0; font:inherit; font-size:.72rem; font-weight:700; }
+    .step.on { cursor:pointer; color:var(--ink-light); }
+    .step.on.t1 { background:var(--l1); } .step.on.t2 { background:var(--l2); }
+    .step.on.t3 { background:var(--l3); color:#fff; } .step.on.t4 { background:var(--l4); color:#fff; }
+    @media (prefers-color-scheme: dark) { .step.on.t1, .step.on.t2 { color:#fff; } .step.on.t3, .step.on.t4 { color:var(--ink-dark); } }
+    .step.on:hover, .step.on:focus-visible { outline:2px solid var(--text); outline-offset:1px; }
+    .since { color:var(--text-2); font-size:.85rem; white-space:nowrap; }
+    .gap { color:var(--critical); font-size:.85rem; font-weight:600; white-space:nowrap; }
+    tr.sel td { background:var(--sel); }
+    #detail { margin-top:.75rem; border-top:1px solid var(--line); padding-top:.75rem; min-height:4.5rem; }
+    #detail h3 { margin:0 0 .25rem; font-size:1rem; }
+    #detail ul { margin:.35rem 0 0; padding-left:1.1rem; font-size:.9rem; }
+    #detail q { color:var(--text-2); }
+    .chip { display:inline-block; background:var(--chip); color:var(--chip-ink); border-radius:999px; padding:.05rem .55rem; font-size:.78rem; margin:.1rem .25rem .1rem 0; }
+    .cards { display:grid; grid-template-columns:repeat(3, 1fr); gap:.9rem; margin-top:.75rem; }
+    @media (max-width: 56rem) { .cards { grid-template-columns:repeat(2, 1fr); } }
+    @media (max-width: 38rem) { .cards { grid-template-columns:1fr; } }
+    .ev { background:var(--surface); border:1px solid var(--line); border-radius:.8rem; padding:.9rem; display:flex; flex-direction:column; gap:.5rem; }
+    .ev h3 { margin:0; font-size:1rem; display:flex; justify-content:space-between; gap:.5rem; align-items:baseline; }
+    .ev .count { font-size:.78rem; color:var(--muted); font-weight:500; white-space:nowrap; }
+    .story { border-left:3px solid var(--l3); padding:.1rem 0 .1rem .6rem; }
+    .story b { display:block; font-size:.9rem; }
+    .story span { display:block; color:var(--text-2); font-size:.87rem; }
+    .story a { font-size:.82rem; }
+    .ev.gapcard { border-style:dashed; }
+    .ev.gapcard .story { border-left-color:var(--critical); }
+    .how { color:var(--text-2); font-size:.9rem; max-width:46rem; }
+    .how h2 { color:var(--text); font-size:1.05rem; margin-top:1.5rem; }
+    @media (max-width: 40rem) { .col-since { display:none; } .steps { min-width:9rem; } }
+  </style>
+</head>
+<body>
+<main>
+  <p class="meta"><a href="/">← {{ app_name }}</a></p>
+  <h1>Capability</h1>
+{% if not cap %}
+  <p class="lede">The capability profile hasn't been generated yet. It's built every night from the search index, so check back tomorrow.</p>
+{% else %}
+  {% set who = cap.person.short_name %}
+  <p class="lede">How far each skill goes in {{ who }}'s public projects, from {{ cap.tiers[0].label|lower }} to {{ cap.tiers[3].label|lower }}. Every filled step links to the evidence. It's rebuilt every night from the search index, and gaps are shown on purpose.</p>
+
+  <section class="card" aria-labelledby="ladder-h">
+    <h2 id="ladder-h">Capability ladder</h2>
+    <p class="meta">Evidence as of {{ cap.generated_at[:10] }} · {{ cap.sources.repos|length if cap.sources and cap.sources.repos else 0 }} public repos · this is the strength of documented evidence, not a self-rating</p>
+    <div class="toolbar">
+      <nav class="seg" aria-label="View">
+        <a href="/capability" {% if not job_title %}aria-current="page"{% endif %}>Full profile</a>
+        <a href="/evidence" {% if job_title %}aria-current="page"{% endif %}>Against a job ad</a>
+      </nav>
+      <div class="legend" aria-label="Tiers">
+        {% for t in cap.tiers %}<span><i style="background:var(--l{{ t.level }})"></i>{{ t.level }} {{ t.label }}</span>{% endfor %}
+      </div>
+    </div>
+    {% if job_title %}
+    <div class="jobbar">Matched to <strong>{{ job_title }}</strong>: the ad's skills come first.
+      {% if fit %}<br><strong>{{ fit.delivered }} of {{ fit.required }}</strong> matched skills at “{{ cap.tiers[2].label }}” or above · <strong>{{ fit.partial }}</strong> at “{{ cap.tiers[0].label }}” or “{{ cap.tiers[1].label }}” · <strong>{{ fit.none }}</strong> not evidenced{% endif %}
+      {% if unmatched %}<br><span class="meta">Not on this profile's skill list: {{ unmatched|join("; ") }}</span>{% endif %}
+    </div>
+    {% else %}
+    <p class="meta">To see this against a role, paste the job ad on the <a href="/evidence">evidence page</a>, then follow its link back here.</p>
+    {% endif %}
+    <div class="scroll">
+      <table class="ladder">
+        <thead><tr><th scope="col">Skill</th><th scope="col">{{ cap.tiers|map(attribute="label")|join(" · ") }}</th><th scope="col" class="col-since">First evidence</th></tr></thead>
+        <tbody>
+        {% for s in rows %}
+          <tr data-skill="{{ s.id }}">
+            <th scope="row" class="skill">{{ s.name }}{% if s.required %}<span class="req">In the ad</span>{% endif %}</th>
+            <td><div class="steps">
+              {% for t in cap.tiers %}
+                {% if t.level <= s.tier %}
+                <button type="button" class="step on t{{ t.level }}" data-skill="{{ s.id }}" data-level="{{ t.level }}"
+                        aria-label="{{ s.name }}: {{ t.label }}, evidenced. Show the evidence">{{ t.level }}</button>
+                {% else %}
+                <span class="step" role="img" aria-label="{{ s.name }}: {{ t.label }}, not evidenced"></span>
+                {% endif %}
+              {% endfor %}
+            </div></td>
+            <td class="col-since">{% if s.tier %}<span class="since">{{ s.first_evidence or "" }}</span>{% else %}<span class="gap">✕ Not evidenced</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div id="detail" aria-live="polite"><p class="meta">Select a filled step to see the evidence for that level.</p></div>
+  </section>
+
+  <section aria-labelledby="cards-h">
+    <h2 id="cards-h">Professional skills: evidence cards</h2>
+    <p class="lede">Documented examples instead of ratings. Each links to its source. Examples go live only once {{ who }} has approved them.</p>
+    <div class="cards">
+    {% for c in cap.cards %}
+      <article class="ev{% if c.gap %} gapcard{% endif %}">
+        <h3>{{ c.title }}<span class="count">{% if c.gap %}✕ gap{% else %}{{ c.stories|length }} example{{ "s" if c.stories|length != 1 }}{% endif %}</span></h3>
+        {% for st in c.stories %}
+          <div class="story"><b>{{ st.title }}</b><span>{{ st.summary }}</span>
+            {% if st.url.startswith("https://github.com/") %}<a href="{{ st.url }}" target="_blank" rel="noopener">{{ st.repo }} / {{ st.path }}{% if st.heading %} › {{ st.heading }}{% endif %}</a>{% endif %}</div>
+        {% endfor %}
+        {% if c.gap %}<div class="story"><b>Not yet evidenced</b><span>{{ c.gap_note or "No approved examples yet." }}</span></div>{% endif %}
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How this is worked out</h2>
+    <p>Every night, each skill's searches run against the same index as the question box. For each section found, an AI judge answers one narrow question: which is the highest tier this section shows? It must quote the words that prove it, and code checks that the quote is really in the section, otherwise the section counts for nothing. A skill's tier is the highest tier any checked section shows. There are no scores or averages.</p>
+    <p>"First evidence" is when the earliest supporting file was first committed. Cards are drafted the same way, and an example appears only after {{ who }} has approved it. Everything comes from public project documentation, so "Not evidenced" means the docs don't show it, not that the skill is missing.</p>
+  </section>
+  <script id="cap-data" type="application/json">{{ cap|tojson }}</script>
+  <script>
+  (function () {
+    const cap = JSON.parse(document.getElementById("cap-data").textContent);
+    const detail = document.getElementById("detail");
+    const label = (n) => (cap.tiers.find((t) => t.level === n) || {}).label || String(n);
+    const el = (tag, text, attrs = {}) => { const e = document.createElement(tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; return e; };
+    document.querySelectorAll(".step.on").forEach((b) => b.addEventListener("click", () => {
+      const skill = cap.skills.find((s) => s.id === b.dataset.skill), level = Number(b.dataset.level);
+      document.querySelectorAll("tr[data-skill]").forEach((r) => r.classList.toggle("sel", r.dataset.skill === skill.id));
+      const items = skill.evidence.filter((e) => e.tier >= level);
+      const projects = (skill.projects_by_tier || {})[String(level)] || [];
+      const box = document.createDocumentFragment();
+      box.append(el("h3", `${skill.name}: ${label(level)}`));
+      const chips = el("p"); projects.forEach((p) => chips.append(el("span", p, { class: "chip" }))); box.append(chips);
+      const ul = el("ul");
+      items.slice(0, 5).forEach((e) => {
+        const li = el("li");
+        if (e.url.startsWith("https://github.com/")) li.append(el("a", `${e.repo} / ${e.path}${e.heading ? " › " + e.heading : ""}`, { href: e.url, target: "_blank", rel: "noopener" }));
+        li.append(document.createTextNode(` (shows ${label(e.tier)}) `));
+        li.append(el("q", e.quote));
+        ul.append(li);
+      });
+      box.append(ul);
+      box.append(el("p", `Highest tier reached: ${label(skill.tier)}${skill.first_evidence ? " · first evidence " + skill.first_evidence : ""} · self-published docs`, { class: "meta" }));
+      detail.replaceChildren(box);
+    }));
+  })();
+  </script>
+{% endif %}
+</main>
+</body>
+</html>

@@ -8,7 +8,7 @@ from .ratelimit import RateLimiter
 
 
 def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
-               search_client=None, model_provider=None, chat_client=None):
+               search_client=None, model_provider=None, chat_client=None, capability_store=None):
     """Create and configure the Flask app.
 
     config_name: "development", "testing" or "production". Defaults to the
@@ -20,6 +20,7 @@ def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
     search_client: optional Azure AI Search client (tests pass a fake).
     model_provider: optional model provider or chat client for the answering step (tests pass a fake).
     chat_client: optional alias for model_provider when passing a raw chat completions client.
+    capability_store: optional CapabilityStore for /capability (tests pass one over a fixture file).
     """
     config_name = config_name or os.getenv("APP_ENV", "production")
     if config_name not in CONFIGS:
@@ -54,6 +55,10 @@ def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
     app.extensions["agent_ratelimiter"] = RateLimiter(
         per_minute=app.config["AGENT_RATE_PER_HOUR"], per_day=app.config["AGENT_RATE_PER_DAY"],
         window=3600, noun="evidence maps")
+    if capability_store is None:
+        from .capability.store import CapabilityStore
+        capability_store = CapabilityStore(app.config.get("CAPABILITY_SOURCE"))
+    app.extensions["capability"] = capability_store
     app.extensions["ratelimiter"] = RateLimiter(
         per_minute=app.config["RATE_LIMIT_PER_MINUTE"], per_day=app.config["RATE_LIMIT_PER_DAY"]
     )

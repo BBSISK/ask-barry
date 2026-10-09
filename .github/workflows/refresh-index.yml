@@ -62,3 +62,64 @@ jobs:
           AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         run: python -m scripts.evaluate_retrieval --retriever azure-hybrid-noname --min-section-recall 0.95
+      # ASK-42: rebuild the capability ladder and evidence cards from the fresh index (about 150 small model
+      # calls). It runs after the sync and quality check, so if it fails the run fails visibly but the index
+      # refresh has already happened.
+      - name: Sign in again before building the capability ladder
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+      - name: Build the capability ladder and evidence cards
+        env:
+          AZURE_AUTH_MODE: entra
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_EMBED_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_EMBED_DEPLOYMENT }}
+          AZURE_OPENAI_CHAT_DEPLOYMENT: gpt-4.1-mini
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # read-only: first-commit dates of public files
+        run: python -m scripts.build_capability --out build/capability.json --suggestions build/capability_suggestions.json
+      - name: Keep the build for the publish job
+        uses: actions/upload-artifact@v4
+        with:
+          name: capability
+          path: build/
+          retention-days: 7
+
+  # A separate job with the only write permission in this workflow: it commits data/capability.json (and the
+  # suggestions for review) when the content changed. The live app reads that file from main, so the page
+  # updates without a redeploy, and git history is the record of how the ladder changed.
+  publish-capability:
+    name: Publish capability.json
+    needs: refresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: capability
+          path: build/
+      - name: Commit if the content changed (the build time alone doesn't count)
+        run: |
+          changed=$(python - <<'PY'
+          import json, pathlib
+          from app.capability.builder import same_content
+          def load(p):
+              p = pathlib.Path(p)
+              return json.loads(p.read_text()) if p.exists() else None
+          diff = [n for n in ("capability.json", "capability_suggestions.json")
+                  if not same_content(load(f"build/{n}"), load(f"data/{n}"))]
+          print(" ".join(diff))
+          PY
+          )
+          if [ -z "$changed" ]; then echo "No change: nothing to commit."; exit 0; fi
+          mkdir -p data && cp build/capability.json build/capability_suggestions.json data/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/capability.json data/capability_suggestions.json
+          git commit -m "ASK-42 nightly capability rebuild ($changed)"
+          git push

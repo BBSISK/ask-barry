@@ -43,11 +43,24 @@ def required_settings(env=None):
     return BASE_SETTINGS + (KEY_SETTINGS if auth_mode(env) == "key" else ())
 
 
+# How long to wait for `az account get-access-token` when signing in with az login. The library default is
+# 10 s, which a pip-installed Azure CLI on an older laptop can exceed on a cold start (9 Oct 2026).
+CLI_TIMEOUT_DEFAULT = 60
+
+
+def cli_timeout(env=None):
+    env = os.environ if env is None else env
+    try:
+        return max(10, int(env.get("AZURE_CLI_TIMEOUT") or CLI_TIMEOUT_DEFAULT))
+    except ValueError:
+        return CLI_TIMEOUT_DEFAULT
+
+
 @lru_cache(maxsize=1)
 def credential():
     """One shared credential for the whole process, so its token cache is shared too."""
     from azure.identity import DefaultAzureCredential
-    return DefaultAzureCredential()
+    return DefaultAzureCredential(process_timeout=cli_timeout())
 
 
 @lru_cache(maxsize=1)

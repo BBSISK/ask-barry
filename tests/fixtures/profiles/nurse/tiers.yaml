@@ -1,0 +1,5 @@
+tiers:
+  - {level: 1, universal: Learned, label: Trained, criteria: "The section shows training or a course in the skill."}
+  - {level: 2, universal: Applied, label: Supervised practice, criteria: "The section shows the skill practised under supervision."}
+  - {level: 3, universal: Delivered, label: Independent practice, criteria: "The section shows the skill practised independently with patients."}
+  - {level: 4, universal: Proven, label: Audited or mentoring, criteria: "The section shows the practice audited, or the person mentoring others in it."}
