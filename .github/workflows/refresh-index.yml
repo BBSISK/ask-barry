@@ -21,7 +21,7 @@ jobs:
   refresh:
     name: Fetch, chunk, sync
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40         # the capability build (ASK-42) asks the model a few hundred questions
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
