@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-09T11:00:21Z",
+  "generated_at": "2026-10-09T17:15:02Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -21,8 +21,22 @@
           "approved": false
         },
         {
+          "id": "problem-solving:8d011cfc3a",
+          "title": "Fixing prompt schedule drift",
+          "summary": "Barry rebuilt the prompt scheduling system to calculate the week purely from time, preventing schedule drift, and back-filled existing users with a migration.",
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I rebuilt it so the week is calculated purely from time (from sign-up to now), so the schedule can no longer drift, and I back-filled existing users with a one-off migration.",
+          "approved": true
+        },
+        {
           "id": "problem-solving:1162028e47",
-          "title": "Fixing silent alert failures",
+          "title": "Fixed silent alert failures",
           "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
           "repo": "inmytime-showcase",
           "path": "README.md",
@@ -35,23 +49,9 @@
           "approved": true
         },
         {
-          "id": "problem-solving:8d011cfc3a",
-          "title": "Fixed prompt scheduling bugs",
-          "summary": "Barry rebuilt the prompt scheduling system to calculate weeks purely from time, preventing schedule drift and back-filled existing users with a migration.",
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "I rebuilt it so the week is calculated purely from time (from sign-up to now), so the schedule can no longer drift, and I back-filled existing users with a one-off migration.",
-          "approved": true
-        },
-        {
           "id": "problem-solving:ab6ed376a9",
-          "title": "Built AgentMath for tailored learning",
-          "summary": "Barry built AgentMath to address mixed-ability challenges and provide real-time insights into student struggles during Junior Cycle maths teaching.",
+          "title": "Built AgentMath for tailored practice",
+          "summary": "Barry built AgentMath to address mixed-ability challenges in a maths class, providing tailored practice and real-time insight into student struggles.",
           "repo": "agentmath_showcase",
           "path": "README.md",
           "heading": "🕵️ AgentMath > The problem",
@@ -70,7 +70,7 @@
           "path": "docs/data-profile.md",
           "heading": "Data profile — Sprint 1 > Property Price Register (HOUSE-8) > Top 5 quality issues",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/docs/data-profile.md#top-5-quality-issues",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Fix: normalise addresses (Sprint 3), geocode them with Azure Maps and keep a confidence score... exclude \"not full market price\" sales from price statistics... keep the flag, add a VAT-inclusive price (×1.135) for comparisons",
@@ -87,7 +87,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Test the evaluator too. Early versions failed correct answers because of formatting (backticks, HTML in diagrams), a token limit that cut off the judge's output, and a judge that couldn't see the source labels the answering model saw. Each fix",
+          "quote": "Early versions failed correct answers because of formatting (backticks, HTML in diagrams), a token limit that cut off the judge's output, and a judge that couldn't see the source labels the answering model saw. Each fix came with a unit",
           "approved": false
         }
       ]
@@ -116,7 +116,7 @@
         {
           "id": "security-mindset:0dad7318bc",
           "title": "Privacy by design in server architecture",
-          "summary": "Barry designed the server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
+          "summary": "Barry designed a server that relays answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
@@ -142,17 +142,31 @@
           "approved": false
         },
         {
-          "id": "security-mindset:91c9e9ba4b",
+          "id": "security-mindset:485108dbfd",
           "title": "Implementing Least Privilege Access",
-          "summary": "Barry configured identities and roles in code to enforce least privilege, disabled API key access, and used Azure Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
+          "summary": "Barry configured identities and roles with least privilege in code, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security",
-          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#security",
+          "url": "https://github.com/BBSISK/ask-barry/blob/5b39a0003f9af2a05ce49e75d267de34394506bf/README.md#security",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "API key access is switched off on both Azure resources, so a leaked key would be useless. Everything signs in with Microsoft Entra ID (`DefaultAzureCredential`, see `app/azure_auth.py`), and Azure role assignments decide what each identity may do",
+          "quote": "No API keys anywhere. API key access is switched off on both Azure resources... Least privilege, as code: the identities and roles live in infra/identity.tf, and tests fail if any identity gets a broad role such as Owner or Contributor.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:3a075dfa62",
+          "title": "Implemented keyless security",
+          "summary": "Barry implemented keyless security from the first commit, using managed identities and least-privilege roles defined in Terraform, with tests to ensure no key-style settings are used.",
+          "repo": "housing-pipeline-ireland",
+          "path": "README.md",
+          "heading": "Housing Pipeline Ireland > Security",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
+          "project": "Housing Pipeline Ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Keyless from the first commit. No API keys or passwords anywhere... Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
           "approved": false
         },
         {
@@ -167,20 +181,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template",
-          "approved": false
-        },
-        {
-          "id": "security-mindset:3a075dfa62",
-          "title": "Implemented keyless security",
-          "summary": "Barry implemented keyless security from the first commit, using managed identities and least-privilege roles defined in Terraform, with tests ensuring no key-style settings are used.",
-          "repo": "housing-pipeline-ireland",
-          "path": "README.md",
-          "heading": "Housing Pipeline Ireland > Security",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
-          "project": "housing-pipeline-ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Keyless from the first commit. No API keys or passwords anywhere... Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
           "approved": false
         },
         {
@@ -215,7 +215,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry's nightly ingestion re-processes only what changed; Nightly job fails and emails me when quality drops below its limit; Labelled evaluation sets; every failure classified by type",
+          "quote": "Responsible for the programme across the whole factory | Data pipelines, ingestion, streaming telemetry | Ask Barry's nightly ingestion re-processes only what changed",
           "approved": false
         }
       ]
@@ -224,22 +224,7 @@
       "card": "written-communication",
       "title": "Written communication",
       "approved_but_not_found": [],
-      "candidates": [
-        {
-          "id": "written-communication:d922c7514f",
-          "title": "Documented Azure model deployment steps",
-          "summary": "Barry documented step-by-step instructions for deploying Foundry resources and models on Azure, including project creation, model deployment, and handling quota limits.",
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 4: Foundry resource and model deployments",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ba39a931b28da61684b20536d601f69359e6abb0/docs/azure-setup.md#step-4-foundry-resource-and-model-deployments",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "1. Go to https://ai.azure.com (Microsoft Foundry portal) and sign in. 2. Create a new project. Let it create a new Foundry resource in rg-ask-barry and your region. 3. In the project, open Models + endpoints → Deploy model → Deploy",
-          "approved": false
-        }
-      ]
+      "candidates": []
     },
     {
       "card": "teaching-mentoring",
@@ -262,7 +247,7 @@
         },
         {
           "id": "teaching-mentoring:fa7966fadc",
-          "title": "Teaching Maths and Supporting Students",
+          "title": "Teaching and supporting maths students",
           "summary": "Taught maths to Junior Cycle and Leaving Certificate students, supported small-group resource teaching, and completed a programme to increase Higher Level maths uptake.",
           "repo": "BBSISK",
           "path": "career.md",
@@ -277,7 +262,7 @@
         {
           "id": "teaching-mentoring:e9fd13724a",
           "title": "Led training and mentoring teams",
-          "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers. Provided mentoring, documentation, onboarding, and grew junior engineers. Taught IT and AI to over 300 students in Tanzania.",
+          "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers. Provided mentoring, documentation, onboarding, and grew junior engineers. Delivered IT and AI training to over 300 students in Tanzania.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -297,7 +282,7 @@
       "candidates": [
         {
           "id": "leadership:e9fd13724a",
-          "title": "Led Engineering and Training Teams",
+          "title": "Led engineering and training teams",
           "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -311,8 +296,8 @@
         },
         {
           "id": "leadership:5299616047",
-          "title": "Led 7nm Start-up and CMP Teams",
-          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and cost in a high-volume manufacturing environment.",
+          "title": "Led 7nm Start-up Qualification",
+          "summary": "Led teams managing safety, quality, output, and cost in CMP operations and directed the 7nm equipment qualification programme, applying Lean methods and strategic planning to meet production goals.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
@@ -320,7 +305,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods, including Kaizen waste reduction and value stream mapping... Led strategic",
+          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods... Led strategic planning to meet production ramp commitments",
           "approved": true
         },
         {
@@ -368,7 +353,7 @@
         {
           "id": "leadership:d01d06712f",
           "title": "Leadership in Strategic Planning",
-          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification to software product roadmap and sprint goals.",
+          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs for team members, and applied PMP certification to software product roadmap and sprint goals.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -395,8 +380,8 @@
         },
         {
           "id": "leadership:73f7ff9703",
-          "title": "Led 300mm Implant Team",
-          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost. Completed ROI analyses and led a multinational team selling obsolete equipment.",
+          "title": "Led Implant Engineering Team",
+          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led a multinational team selling obsolete equipment.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
@@ -404,7 +389,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost. Completed return-on-investment (ROI) analyses for equipment selection and capital projects. Led a multinational team that sold obsolete manufacturing equipment",
+          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost.",
           "approved": true
         },
         {
@@ -418,7 +403,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "quote": "Keys are all-or-nothing: anyone holding the Search admin key can delete the index. With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do.",
           "approved": false
         }
       ]
@@ -445,7 +430,7 @@
         {
           "id": "teamwork:73f7ff9703",
           "title": "Led multinational team selling equipment",
-          "summary": "Led a multinational team that sold obsolete manufacturing equipment from 14nm production lines.",
+          "summary": "Led a multinational team that sold obsolete manufacturing equipment from the 14nm production lines.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
@@ -459,7 +444,7 @@
         {
           "id": "teamwork:b75a31933f",
           "title": "Azure sign-in setup with Entra ID",
-          "summary": "Barry configured Azure sign-in using Entra ID by creating identities and roles, updating search service authentication, testing locally, managing secrets securely, and enabling GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
+          "summary": "Barry configured Azure sign-in using Entra ID by creating identities and roles, updating search service authentication, testing locally, managing secrets securely, and setting up GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
           "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
@@ -473,7 +458,7 @@
         {
           "id": "teamwork:d362007369",
           "title": "Mapping manufacturing teamwork to software",
-          "summary": "Barry mapped manufacturing teamwork practices like quality systems and change control to software delivery processes, implementing automated testing, code reviews, and staged rollouts to ensure quality and stability.",
+          "summary": "Barry mapped manufacturing teamwork practices like multi-level change control and supplier management to software delivery processes including code review, staged rollouts, and managing third-party APIs.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",

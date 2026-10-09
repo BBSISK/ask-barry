@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-09T11:00:21Z",
+  "generated_at": "2026-10-09T17:15:02Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -43,28 +43,35 @@
     {
       "id": "python-flask",
       "name": "Python & Flask",
-      "tier": 1,
-      "first_evidence": null,
+      "tier": 3,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "AgentMath",
           "Ask Barry",
           "Brief",
-          "In My Time",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "In My Time"
+        ],
+        "2": [
+          "Ask Barry"
+        ],
+        "3": [
+          "Ask Barry"
         ]
       },
       "evidence": [
         {
-          "tier": 1,
-          "repo": "my30words_showcase",
+          "tier": 3,
+          "repo": "ask-barry",
           "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
+          "heading": "Ask Barry > Run locally",
+          "url": "https://github.com/BBSISK/ask-barry/blob/33a7600b81dde56e156fc3a9b06f7d3f6602a0a9/README.md#run-locally",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |"
+          "quote": "python -m pytest -v # run the tests flask --app wsgi run # open http://127.0.0.1:5000",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -72,10 +79,11 @@
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Run the tests",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#run-the-tests",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python3 -m venv .venv source .venv/bin/activate python -m pip install -e \"[.dev]\" python -m pytest -q"
+          "quote": "python3 -m venv .venv source .venv/bin/activate python -m pip install -e \"[.dev]\" python -m pytest -q",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 1,
@@ -86,18 +94,20 @@
           "project": "AgentMath",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask |"
+          "quote": "| Backend | Python, Flask |",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
-          "repo": "ask-barry",
+          "repo": "my30words_showcase",
           "path": "README.md",
-          "heading": "Ask Barry > Run locally",
-          "url": "https://github.com/BBSISK/ask-barry/blob/33a7600b81dde56e156fc3a9b06f7d3f6602a0a9/README.md#run-locally",
-          "project": "Ask Barry",
+          "heading": "✍️ Brief > Tech stack",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
+          "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "flask --app wsgi run # open http://127.0.0.1:5000"
+          "quote": "| Backend | Python, Flask, scheduled jobs |",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -108,18 +118,8 @@
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email]"
-        },
-        {
-          "tier": 1,
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Tech stack",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#tech-stack",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |"
+          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email]",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -130,7 +130,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "then run `python -m scripts.check_azure`."
+          "quote": "then run `python -m scripts.check_azure`.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Tech stack",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#tech-stack",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "| Backend | Python, Flask, scheduled jobs |",
+          "first_committed": "2026-09-25"
         }
       ],
       "match": [
@@ -146,7 +159,7 @@
       "id": "cloud",
       "name": "Cloud (Azure & AWS)",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry"
@@ -171,7 +184,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock"
+          "quote": "RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -182,7 +196,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → **Variables**, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run"
+          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -193,7 +208,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing."
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -204,7 +220,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid - **Index:** `ask-barry-chunks`, one document per chunk..."
+          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid ... Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level:",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -215,7 +232,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Portal → **+ Create a resource** → **Azure AI Search** →"
+          "quote": "Portal → **+ Create a resource** → **Azure AI Search** →",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -226,7 +244,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Portal → **Cost Management + Billing** → **Budgets** → **+ Add** - Scope: your subscription - Amount: **€5** per month - Alerts: 50% and 90% of **actual**, plus 100% of **forecasted**, sent to your email"
+          "quote": "Portal → **Cost Management + Billing** → **Budgets** → **+ Add** - Scope: your subscription - Amount: **€5** per month - Alerts: 50% and 90% of **actual**, plus 100% of **forecasted**, sent to your email",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -237,7 +256,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "This guide creates the three Azure pieces Ask Barry needs. Everything is done in the portal first (good AI-901 practice)"
+          "quote": "This guide creates the three Azure pieces Ask Barry needs.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -248,7 +268,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Microsoft Foundry resources and projects, model catalog and deployments, deployment types (Global / Data Zone / Standard), quotas and rate limits, keys vs Microsoft Entra ID authentication, Azure AI Search tiers, resource groups, and cost management."
+          "quote": "Microsoft Foundry resources and projects, model catalog and deployments, deployment types (Global / Data Zone / Standard), quotas and rate limits, keys vs Microsoft Entra ID authentication, Azure AI Search tiers, resource groups, and cost management.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -263,28 +284,25 @@
     {
       "id": "infrastructure-as-code",
       "name": "Infrastructure as code",
-      "tier": 4,
-      "first_evidence": null,
+      "tier": 3,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "2": [
           "Ask Barry",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland"
         ],
         "3": [
-          "Ask Barry"
-        ],
-        "4": [
           "Ask Barry"
         ]
       },
       "evidence": [
         {
-          "tier": 4,
+          "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
@@ -292,7 +310,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Safe by design: every resource has `prevent_destroy`. The first plan found two portal settings the code was missing... After adding them, the plan was 5 to import, 0 to add, 0 to change, 0 to destroy, and `apply` imported all"
+          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init terraform plan ... terraform apply ... changes nothing in Azure",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#infrastructure-as-code-stage-7e",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The Azure resources were first created by hand in the portal... `infra/` now describes them in Terraform and adopts them with import blocks... Checked in CI: every push runs `terraform fmt -check` and `terraform validate`",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -303,18 +334,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "az login cd infra && terraform init -upgrade && terraform plan Expect only additions (the app registration, its service principal, five role assignments), nothing changed or destroyed. Then terraform apply."
-        },
-        {
-          "tier": 2,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#infrastructure-as-code-stage-7e",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "terraform init terraform plan # expect: 5 to import, 0 to add, 0 to change, 0 to destroy terraform apply # records the imports in state; changes nothing in Azure"
+          "quote": "az login cd infra && terraform init -upgrade && terraform plan Expect only additions (the app registration, its service principal, five role assignments), nothing changed or destroyed. Then terraform apply.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 2,
@@ -322,10 +343,11 @@
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Security",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "roles are least-privilege and defined in Terraform"
+          "quote": "roles are least-privilege and defined in Terraform",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 1,
@@ -336,7 +358,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Terraform (infra/main.tf)"
+          "quote": "TF[\"Terraform (infra/main.tf)\"]",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -347,7 +370,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS"
+          "quote": "The root user is locked with MFA and used only for account-level jobs; budget alerts email at the first cent and at $5 a month.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -363,47 +387,64 @@
       "id": "ci-cd",
       "name": "CI/CD & DevOps",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "2": [
           "Ask Barry",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "3": [
           "Ask Barry",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "4": [
-          "housing-pipeline-ireland"
+          "Ask Barry",
+          "Housing Pipeline Ireland"
         ]
       },
       "evidence": [
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Deployment",
+          "url": "https://github.com/BBSISK/ask-barry/blob/3f05cbf3efa5ae06d7f1a8e7cf694d06d9369a42/README.md#deployment",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`). CI runs the full pytest suite on every push. It includes tests that call the Flask routes ... so a broken route blocks the deploy.",
+          "first_committed": "2026-09-27"
+        },
         {
           "tier": 4,
           "repo": "housing-pipeline-ireland",
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Security",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting."
+          "quote": "a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 3,
-          "repo": "ask-barry",
+          "repo": "wall_inspector",
           "path": "README.md",
-          "heading": "Ask Barry > Deployment",
-          "url": "https://github.com/BBSISK/ask-barry/blob/813bf88caf4f33bec0d6172da4c0232c53022c3a/README.md#deployment",
-          "project": "Ask Barry",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
+          "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`)."
+          "quote": "Terraform (infra/main.tf)\" \"GitHub Actions (ci/github-actions-ci.yml)\"",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -411,10 +452,11 @@
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Delivery",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#delivery",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "every change goes through a pull request with green CI."
+          "quote": "every change goes through a pull request with green CI.",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 1,
@@ -422,10 +464,11 @@
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Run the tests",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#run-the-tests",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m pytest -q"
+          "quote": "python -m pytest -q",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 1,
@@ -436,7 +479,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests"
+          "quote": "Run the 86 Automated Unit & Agent Tests",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -447,7 +491,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.check_azure Expected: PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far"
+          "quote": "python -m scripts.check_azure",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -465,7 +510,7 @@
       "id": "containers",
       "name": "Containers (Docker)",
       "tier": 1,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Wall Inspector"
@@ -481,7 +526,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "docker compose up --build # Application runs at http://localhost:8000/portal # Container health telemetry at http://localhost:8000/api/health"
+          "quote": "docker compose up --build # Application runs at http://localhost:8000/portal # Container health telemetry at http://localhost:8000/api/health",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -492,7 +538,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "🐳 Docker Container (Dockerfile)"
+          "quote": "subgraph App_Container[\" 6F3 Docker Container (Dockerfile)\"]",
+          "first_committed": "2026-09-25"
         }
       ],
       "match": [
@@ -507,7 +554,7 @@
       "id": "rag-llm",
       "name": "RAG & LLM apps",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry"
@@ -532,7 +579,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock"
+          "quote": "RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -543,7 +591,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:"
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -554,18 +603,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_retrieval # print the report"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/model-card.md",
-          "heading": "Ask Barry: model card > Evaluation",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2b820dd73355f1a5187ecc0aec0300326e23844c/docs/model-card.md#evaluation",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%."
+          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -576,18 +615,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each fix came with a unit test."
+          "quote": "Each fix came with a unit test.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
           "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Two judges compared (Stage 9a)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#two-judges-compared-stage-9a",
+          "path": "docs/model-card.md",
+          "heading": "Ask Barry: model card > Evaluation",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2b820dd73355f1a5187ecc0aec0300326e23844c/docs/model-card.md#evaluation",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand."
+          "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -598,7 +639,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Pipeline: question → Azure AI Search hybrid retrieval (top 8 sections, the Stage 4 decision) → numbered sources in the prompt → `gpt-4.1-mini` (temperature 0, JSON output) → citation check → answer with links."
+          "quote": "Pipeline: question → Azure AI Search hybrid retrieval (top 8 sections, the Stage 4 decision) → numbered sources in the prompt → `gpt-4.1-mini` (temperature 0, JSON output) → citation check → answer with links.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Two judges compared (Stage 9a)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#two-judges-compared-stage-9a",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -609,7 +663,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "In production the app uses a read-only Search key."
+          "quote": "In production the app uses a read-only Search key.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -627,7 +682,7 @@
       "id": "agents-mcp",
       "name": "Agents & MCP",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry",
@@ -655,7 +710,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 mcp_server.py --self-test"
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 3,
@@ -666,7 +722,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "It's built on **Microsoft Agent Framework** and uses the Ask Barry **MCP server** as its tool."
+          "quote": "It's built on **Microsoft Agent Framework** and uses the Ask Barry **MCP server** as its tool.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -677,18 +734,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The framework limits tool calls (16), loop iterations and run time. If the agent doesn't finish, the report falls back to the tool answers as returned."
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Job-ad evidence agent (Stage 8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#job-ad-evidence-agent-stage-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The first live run ignored \"one row per skill\" and \"no grading words\", so both are now enforced in code (see the guardrail table)."
+          "quote": "The framework limits tool calls (16), loop iterations and run time. If the agent doesn't finish, the report falls back to the tool answers as returned.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -699,7 +746,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "* **Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)"
+          "quote": "**Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -710,7 +758,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Sentinel[\"Intake Sentinel Agent\"] Director[\"Curriculum Director Agent\"] MCP[\"MCP Server (mcp_server.py)\"]"
+          "quote": "MCP[\"MCP Server (mcp_server.py)\"]",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -721,7 +770,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit."
+          "quote": "For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Job-ad evidence agent (Stage 8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#job-ad-evidence-agent-stage-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "One search over a whole ad retrieves sections about the ad's main theme, so the baseline under-reported 5 requirements that are documented elsewhere, marking them \"related only\". Asking one focused question per requirement found them all.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -737,27 +799,27 @@
       "id": "testing-evaluation",
       "name": "Testing & evaluation",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "2": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "3": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "4": [
           "Ask Barry",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ]
       },
       "evidence": [
@@ -767,10 +829,11 @@
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Run the tests",
           "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#run-the-tests",
-          "project": "housing-pipeline-ireland",
+          "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m pytest -q"
+          "quote": "python -m pytest -q",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 4,
@@ -781,7 +844,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md"
+          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -792,7 +856,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests"
+          "quote": "Run the 86 Automated Unit & Agent Tests",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 4,
@@ -803,7 +868,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:"
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored: ... An LLM judge confirms every claim is supported by the cited text ... Regression checks ...",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -814,7 +880,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m pytest -v # run the tests"
+          "quote": "python -m pytest -v # run the tests",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -825,7 +892,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`. The 0.5 threshold was picked on"
+          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -836,7 +904,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%. ... Regression checks failed 0 ... Passing every check 43 of 46 ... regression checks 0 failed."
+          "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Answer-quality evaluation (Stage 6) > Results (27 Sep 2026)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/33a7600b81dde56e156fc3a9b06f7d3f6602a0a9/README.md#results-27-sep-2026",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Regression checks failed | 0 | ... Each fix came with a unit test.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -853,34 +934,18 @@
     {
       "id": "databases-sql",
       "name": "Databases & SQL",
-      "tier": 3,
-      "first_evidence": null,
+      "tier": 2,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "In My Time",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Wall Inspector"
         ],
         "2": [
-          "Wall Inspector",
-          "housing-pipeline-ireland"
-        ],
-        "3": [
-          "housing-pipeline-ireland"
+          "Wall Inspector"
         ]
       },
       "evidence": [
-        {
-          "tier": 3,
-          "repo": "housing-pipeline-ireland",
-          "path": "README.md",
-          "heading": "Housing Pipeline Ireland > Architecture (planned)",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#architecture-planned",
-          "project": "housing-pipeline-ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Model — star schema in SQL, hand-written queries"
-        },
         {
           "tier": 2,
           "repo": "wall_inspector",
@@ -890,7 +955,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "New columns (`grading_status`, `graded_by_user_*`, `graded_at`, `provenance`, `confidence_score`) are added by a non-destructive auto-migration on start-up, so existing production records in PostgreSQL are preserved."
+          "quote": "New columns (`grading_status`, `graded_by_user_*`, `graded_at`, `provenance`, `confidence_score`) are added by a non-destructive auto-migration on start-up, so existing production records in PostgreSQL are preserved.",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -901,7 +967,8 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Full Stack: Web + PostgreSQL 15"
+          "quote": "Full Stack: Web + PostgreSQL 15",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -912,7 +979,8 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Storage | Relational database (progress only)"
+          "quote": "Storage | Relational database (progress only)",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -923,7 +991,20 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The database schema has no column capable of holding an answer. If an answers table ever appears in a migration, that is treated as an alarm bell."
+          "quote": "The database schema has no column capable of holding an answer. If an answers table ever appears in a migration, that is treated as an alarm bell.",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
+          "project": "Wall Inspector",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "PG[(\"PostgreSQL 15\")]",
+          "first_committed": "2026-09-25"
         }
       ],
       "match": [
@@ -940,41 +1021,30 @@
       "id": "security-identity",
       "name": "Security & identity",
       "tier": 4,
-      "first_evidence": null,
+      "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "Ask Barry",
           "Brief",
-          "Wall Inspector",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "2": [
           "Ask Barry",
           "Brief",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland"
         ],
         "3": [
           "Ask Barry",
           "Brief",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland"
         ],
         "4": [
           "Ask Barry",
-          "housing-pipeline-ireland"
+          "Housing Pipeline Ireland"
         ]
       },
       "evidence": [
-        {
-          "tier": 4,
-          "repo": "housing-pipeline-ireland",
-          "path": "README.md",
-          "heading": "Housing Pipeline Ireland > Security",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
-          "project": "housing-pipeline-ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting."
-        },
         {
           "tier": 4,
           "repo": "ask-barry",
@@ -984,7 +1054,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait."
+          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "housing-pipeline-ireland",
+          "path": "README.md",
+          "heading": "Housing Pipeline Ireland > Security",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
+          "project": "Housing Pipeline Ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 3,
@@ -995,7 +1078,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs: ... Render | the `ask-barry-render` service principal | Cognitive Services OpenAI User, Search Index Data Reader ... Azure compute (later) | a managed identity: no"
+          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs:",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -1006,18 +1090,8 @@
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down with a strict `.gitignore`"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Turn keys off (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them, then rotate the old keys so any copy left anywhere is useless."
+          "quote": "rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down with a strict `.gitignore`",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -1028,7 +1102,20 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "All credentials and cloud endpoints are injected strictly via environment variables (never hardcoded)"
+          "quote": "All credentials and cloud endpoints are injected strictly via environment variables (never hardcoded)",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Turn keys off (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them, then rotate the old keys so any copy left anywhere is useless.",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -1039,7 +1126,20 @@
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Security maturity: a transparent incident response, and privacy-first data handling with full export and permanent deletion"
+          "quote": "Security maturity: a transparent incident response, and privacy-first data handling with full export and permanent deletion",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > AI-901 concepts this stage practises",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#ai-901-concepts-this-stage-practises",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "keys vs Microsoft Entra ID authentication",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
