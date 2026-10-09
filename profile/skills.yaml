@@ -12,7 +12,7 @@ skills:
   - id: python-flask
     name: Python & Flask
     description: Writing Python, including Flask web applications and back-end services.
-    queries: ["Python Flask web application", "Python back end and scripts"]
+    queries: ["Python Flask web application", "Flask app deployed on Render", "pytest tests for Flask routes"]
     match: [python, flask, django, fastapi, back end, backend]
 
   - id: cloud

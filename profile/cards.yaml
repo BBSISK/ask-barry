@@ -3,20 +3,25 @@
 # How a card fills (option A, Product Owner, 9 Oct 2026): every night the builder searches the index with each
 # card's queries and drafts short examples from the sections it finds, each with a quote checked against the
 # source. Drafts go to data/capability_suggestions.json. An example goes live only after its id is copied into
-# "approved" below. Until a card has an approved example, it shows as a gap with its gap_note.
+# "approved" below. First approvals: Barry, 9 Oct 2026. Until a card has an approved example, it shows as a gap with its gap_note.
 #
 # Adding a card needs no code change: add an entry here and it appears after the next nightly build.
 cards:
   - id: problem-solving
     title: Problem solving & debugging
     queries: ["root cause and fix", "bug found and fixed", "problem I solved"]
-    approved: []
+    approved:
+      - "problem-solving:1162028e47"
+      - "problem-solving:8d011cfc3a"
     gap_note: No approved examples yet.
 
   - id: security-mindset
     title: Security mindset
     queries: ["leaked credential response", "security and privacy by design"]
-    approved: []
+    approved:
+      - "security-mindset:8d011cfc3a"
+      - "security-mindset:b75a31933f"
+      - "security-mindset:b913ad81a3"
     gap_note: No approved examples yet.
 
   - id: data-manipulation
@@ -35,18 +40,24 @@ cards:
   - id: teaching-mentoring
     title: Teaching & mentoring
     queries: ["teaching maths", "students learning"]
-    approved: []
+    approved:
+      - "teaching-mentoring:ab6ed376a9"
+      - "teaching-mentoring:fa7966fadc"
     gap_note: No approved examples yet.
 
   - id: leadership
     title: Leadership
     queries: ["leading engineering teams", "manager role"]
-    approved: []
+    approved:
+      - "leadership:5299616047"
+      - "leadership:035538d07a"
+      - "leadership:73f7ff9703"
     gap_note: No approved examples yet.
 
   - id: teamwork
     title: Teamwork & collaboration
     queries: ["worked with a team", "collaboration with colleagues"]
-    approved: []
+    approved:
+      - "teamwork:73f7ff9703"
     gap_note: >-
       Projects so far are mostly solo. Team-based software work is the next step.

@@ -1,13 +1,19 @@
 {
   "profile_id": "barry-sisk",
-  "status": "DRAFT: proposed by Claude from the public READMEs on 9 Oct 2026. Barry to confirm or change each tier before the first evaluation counts.",
-  "tiers": {"0": "Not evidenced", "1": "Used", "2": "Built", "3": "In production", "4": "Tested / evaluated"},
+  "status": "Confirmed by Barry on 9 Oct 2026 after the first build.",
+  "tiers": {
+    "0": "Not evidenced",
+    "1": "Used",
+    "2": "Built",
+    "3": "In production",
+    "4": "Tested / evaluated"
+  },
   "skills": {
     "python-flask": 4,
     "cloud": 4,
     "infrastructure-as-code": 4,
     "ci-cd": 4,
-    "containers": 3,
+    "containers": 1,
     "rag-llm": 4,
     "agents-mcp": 4,
     "testing-evaluation": 4,
@@ -18,9 +24,14 @@
     "front-end-frameworks": 0,
     "data-streaming": 0
   },
-  "traps": ["kubernetes", "front-end-frameworks", "data-streaming"],
+  "traps": [
+    "kubernetes",
+    "front-end-frameworks",
+    "data-streaming"
+  ],
   "notes": {
     "traps": "Same skills as the golden set's trap questions: anything above 0 is over-claiming.",
-    "java": "Expected 0 until Java work is in public docs (HDip coursework isn't indexed)."
+    "java": "Expected 0 until Java work is in public docs (HDip coursework isn't indexed).",
+    "containers": "Docker is mentioned in the READMEs but no app runs in a container in production (Render runs Ask Barry as a Python service), so Used is the honest tier."
   }
 }
