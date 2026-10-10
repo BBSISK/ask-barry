@@ -1,0 +1,62 @@
+# Gap-closing plans (ASK-50): what is being done about each gap on the capability page, and by when.
+#
+# Copied from Barry's HDip Education & Gap-Closing Plan (9 Oct 2026); both are updated together once a month.
+# A plan never fills a tier. The nightly build marks it closed only when checked evidence reaches the target,
+# keeps the month that happened, and marks it overdue if the target month passes first. Every change to this
+# file is dated in git history, so the plan can't be rewritten after the fact without it showing.
+#
+# Fields: id, skill + target_tier (1-4) or card, work (one line), planned and target (YYYY-MM).
+plans:
+  - id: change-control-readme
+    skill: change-control
+    target_tier: 4
+    work: Write down how changes reach production in the Ask Barry README, including the tests that guard it
+    planned: 2026-10
+    target: 2026-10
+
+  - id: written-communication-examples
+    card: written-communication
+    work: Approve examples already written (model card, Azure setup guide, Housing Pipeline data profile)
+    planned: 2026-10
+    target: 2026-10
+
+  - id: databases-production
+    skill: databases-sql
+    target_tier: 3
+    work: CS285 Databases (PostgreSQL); state the database each app really runs on in production in its README
+    planned: 2026-10
+    target: 2026-11
+
+  - id: java-own-repo
+    skill: java
+    target_tier: 2
+    work: My own public Java repo, e.g. a Property Price Register CSV parser (no assessed lab solutions)
+    planned: 2026-10
+    target: 2026-12
+
+  - id: data-manipulation-housing
+    card: data-manipulation
+    work: Housing Pipeline Ireland Sprints 1-3 (profiling, cleaning, reject logs, geocoding) with data-quality figures
+    planned: 2026-10
+    target: 2027-01
+
+  - id: containers-housing
+    skill: containers
+    target_tier: 3
+    work: Run a Housing Pipeline Ireland service as a container on Azure
+    planned: 2026-10
+    target: 2027-03
+
+  - id: java-tested
+    skill: java
+    target_tier: 4
+    work: JUnit tests in CI on the Java repo, applying CS265 Software Testing
+    planned: 2026-10
+    target: 2027-03
+
+  - id: front-end-dashboard
+    skill: front-end-frameworks
+    target_tier: 2
+    work: Housing Pipeline Ireland dashboard, only if the roles I target ask for a front-end framework
+    planned: 2026-10
+    target: 2027-04

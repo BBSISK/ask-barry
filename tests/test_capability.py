@@ -475,3 +475,115 @@ def test_draft_labels_cover_every_skill_on_barrys_list():
     labels = json.loads((ROOT / "eval" / "capability_labels.json").read_text())
     assert set(labels["skills"]) == {s["id"] for s in load_pack().skills}
     assert set(labels["traps"]) <= {k for k, v in labels["skills"].items() if v == 0}
+
+
+# --- ASK-50: gap-closing plans -----------------------------------------------------------------------------------
+
+def plan_pack(tmp_path, plans):
+    folder = copy_pack(tmp_path)
+    (folder / "plans.yaml").write_text(yaml.safe_dump({"plans": plans}))
+    return folder
+
+
+JAVA_PLAN = {"id": "java-repo", "skill": "java", "target_tier": 2, "work": "Own Java repo", "planned": "2026-10",
+             "target": "2026-12"}
+DOCKER_PLAN = {"id": "docker-prod", "skill": "containers", "target_tier": 3, "work": "Container in production",
+               "planned": "2026-10", "target": "2026-11"}
+CARD_PLAN = {"id": "card-ps", "card": "problem-solving", "work": "Approve an example", "planned": "2026-09",
+             "target": "2026-09"}
+
+
+def test_barrys_plans_load_and_point_at_real_skills_and_cards():
+    pack = load_pack()
+    assert pack.plans and {p["skill"] for p in pack.plans if "skill" in p} <= {s["id"] for s in pack.skills}
+    assert {p["card"] for p in pack.plans if "card" in p} <= {c["id"] for c in pack.cards}
+
+
+def test_a_pack_without_plans_still_loads():
+    assert load_pack(NURSE).plans == []
+
+
+@pytest.mark.parametrize("bad, message", [
+    ({**JAVA_PLAN, "skill": "juggling"}, "isn't in skills.yaml"),
+    ({**JAVA_PLAN, "target": "2026-09"}, "before the month it was planned"),
+    ({**CARD_PLAN, "target_tier": 2}, "plans format"),             # a card has no tier
+    ({**JAVA_PLAN, "target": "Dec 2026"}, "plans format"),
+])
+def test_bad_plans_are_refused_with_the_file_named(tmp_path, bad, message):
+    with pytest.raises(PackError, match=message) as err:
+        load_pack(plan_pack(tmp_path, [bad]))
+    assert "plans.yaml" in str(err.value)
+
+
+def test_plans_are_open_closed_or_overdue_and_never_fill_a_tier(tmp_path):
+    pack = load_pack(plan_pack(tmp_path, [JAVA_PLAN, DOCKER_PLAN, CARD_PLAN]))
+    cap, _ = build(pack=pack)                                 # NOW = 9 Oct 2026; Containers reaches 3, Java 0
+    assert problems(cap) == []
+    status = {p["id"]: p for p in cap["plans"]}
+    assert status["java-repo"]["status"] == "open" and skill(cap, "java")["tier"] == 0
+    assert status["docker-prod"] == {**status["docker-prod"], "status": "closed", "closed": "2026-10", "on_time": True}
+    assert status["card-ps"]["status"] == "overdue"            # no approved example, target month has passed
+    assert cap["plan_record"] == {"total": 3, "closed": 1, "on_time": 1, "open": 1, "overdue": 1}
+    assert [p["id"] for p in cap["plans"]] == ["card-ps", "docker-prod", "java-repo"]   # by target month
+
+
+def test_the_month_a_plan_closed_is_kept_across_rebuilds(tmp_path):
+    from app.capability.plans import plan_statuses
+    pack = load_pack(plan_pack(tmp_path, [DOCKER_PLAN]))
+    first, _ = build(pack=pack)
+    skills, cards = first["skills"], first["cards"]
+    later = datetime(2027, 2, 1, tzinfo=timezone.utc)
+    kept, _ = plan_statuses(pack, skills, cards, previous=first, now=later)
+    assert kept[0]["closed"] == "2026-10" and kept[0]["on_time"] is True
+    fresh, _ = plan_statuses(pack, skills, cards, previous=None, now=later)
+    assert fresh[0]["closed"] == "2027-02" and fresh[0]["on_time"] is False        # late if first seen in Feb
+
+
+def test_a_closed_plan_reopens_if_the_evidence_goes_away(tmp_path):
+    from app.capability.plans import plan_statuses
+    pack = load_pack(plan_pack(tmp_path, [DOCKER_PLAN]))
+    first, _ = build(pack=pack)
+    gone = [{**s, "tier": 0} if s["id"] == "containers" else s for s in first["skills"]]
+    plans, record = plan_statuses(pack, gone, first["cards"], previous=first, now=NOW)
+    assert plans[0]["status"] == "open" and "closed" not in plans[0] and record["closed"] == 0
+
+
+def test_no_plans_means_no_plan_fields(tmp_path):
+    cap, _ = build()
+    assert "plans" in cap                                     # Barry's own pack has plans
+    cap, _ = build(pack=load_pack(NURSE))
+    assert "plans" not in cap and "plan_record" not in cap
+
+
+def test_page_shows_the_plan_beside_its_gap_and_the_track_record(tmp_path):
+    pack = load_pack(plan_pack(tmp_path, [JAVA_PLAN, DOCKER_PLAN, CARD_PLAN]))
+    cap, _ = build(pack=pack)
+    html = app_with(cap).get("/capability").get_data(as_text=True)
+    assert "Gap-closing plan:</strong> 1 of 3 closed (1 on time)" in html and "1 overdue" in html
+    java_row = html.split('data-skill="java"', 1)[1].split("</tr>", 2)[1]
+    assert "Working on it:</b> Own Java repo · target Built by Dec 2026" in java_row
+    assert "Overdue:</b> Approve an example" in html                         # on the card
+    table = html.split('id="plans"', 1)[1].split("</section>", 1)[0]
+    assert "Closed Oct 2026" in table and "Overdue" in table and "Open" in table
+
+
+def test_api_keeps_a_skills_plans_and_mcp_reports_them(tmp_path):
+    import ask_barry_mcp as server
+    pack = load_pack(plan_pack(tmp_path, [JAVA_PLAN, DOCKER_PLAN]))
+    cap, _ = build(pack=pack)
+    one = app_with(cap).get("/api/capability?skill=java").get_json()
+    assert [p["id"] for p in one["plans"]] == ["java-repo"]
+    result = server.to_capability_result(cap)
+    assert {(p.gap, p.status) for p in result.plans} == {("Java", "open"), ("Containers (Docker)", "closed")}
+    assert result.plan_record.startswith("1 of 2 closed (1 on time)")
+    assert {p.gap for p in server.to_capability_result(one).plans} == {"Java"}
+
+
+# --- ASK-52: change control ---------------------------------------------------------------------------------------
+
+def test_change_control_is_its_own_skill_and_not_matched_on_change_management():
+    cap, _ = build()
+    assert skill(cap, "change-control")["name"] == "Change control"
+    assert view.matching_skills(cap, "Experience with Git, pull requests and Jira") == ["change-control"]
+    assert "change-control" not in view.matching_skills(cap, "Leads organisational change management")
+    assert "change-control" in view.matching_skills(cap, "Release management and change control")

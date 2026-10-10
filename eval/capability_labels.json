@@ -20,9 +20,10 @@
     "databases-sql": 3,
     "security-identity": 4,
     "kubernetes": 0,
-    "java": 0,
+    "java": 2,
     "front-end-frameworks": 0,
-    "data-streaming": 0
+    "data-streaming": 0,
+    "change-control": 4
   },
   "traps": [
     "kubernetes",
@@ -31,7 +32,8 @@
   ],
   "notes": {
     "traps": "Same skills as the golden set's trap questions: anything above 0 is over-claiming.",
-    "java": "Expected 0 until Java work is in public docs (HDip coursework isn't indexed).",
-    "containers": "Docker is mentioned in the READMEs but no app runs in a container in production (Render runs Ask Barry as a Python service), so Used is the honest tier."
+    "java": "Raised 0 -> 2 by Claude on 10 Oct 2026: the nightly build found the public CS627_Advanced_OOP_Java repo (CS627B Lab 2 README). Barry to confirm.",
+    "containers": "Docker is mentioned in the READMEs but no app runs in a container in production (Render runs Ask Barry as a Python service), so Used is the honest tier.",
+    "change-control": "Proposed by Claude on 10 Oct 2026 for the new skill (README 'How changes are made' + workflow and infrastructure tests). Barry to confirm."
   }
 }

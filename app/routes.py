@@ -118,6 +118,7 @@ def capability_page():
             context.update(job_title=job.report.get("role_title") or "this job ad", required=required,
                            unmatched=unmatched, fit=view.fit_summary(data, required))
         context["rows"] = view.ladder(data, context["required"])
+        context["plan"] = view.plan_view(data)
     return render_template("capability.html", **context)
 
 
@@ -135,8 +136,12 @@ def capability_api():
     if skill is None:
         return jsonify(error=f"No skill '{skill_ref[:60]}' on this profile.",
                        skills=[s["id"] for s in data["skills"]]), 404
-    return jsonify({**{k: data[k] for k in ("schema_version", "profile_id", "person", "generated_at", "tiers")},
-                    "skills": [skill], "cards": []})
+    one = {**{k: data[k] for k in ("schema_version", "profile_id", "person", "generated_at", "tiers")},
+           "skills": [skill], "cards": []}
+    plans = [p for p in data.get("plans") or [] if p.get("skill") == skill["id"]]
+    if plans:
+        one["plans"] = plans
+    return jsonify(one)
 
 
 CONNECT_SECTIONS = [

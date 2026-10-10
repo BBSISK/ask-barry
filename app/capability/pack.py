@@ -1,6 +1,6 @@
 """Load and validate a profile pack: the folder that says whose capability this is (ASK-42, ASK-43).
 
-A pack is four YAML files (profile, tiers, skills, cards). Each is checked against a JSON Schema, then
+A pack is four YAML files (profile, tiers, skills, cards), plus an optional plans.yaml (ASK-50). Each is checked against a JSON Schema, then
 against a few rules a schema can't express (unique ids, tiers 1-4 in order). Errors name the file and the
 field, so someone setting up their own pack can fix it without reading code.
 """
@@ -28,6 +28,7 @@ class Pack:
     skills: list
     cards: list
     path: Path = field(default=None)
+    plans: list = field(default_factory=list)
 
     @property
     def profile_id(self):
@@ -94,4 +95,23 @@ def load_pack(folder=DEFAULT_PACK):
     _unique(data["skills"]["skills"], "skill", folder / "skills.yaml")
     _unique(data["cards"]["cards"], "card", folder / "cards.yaml")
     return Pack(profile=data["profile"], tiers=tiers, skills=data["skills"]["skills"],
-                cards=data["cards"]["cards"], path=folder)
+                cards=data["cards"]["cards"], path=folder, plans=_plans(folder, data))
+
+
+def _plans(folder, data):
+    """Optional plans.yaml: each plan must point at a skill or card on this pack."""
+    path = Path(folder) / "plans.yaml"
+    if not path.exists():
+        return []
+    plans = _read(folder, "plans")["plans"]
+    _unique(plans, "plan", path)
+    skills = {s["id"] for s in data["skills"]["skills"]}
+    cards = {c["id"] for c in data["cards"]["cards"]}
+    for plan in plans:
+        if "skill" in plan and plan["skill"] not in skills:
+            raise PackError(f"{path}: plan '{plan['id']}' names skill '{plan['skill']}', which isn't in skills.yaml.")
+        if "card" in plan and plan["card"] not in cards:
+            raise PackError(f"{path}: plan '{plan['id']}' names card '{plan['card']}', which isn't in cards.yaml.")
+        if plan["target"] < plan["planned"]:
+            raise PackError(f"{path}: plan '{plan['id']}' has a target month before the month it was planned.")
+    return plans
