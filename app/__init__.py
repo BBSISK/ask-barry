@@ -8,7 +8,8 @@ from .ratelimit import RateLimiter
 
 
 def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
-               search_client=None, model_provider=None, chat_client=None, capability_store=None):
+               search_client=None, model_provider=None, chat_client=None, capability_store=None,
+               ad_fetcher=None):
     """Create and configure the Flask app.
 
     config_name: "development", "testing" or "production". Defaults to the
@@ -21,6 +22,8 @@ def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
     model_provider: optional model provider or chat client for the answering step (tests pass a fake).
     chat_client: optional alias for model_provider when passing a raw chat completions client.
     capability_store: optional CapabilityStore for /capability (tests pass one over a fixture file).
+    ad_fetcher: optional job-ad link fetcher (ASK-27; tests pass a fake). Otherwise Firecrawl when
+    FIRECRAWL_API_KEY is set.
     """
     config_name = config_name or os.getenv("APP_ENV", "production")
     if config_name not in CONFIGS:
@@ -52,6 +55,14 @@ def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
     app.extensions["scan_ratelimiter"] = RateLimiter(
         per_minute=app.config["SCAN_RATE_PER_HOUR"], per_day=app.config["SCAN_RATE_PER_DAY"],
         window=3600, noun="photo scans")
+    app.extensions["ad_fetcher"] = ad_fetcher
+    # ASK-27: per visitor, plus one shared daily budget that protects the Firecrawl free allowance.
+    app.extensions["fetch_ratelimiter"] = RateLimiter(
+        per_minute=app.config["FETCH_RATE_PER_HOUR"], per_day=app.config["FETCH_RATE_PER_DAY"],
+        window=3600, noun="link fetches")
+    app.extensions["fetch_budget"] = RateLimiter(
+        per_minute=app.config["FETCH_BUDGET_PER_DAY"], per_day=app.config["FETCH_BUDGET_PER_DAY"],
+        window=3600, noun="link fetches today")
     app.extensions["agent_ratelimiter"] = RateLimiter(
         per_minute=app.config["AGENT_RATE_PER_HOUR"], per_day=app.config["AGENT_RATE_PER_DAY"],
         window=3600, noun="evidence maps")

@@ -360,6 +360,18 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 
+## Fetch a job ad from a link (ASK-27)
+
+On the evidence page, a visitor can paste a link to the ad on a company careers page instead of the ad itself. The page's text lands in the box for them to check, exactly like "Scan a job ad", and only then does the agent run.
+
+- **Fetching is code, not an agent tool.** The link comes only from the visitor. Nothing the model reads can make the server fetch a URL.
+- **Scraping policy.** LinkedIn, Indeed and Glassdoor links are refused with a request to paste the text, because their terms don't allow automated fetching. Every other site's `robots.txt` is read first and obeyed, for this app's user agent (`AskBarryBot`) and for all agents.
+- **No reaching inward.** Only named public hosts are accepted: no IP addresses, no `localhost`, no links with a username. When this server reads `robots.txt`, each redirect hop is checked to resolve only to public internet addresses.
+- **Firecrawl does the page work.** Its v2 `scrape` endpoint renders the page, keeps the main content as markdown and extracts the title, company, location, required skills and closing date against a fixed JSON schema. The page is untrusted content: it only fills the text box, which then goes through the agent's usual guardrails.
+- **Cost control.** Each page uses 5 Firecrawl credits; the free plan has 1,000 a month. Besides a per-visitor limit, one shared daily budget (6 by default) keeps the month within the free plan. Bad or blocked links are refused before any allowance is used.
+- **Secrets and privacy.** `FIRECRAWL_API_KEY` lives in the Render dashboard and a local `.env`, never in the repo. Only the site's host name is logged, not the link or the ad.
+- **Tested offline.** Firecrawl, DNS and `robots.txt` are faked in the tests. Real careers pages saved with `python -m scripts.try_fetch <url> --save tests/fixtures/firecrawl/<name>.json` are replayed in CI.
+
 ## Two judges compared (Stage 9a)
 
 My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.

@@ -16,7 +16,7 @@ def test_health_ok(client):
 def test_health_reports_no_ai_features_yet(client):
     # Honesty check: nothing claims to be live before it is built.
     features = client.get("/health").get_json()["features"]
-    assert features == {"search": False, "embeddings": False, "generation": False, "job_agent": False}
+    assert features == {"search": False, "embeddings": False, "generation": False, "job_agent": False, "job_url": False}
 
 
 def test_ready_ok():

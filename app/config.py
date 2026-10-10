@@ -23,6 +23,10 @@ class Config:
     # "Scan a job ad" (Stage 8e): about a cent per photo; separate limit so scanning doesn't use up agent runs.
     SCAN_RATE_PER_HOUR = int(os.getenv("SCAN_RATE_PER_HOUR", "8"))
     SCAN_RATE_PER_DAY = int(os.getenv("SCAN_RATE_PER_DAY", "60"))
+    # ASK-27: fetch a job ad from a link with Firecrawl (5 credits a page; the free plan has 1,000 a month).
+    FETCH_RATE_PER_HOUR = int(os.getenv("FETCH_RATE_PER_HOUR", "6"))
+    FETCH_RATE_PER_DAY = int(os.getenv("FETCH_RATE_PER_DAY", "20"))
+    FETCH_BUDGET_PER_DAY = int(os.getenv("FETCH_BUDGET_PER_DAY", "6"))      # all visitors together: ~180 a month
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024        # Flask rejects bigger uploads with 413 before reading them
     # ASK-42: where capability.json is read from (a path, or an https URL such as the raw file on main, so the
     # nightly rebuild shows without a redeploy). Blank means data/capability.json in this checkout.

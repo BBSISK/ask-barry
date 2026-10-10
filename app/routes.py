@@ -9,6 +9,7 @@ from flask import Blueprint, current_app, jsonify, redirect, render_template, re
 from .agent_jobs import Busy
 from .answering import answerer_from_env, azure_configured, validate_question
 from .job_agent import MAX_JOB_AD_CHARS
+from .job_fetch import FetchError, check_url, fetcher_from_env
 from .scan import ScanError, transcriber_from_env
 from .share import BadShareLink, pack, qr_data_uri, unpack
 
@@ -97,6 +98,7 @@ def evidence_page():
         app_name=current_app.config["APP_NAME"],
         stage=current_app.config["BUILD_STAGE"],
         available=agent_available(),
+        fetch_available=bool(get_ad_fetcher()),
         max_chars=MAX_JOB_AD_CHARS,
         per_hour=current_app.config["AGENT_RATE_PER_HOUR"],
     )
@@ -242,6 +244,48 @@ def scan_job_ad():
     return jsonify(text=text, ai_generated=True)
 
 
+def get_ad_fetcher():
+    """Link -> job ad (ASK-27): the injected one (tests) or Firecrawl, when FIRECRAWL_API_KEY is set."""
+    fetcher = current_app.extensions.get("ad_fetcher")
+    if fetcher is None and current_app.config["ANSWERING_FROM_ENV"]:
+        fetcher = fetcher_from_env(max_chars=MAX_JOB_AD_CHARS)
+        current_app.extensions["ad_fetcher"] = fetcher
+    return fetcher
+
+
+@bp.post("/api/fetch-ad")
+def fetch_job_ad():
+    """A careers-page link -> the ad's text, for the visitor to check before running the agent (ASK-27)."""
+    payload = request.get_json(silent=True) or {}
+    url = payload.get("url")
+    if not isinstance(url, str) or not url.strip():
+        return jsonify(error="Please paste a link to the job ad."), 400
+    fetcher = get_ad_fetcher()
+    if fetcher is None:
+        return jsonify(error="Fetching from a link is not configured on this server."), 503
+    try:
+        check_url(url)                          # refuse bad or blocked links before they use up any allowance
+    except FetchError as err:
+        return jsonify(error=str(err)), err.status
+    allowed, reason = current_app.extensions["fetch_ratelimiter"].allow(request.remote_addr or "unknown")
+    if not allowed:
+        return jsonify(error=reason), 429
+    allowed, _ = current_app.extensions["fetch_budget"].allow("everyone")
+    if not allowed:
+        return jsonify(error="Today's link fetches are used up. Please paste the ad text instead."), 429
+    try:
+        ad = fetcher.fetch(url)
+    except FetchError as err:
+        log.info("link fetch refused (%s): %s", err.status, err)
+        return jsonify(error=str(err)), err.status
+    except Exception:
+        log.exception("link fetch failed")
+        return jsonify(error="Sorry, something went wrong fetching that page. Please paste the ad text."), 502
+    # Only the host is logged: the visitor's link and the ad text are not stored.
+    log.info("fetched a job ad from %s (%d chars)", ad["host"], len(ad["text"]))
+    return jsonify(**ad, ai_generated=True)
+
+
 @bp.errorhandler(413)
 def too_large(_err):
     return jsonify(error="That photo is too large. Please try again, closer to the text."), 413
@@ -320,7 +364,8 @@ def health():
         status="ok",
         app=current_app.config["APP_NAME"],
         stage=current_app.config["BUILD_STAGE"],
-        features={"search": live, "embeddings": live, "generation": live, "job_agent": bool(agent_available())},
+        features={"search": live, "embeddings": live, "generation": live, "job_agent": bool(agent_available()),
+                  "job_url": bool(agent_available() and get_ad_fetcher())},
         retrieval="azure-hybrid" if live else None,
     )
 

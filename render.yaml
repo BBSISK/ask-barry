@@ -55,3 +55,13 @@ services:
         value: "8"
       - key: SCAN_RATE_PER_DAY
         value: "60"
+      # ASK-27: fetch a job ad from a careers-page link with Firecrawl. The key is a secret: set it in the
+      # Render dashboard (sync: false), never here.
+      - key: FIRECRAWL_API_KEY
+        sync: false
+      - key: FETCH_RATE_PER_HOUR
+        value: "6"
+      - key: FETCH_RATE_PER_DAY
+        value: "20"
+      - key: FETCH_BUDGET_PER_DAY
+        value: "6"
