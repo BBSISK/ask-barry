@@ -5,10 +5,11 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-10T09:57:28Z",
+  "generated_at": "2026-10-10T16:01:15Z",
   "sources": {
     "repos": [
       "BBSISK",
+      "CS627_Advanced_OOP_Java",
       "agentmath_showcase",
       "ask-barry",
       "housing-pipeline-ireland",
@@ -126,18 +127,6 @@
         },
         {
           "tier": 1,
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Architecture",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#architecture",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email] TW --> U[📱 User] EM --> U U -- 30 words --> W[Web app / PWA] W --> F F --- DB[(SQLite<br/>users, entries,<br/>groups,",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
           "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
@@ -145,7 +134,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "then run `python -m scripts.check_azure`.",
+          "quote": "then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
           "first_committed": "2026-09-27"
         },
         {
@@ -157,7 +146,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Backend | Python, Flask, scheduled jobs",
+          "quote": "| Backend | Python, Flask, scheduled jobs |",
           "first_committed": "2026-09-25"
         }
       ],
@@ -223,7 +212,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS...",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
           "first_committed": "2026-09-27"
         },
         {
@@ -273,6 +262,18 @@
           "verified_by": "self",
           "quote": "Microsoft Foundry resources and projects, model catalog and deployments, deployment types (Global / Data Zone / Standard), quotas and rate limits, keys vs Microsoft Entra ID authentication, Azure AI Search tiers, resource groups, and cost management.",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 4: Foundry resource and model deployments",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ba39a931b28da61684b20536d601f69359e6abb0/docs/azure-setup.md#step-4-foundry-resource-and-model-deployments",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Create a new project. Let it create a new Foundry resource in rg-ask-barry and your region. Name the resource something like ask-barry-ai.",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -312,6 +313,18 @@
         {
           "tier": 4,
           "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#infrastructure-as-code-stage-7e",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Checked in CI: every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
           "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
@@ -342,19 +355,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init terraform plan ... terraform apply ... changes nothing in Azure",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/27c855c0fa300b2893937c739d218a71cce90a59/README.md#infrastructure-as-code-stage-7e",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Safe by design: every resource has `prevent_destroy`. The first plan found two portal settings the code was missing... After adding them, the plan was 5 to import, 0 to add, 0 to change, 0 to destroy, and `apply` imported all",
+          "quote": "terraform init terraform plan # expect: 5 to import, 0 to add, 0 to change, 0 to destroy terraform apply # records the imports in state; changes nothing in Azure",
           "first_committed": "2026-09-27"
         },
         {
@@ -366,7 +367,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Terraform (infra/main.tf)",
+          "quote": "TF[\"Terraform (infra/main.tf)\"]",
           "first_committed": "2026-09-25"
         },
         {
@@ -378,7 +379,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS",
           "first_committed": "2026-09-27"
         }
       ],
@@ -404,11 +405,13 @@
         ],
         "2": [
           "Ask Barry",
-          "Housing Pipeline Ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "3": [
           "Ask Barry",
-          "Housing Pipeline Ireland"
+          "Housing Pipeline Ireland",
+          "Wall Inspector"
         ],
         "4": [
           "Ask Barry",
@@ -441,16 +444,16 @@
           "first_committed": "2026-10-08"
         },
         {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
+          "tier": 3,
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
+          "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
-          "first_committed": "2026-09-27"
+          "quote": "Terraform (infra/main.tf)\" \"GitHub Actions (ci/github-actions-ci.yml)\"",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -461,7 +464,7 @@
           "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "every change goes through a pull request with green CI",
+          "quote": "every change goes through a pull request with green CI.",
           "first_committed": "2026-10-08"
         },
         {
@@ -490,15 +493,15 @@
         },
         {
           "tier": 1,
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
-          "project": "Wall Inspector",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 7: Verify",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Terraform (infra/main.tf)\" \"GitHub Actions (ci/github-actions-ci.yml)\"",
-          "first_committed": "2026-09-25"
+          "quote": "python -m scripts.check_azure",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -716,7 +719,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
+          "quote": "python3 mcp_server.py --self-test",
           "first_committed": "2026-09-25"
         },
         {
@@ -752,7 +755,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "* **Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
+          "quote": "**Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
           "first_committed": "2026-09-25"
         },
         {
@@ -764,7 +767,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Sentinel[\"Intake Sentinel Agent\"] Director[\"Curriculum Director Agent\"] MCP[\"MCP Server (mcp_server.py)\"]",
+          "quote": "MCP[\"MCP Server (mcp_server.py)\"]",
           "first_committed": "2026-09-25"
         },
         {
@@ -862,7 +865,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests",
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
           "first_committed": "2026-09-25"
         },
         {
@@ -874,7 +877,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored: ... Regression checks ... Traps ...",
           "first_committed": "2026-09-27"
         },
         {
@@ -940,7 +943,7 @@
     {
       "id": "databases-sql",
       "name": "Databases & SQL",
-      "tier": 2,
+      "tier": 3,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
@@ -949,11 +952,14 @@
         ],
         "2": [
           "Wall Inspector"
+        ],
+        "3": [
+          "Wall Inspector"
         ]
       },
       "evidence": [
         {
-          "tier": 2,
+          "tier": 3,
           "repo": "wall_inspector",
           "path": "README.md",
           "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
@@ -997,19 +1003,19 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The database schema has no column capable of holding an answer. If an `answers` table ever appears in a migration, that is treated as an alarm bell.",
+          "quote": "The database schema has no column capable of holding an answer. If an answers table ever appears in a migration, that is treated as an alarm bell.",
           "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
           "repo": "wall_inspector",
           "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🛠️ Quick Start & Verification > 3. Security & Environment Variables (Production)",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#3-security--environment-variables-production",
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "PG[(\"PostgreSQL 15\")] ... Flask --> PG ... PG --> COCO",
+          "quote": "`DATABASE_URL` — Managed PostgreSQL 15 connection string",
           "first_committed": "2026-09-25"
         }
       ],
@@ -1134,6 +1140,18 @@
           "verified_by": "self",
           "quote": "Security maturity: a transparent incident response, and privacy-first data handling with full export and permanent deletion",
           "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > AI-901 concepts this stage practises",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#ai-901-concepts-this-stage-practises",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "keys vs Microsoft Entra ID authentication",
+          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -1166,10 +1184,54 @@
     {
       "id": "java",
       "name": "Java",
-      "tier": 0,
-      "first_evidence": null,
-      "projects_by_tier": {},
-      "evidence": [],
+      "tier": 2,
+      "first_evidence": "2026-10",
+      "projects_by_tier": {
+        "1": [
+          "CS627_Advanced_OOP_Java"
+        ],
+        "2": [
+          "CS627_Advanced_OOP_Java"
+        ]
+      },
+      "evidence": [
+        {
+          "tier": 2,
+          "repo": "CS627_Advanced_OOP_Java",
+          "path": "CS627B_Lab2_AB_BS/Readme.md",
+          "heading": "Programming Module Repository > Design Decisions",
+          "url": "https://github.com/BBSISK/CS627_Advanced_OOP_Java/blob/68a0453055bd632db1f67e9f648b1763ed26e0d6/CS627B_Lab2_AB_BS/Readme.md#design-decisions",
+          "project": "CS627_Advanced_OOP_Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Add static valiable to class Car and Customer to allow for unique identification. Added a Boolean to track if the car status was sold (isSold) allowing for defining current stock and allocated stock Used a toString() function with Override to",
+          "first_committed": "2026-10-07"
+        },
+        {
+          "tier": 1,
+          "repo": "CS627_Advanced_OOP_Java",
+          "path": "CS627B_Lab2_AB_BS/Readme.md",
+          "heading": "Programming Module Repository > Class Summary",
+          "url": "https://github.com/BBSISK/CS627_Advanced_OOP_Java/blob/68a0453055bd632db1f67e9f648b1763ed26e0d6/CS627B_Lab2_AB_BS/Readme.md#class-summary",
+          "project": "CS627_Advanced_OOP_Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Java Skill used during this exercise: Classes and Objectives , encapsulation, Static ID counters, ArrayLsits, overriding toString()",
+          "first_committed": "2026-10-07"
+        },
+        {
+          "tier": 1,
+          "repo": "CS627_Advanced_OOP_Java",
+          "path": "CS627B_Lab2_AB_BS/Readme.md",
+          "heading": "Programming Module Repository > Class Summary",
+          "url": "https://github.com/BBSISK/CS627_Advanced_OOP_Java/blob/68a0453055bd632db1f67e9f648b1763ed26e0d6/CS627B_Lab2_AB_BS/Readme.md#class-summary",
+          "project": "CS627_Advanced_OOP_Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Program will be run from main method from main.java cd cs267-99190989 javac CS627B_Lab2_AB_BS/*.java java Lab02.CarDealershipManager",
+          "first_committed": "2026-10-07"
+        }
+      ],
       "match": [
         "java",
         "spring",
