@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-09T17:15:02Z",
+  "generated_at": "2026-10-10T09:57:28Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -8,7 +8,7 @@
       "candidates": [
         {
           "id": "problem-solving:d01d06712f",
-          "title": "Problem solving and root cause analysis",
+          "title": "Problem solving and root cause",
           "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -23,7 +23,7 @@
         {
           "id": "problem-solving:8d011cfc3a",
           "title": "Fixing prompt schedule drift",
-          "summary": "Barry rebuilt the prompt scheduling system to calculate the week purely from time, preventing schedule drift, and back-filled existing users with a migration.",
+          "summary": "Barry rebuilt the prompt scheduling system to calculate the week purely from time, preventing schedule drift and back-filled existing users with a migration.",
           "repo": "my30words_showcase",
           "path": "README.md",
           "heading": "✍️ Brief > Problems I solved along the way",
@@ -50,7 +50,7 @@
         },
         {
           "id": "problem-solving:ab6ed376a9",
-          "title": "Built AgentMath for tailored practice",
+          "title": "Built AgentMath for tailored learning",
           "summary": "Barry built AgentMath to address mixed-ability challenges in a maths class, providing tailored practice and real-time insight into student struggles.",
           "repo": "agentmath_showcase",
           "path": "README.md",
@@ -78,8 +78,8 @@
         },
         {
           "id": "problem-solving:b12b8bcd4e",
-          "title": "Improved evaluator with tests",
-          "summary": "Barry improved the answer-quality evaluator by requesting evidence from the judge, fixing formatting and token limit issues, and adding unit tests to prevent false negatives.",
+          "title": "Improving Answer Evaluator Accuracy",
+          "summary": "Barry improved the answer evaluator by requesting evidence from the judge, testing the evaluator with unit tests, and refining prompts to reduce false positives.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Answer-quality evaluation (Stage 6) > Results (27 Sep 2026)",
@@ -87,7 +87,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Early versions failed correct answers because of formatting (backticks, HTML in diagrams), a token limit that cut off the judge's output, and a judge that couldn't see the source labels the answering model saw. Each fix came with a unit",
+          "quote": "Ask the judge for evidence, not a verdict. The judge lists each claim with a quoted supporting passage... Test the evaluator too. Early versions failed correct answers because of formatting... Each fix came with a unit test.",
           "approved": false
         }
       ]
@@ -144,7 +144,7 @@
         {
           "id": "security-mindset:485108dbfd",
           "title": "Implementing Least Privilege Access",
-          "summary": "Barry configured identities and roles with least privilege in code, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
+          "summary": "Barry configured identities and roles in code to enforce least privilege, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security",
@@ -152,13 +152,13 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "No API keys anywhere. API key access is switched off on both Azure resources... Least privilege, as code: the identities and roles live in infra/identity.tf, and tests fail if any identity gets a broad role such as Owner or Contributor.",
+          "quote": "Least privilege, as code: the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.",
           "approved": false
         },
         {
           "id": "security-mindset:3a075dfa62",
           "title": "Implemented keyless security",
-          "summary": "Barry implemented keyless security from the first commit, using managed identities and least-privilege roles defined in Terraform, with tests to ensure no key-style settings are used.",
+          "summary": "Barry implemented keyless security from the first commit, using managed identities and least-privilege roles defined in Terraform, with tests to prevent key usage.",
           "repo": "housing-pipeline-ireland",
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Security",
@@ -171,8 +171,8 @@
         },
         {
           "id": "security-mindset:1162028e47",
-          "title": "Alerts failed silently fixed",
-          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
+          "title": "Fixing silent alert failures",
+          "summary": "Barry identified WhatsApp's 24-hour session rule causing silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Problems I solved along the way",
@@ -186,7 +186,7 @@
         {
           "id": "security-mindset:b75a31933f",
           "title": "Azure sign-in with Entra ID",
-          "summary": "Barry configured Azure to sign in using Entra ID instead of keys, created identities and roles, updated search service authentication, tested locally, managed secrets securely, and set up GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
+          "summary": "Barry configured Azure to sign in using Entra ID instead of keys, created identities and roles, tested token acceptance, and set up secrets to avoid storing keys in Terraform or GitHub.",
           "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
@@ -203,22 +203,7 @@
       "card": "data-manipulation",
       "title": "Data manipulation",
       "approved_but_not_found": [],
-      "candidates": [
-        {
-          "id": "data-manipulation:9edbd02b52",
-          "title": "Real-time fault detection at factory scale",
-          "summary": "Barry led a factory-wide program for real-time fault detection using data pipelines and anomaly detection, implementing nightly ingestion re-processes and fault classification to improve yield and system reliability.",
-          "repo": "BBSISK",
-          "path": "manufacturing-to-software.md",
-          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > Real-time fault detection at factory scale",
-          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#real-time-fault-detection-at-factory-scale",
-          "project": "Profile",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Responsible for the programme across the whole factory | Data pipelines, ingestion, streaming telemetry | Ask Barry's nightly ingestion re-processes only what changed",
-          "approved": false
-        }
-      ]
+      "candidates": []
     },
     {
       "card": "written-communication",
@@ -282,7 +267,7 @@
       "candidates": [
         {
           "id": "leadership:e9fd13724a",
-          "title": "Led engineering and training teams",
+          "title": "Led Engineering and Training Teams",
           "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -296,8 +281,8 @@
         },
         {
           "id": "leadership:5299616047",
-          "title": "Led 7nm Start-up Qualification",
-          "summary": "Led teams managing safety, quality, output, and cost in CMP operations and directed the 7nm equipment qualification programme, applying Lean methods and strategic planning to meet production goals.",
+          "title": "Led 7nm Start-up and CMP Teams",
+          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve manufacturing safety, quality, output, and cost.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
@@ -305,13 +290,13 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods... Led strategic planning to meet production ramp commitments",
+          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods, including Kaizen waste reduction and value stream mapping... Led strategic",
           "approved": true
         },
         {
           "id": "leadership:d362007369",
           "title": "Leadership in Equipment Qualification",
-          "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
+          "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness and stability.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -353,7 +338,7 @@
         {
           "id": "leadership:d01d06712f",
           "title": "Leadership in Strategic Planning",
-          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs for team members, and applied PMP certification to software product roadmap and sprint goals.",
+          "summary": "Led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification to software product roadmap and sprint goals.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -367,7 +352,7 @@
         {
           "id": "leadership:b50611f1aa",
           "title": "Led Semiconductor Manufacturing Teams",
-          "summary": "Led teams in high-volume semiconductor manufacturing across multiple technologies and processes, including new-technology start-ups.",
+          "summary": "Led teams in high-volume semiconductor manufacturing across multiple technologies and processes, including new-technology start-ups, to meet production demands.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024)",
@@ -380,8 +365,8 @@
         },
         {
           "id": "leadership:73f7ff9703",
-          "title": "Led Implant Engineering Team",
-          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led a multinational team selling obsolete equipment.",
+          "title": "Led 300mm Implant Team",
+          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led multinational team selling obsolete equipment.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
@@ -391,20 +376,6 @@
           "verified_by": "self",
           "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost.",
           "approved": true
-        },
-        {
-          "id": "leadership:f149434714",
-          "title": "Implemented secure Azure sign-in",
-          "summary": "Barry replaced all-or-nothing keys with Entra ID sign-in using DefaultAzureCredential, assigning scoped roles per environment to improve security and manageability.",
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Keys are all-or-nothing: anyone holding the Search admin key can delete the index. With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do.",
-          "approved": false
         }
       ]
     },
@@ -458,7 +429,7 @@
         {
           "id": "teamwork:d362007369",
           "title": "Mapping manufacturing teamwork to software",
-          "summary": "Barry mapped manufacturing teamwork practices like multi-level change control and supplier management to software delivery processes including code review, staged rollouts, and managing third-party APIs.",
+          "summary": "Barry mapped manufacturing teamwork practices like quality systems and change control to software delivery processes, implementing automated tests, code reviews, staged rollouts, and monitoring to ensure quality and collaboration.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -466,7 +437,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Strict, multi-level change control based on risk assessment; stepped approvals for controlled experiments, with Watch It plans after release | Code review and pull requests; risk-based approvals; staged rollouts; post-release monitoring with rollback",
+          "quote": "Every change reviewed and tested before merge; deploys only when CI passes, then health checks on the live site",
           "approved": false
         }
       ]

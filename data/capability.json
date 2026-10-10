@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-09T17:15:02Z",
+  "generated_at": "2026-10-10T09:57:28Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -43,7 +43,7 @@
     {
       "id": "python-flask",
       "name": "Python & Flask",
-      "tier": 3,
+      "tier": 4,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
@@ -58,9 +58,24 @@
         ],
         "3": [
           "Ask Barry"
+        ],
+        "4": [
+          "Ask Barry"
         ]
       },
       "evidence": [
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Deployment",
+          "url": "https://github.com/BBSISK/ask-barry/blob/3f05cbf3efa5ae06d7f1a8e7cf694d06d9369a42/README.md#deployment",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com... CI runs the full pytest suite on every push. It includes tests that call the Flask routes... so a broken route blocks the deploy.",
+          "first_committed": "2026-09-27"
+        },
         {
           "tier": 3,
           "repo": "ask-barry",
@@ -87,6 +102,18 @@
         },
         {
           "tier": 1,
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Tech stack",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Backend | Python, Flask, scheduled jobs",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
           "repo": "agentmath_showcase",
           "path": "README.md",
           "heading": "🕵️ AgentMath > Tech stack",
@@ -101,24 +128,12 @@
           "tier": 1,
           "repo": "my30words_showcase",
           "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "my30words_showcase",
-          "path": "README.md",
           "heading": "✍️ Brief > Architecture",
           "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#architecture",
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email]",
+          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email] TW --> U[📱 User] EM --> U U -- 30 words --> W[Web app / PWA] W --> F F --- DB[(SQLite<br/>users, entries,<br/>groups,",
           "first_committed": "2026-09-25"
         },
         {
@@ -142,7 +157,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |",
+          "quote": "Backend | Python, Flask, scheduled jobs",
           "first_committed": "2026-09-25"
         }
       ],
@@ -196,7 +211,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "quote": "Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → **Variables**, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run",
           "first_committed": "2026-09-27"
         },
         {
@@ -208,19 +223,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Index into Azure AI Search and compare retrievers (Stage 4)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/33a7600b81dde56e156fc3a9b06f7d3f6602a0a9/README.md#index-into-azure-ai-search-and-compare-retrievers-stage-4",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid ... Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level:",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS...",
           "first_committed": "2026-09-27"
         },
         {
@@ -256,7 +259,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "This guide creates the three Azure pieces Ask Barry needs.",
+          "quote": "This guide creates the three Azure pieces Ask Barry needs. Everything is done in the portal first (good AI-901 practice)",
           "first_committed": "2026-09-27"
         },
         {
@@ -284,7 +287,7 @@
     {
       "id": "infrastructure-as-code",
       "name": "Infrastructure as code",
-      "tier": 3,
+      "tier": 4,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
@@ -297,10 +300,39 @@
           "Housing Pipeline Ireland"
         ],
         "3": [
-          "Ask Barry"
+          "Ask Barry",
+          "Housing Pipeline Ireland"
+        ],
+        "4": [
+          "Ask Barry",
+          "Housing Pipeline Ireland"
         ]
       },
       "evidence": [
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "az login cd infra && terraform init -upgrade && terraform plan Expect only additions (the app registration, its service principal, five role assignments), nothing changed or destroyed. Then terraform apply.",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "housing-pipeline-ireland",
+          "path": "README.md",
+          "heading": "Housing Pipeline Ireland > Security",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
+          "project": "Housing Pipeline Ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
+          "first_committed": "2026-10-08"
+        },
         {
           "tier": 3,
           "repo": "ask-barry",
@@ -322,32 +354,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The Azure resources were first created by hand in the portal... `infra/` now describes them in Terraform and adopts them with import blocks... Checked in CI: every push runs `terraform fmt -check` and `terraform validate`",
+          "quote": "Safe by design: every resource has `prevent_destroy`. The first plan found two portal settings the code was missing... After adding them, the plan was 5 to import, 0 to add, 0 to change, 0 to destroy, and `apply` imported all",
           "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "az login cd infra && terraform init -upgrade && terraform plan Expect only additions (the app registration, its service principal, five role assignments), nothing changed or destroyed. Then terraform apply.",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 2,
-          "repo": "housing-pipeline-ireland",
-          "path": "README.md",
-          "heading": "Housing Pipeline Ireland > Security",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
-          "project": "Housing Pipeline Ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "roles are least-privilege and defined in Terraform",
-          "first_committed": "2026-10-08"
         },
         {
           "tier": 1,
@@ -358,7 +366,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "TF[\"Terraform (infra/main.tf)\"]",
+          "quote": "Terraform (infra/main.tf)",
           "first_committed": "2026-09-25"
         },
         {
@@ -370,7 +378,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The root user is locked with MFA and used only for account-level jobs; budget alerts email at the first cent and at $5 a month.",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
           "first_committed": "2026-09-27"
         }
       ],
@@ -396,13 +404,11 @@
         ],
         "2": [
           "Ask Barry",
-          "Housing Pipeline Ireland",
-          "Wall Inspector"
+          "Housing Pipeline Ireland"
         ],
         "3": [
           "Ask Barry",
-          "Housing Pipeline Ireland",
-          "Wall Inspector"
+          "Housing Pipeline Ireland"
         ],
         "4": [
           "Ask Barry",
@@ -435,16 +441,16 @@
           "first_committed": "2026-10-08"
         },
         {
-          "tier": 3,
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
-          "project": "Wall Inspector",
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 7: Verify",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Terraform (infra/main.tf)\" \"GitHub Actions (ci/github-actions-ci.yml)\"",
-          "first_committed": "2026-09-25"
+          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -455,7 +461,7 @@
           "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "every change goes through a pull request with green CI.",
+          "quote": "every change goes through a pull request with green CI",
           "first_committed": "2026-10-08"
         },
         {
@@ -484,15 +490,15 @@
         },
         {
           "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
+          "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.check_azure",
-          "first_committed": "2026-09-27"
+          "quote": "Terraform (infra/main.tf)\" \"GitHub Actions (ci/github-actions-ci.yml)\"",
+          "first_committed": "2026-09-25"
         }
       ],
       "match": [
@@ -538,7 +544,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "subgraph App_Container[\" 6F3 Docker Container (Dockerfile)\"]",
+          "quote": "subgraph App_Container[\" 93B Docker Container (Dockerfile)\"]",
           "first_committed": "2026-09-25"
         }
       ],
@@ -746,7 +752,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
+          "quote": "* **Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
           "first_committed": "2026-09-25"
         },
         {
@@ -758,7 +764,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "MCP[\"MCP Server (mcp_server.py)\"]",
+          "quote": "Sentinel[\"Intake Sentinel Agent\"] Director[\"Curriculum Director Agent\"] MCP[\"MCP Server (mcp_server.py)\"]",
           "first_committed": "2026-09-25"
         },
         {
@@ -868,7 +874,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored: ... An LLM judge confirms every claim is supported by the cited text ... Regression checks ...",
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
           "first_committed": "2026-09-27"
         },
         {
@@ -892,7 +898,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
+          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`.",
           "first_committed": "2026-09-27"
         },
         {
@@ -991,7 +997,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The database schema has no column capable of holding an answer. If an answers table ever appears in a migration, that is treated as an alarm bell.",
+          "quote": "The database schema has no column capable of holding an answer. If an `answers` table ever appears in a migration, that is treated as an alarm bell.",
           "first_committed": "2026-09-25"
         },
         {
@@ -1003,7 +1009,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "PG[(\"PostgreSQL 15\")]",
+          "quote": "PG[(\"PostgreSQL 15\")] ... Flask --> PG ... PG --> COCO",
           "first_committed": "2026-09-25"
         }
       ],
@@ -1071,18 +1077,6 @@
         },
         {
           "tier": 3,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs:",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
           "repo": "my30words_showcase",
           "path": "README.md",
           "heading": "✍️ Brief > Problems I solved along the way",
@@ -1092,6 +1086,18 @@
           "verified_by": "self",
           "quote": "rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down with a strict `.gitignore`",
           "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -1128,18 +1134,6 @@
           "verified_by": "self",
           "quote": "Security maturity: a transparent incident response, and privacy-first data handling with full export and permanent deletion",
           "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > AI-901 concepts this stage practises",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#ai-901-concepts-this-stage-practises",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "keys vs Microsoft Entra ID authentication",
-          "first_committed": "2026-09-27"
         }
       ],
       "match": [
