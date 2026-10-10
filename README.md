@@ -203,6 +203,19 @@ Ask Barry is a Flask app running in production on Render at [ask-barry.onrender.
 
 CI runs the full pytest suite on every push. It includes tests that call the Flask routes (the home page, `/evidence`, `/capability`, the JSON APIs, `/health` and `/ready`) through Flask's test client, so a broken route blocks the deploy.
 
+## How changes are made
+
+Since Sprint 1 (October 2026), every change follows the same controlled path from a Jira story to production:
+
+1. **One story per change.** Each change starts as a Jira story (project key ASK). The branch, the commits and the pull request carry the story key, for example `ASK-42-capability`, so any line of code traces back to why it changed.
+2. **A branch and a pull request.** I don't push code changes to `main` directly: each story gets its own branch and a pull request into `main`. The only direct commits are the nightly data rebuilds in point 6.
+3. **Checks before merge.** GitHub Actions CI runs on every pull request: the full pytest suite, plus `terraform fmt -check` and `terraform validate` for the infrastructure code.
+4. **Checks before deploy.** Render deploys a commit on `main` only after CI passes (`autoDeployTrigger: checksPass`), so a failing change never reaches the live site.
+5. **Infrastructure changes are planned first.** Azure changes go through Terraform: `terraform plan` is read before every `apply`. The original Azure resources are marked `prevent_destroy`, and the state file never enters the repo.
+6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code.
+
+**The rules are tested, not just written down.** Tests fail the build if a workflow gains a stored key, if the publish job loses its separation, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`, or if CI stops checking the Terraform.
+
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 
 `ask_barry_mcp.py` is a small [Model Context Protocol](https://modelcontextprotocol.io) server with one read-only tool, `ask_barry`. It lets Claude Desktop, Claude Code, Cursor or VS Code ask about my projects and get the same cited answers as the website.
@@ -424,6 +437,7 @@ The evaluation also checks citation completeness. The judge sees the retrieved s
 
 - **How a tier is decided:** each skill's searches run through the production retriever. For every section found, the model answers one narrow question, "the highest tier this section shows", and must quote the proof. Code checks that the quote is really in the section, or that answer counts as 0. The question is asked up to three times per section and the middle answer wins, because two builds from the same index once disagreed by two tiers on one skill: a single borderline answer was deciding it. A skill's tier is the highest checked tier; there are no scores or averages. My own profile README and career summary never fill a tier, because a self-description isn't evidence of use. Nor does a section whose heading marks it as a plan, such as "Architecture (planned)".
 - **Nightly, not per visit:** the refresh workflow builds `data/capability.json` after the index sync and a separate job commits it only when the content changed. The live app reads that file from `main`, so the page updates without a redeploy and git history records how the ladder changed. Visitors trigger no model calls.
+- **Gap-closing plan:** `profile/plans.yaml` says what I'm doing about each gap and by when. A plan never fills a tier: the nightly build marks it closed only when the checked evidence reaches its target, keeps the month that happened, and marks it overdue if the target passes first. The page shows the track record (closed, on time, open, overdue).
 - **Cards need my approval:** the builder drafts examples into `data/capability_suggestions.json`; one goes live only once its id is in `profile/cards.yaml`. After that it keeps the wording I approved: each night the builder only re-checks that its quote is still in the source, and drops it if not, so a redraft can't change or remove it.
 - **Built for anyone's evidence:** everything about me lives in the `profile/` pack (skills, tier wording and criteria, cards), checked against JSON Schemas. A test builds and shows a made-up profile for a different profession with no code change.
 - **Checked:** hand-labelled expected tiers (`python -m scripts.evaluate_capability`, pass mark 80% plus no over-claimed gap skills), a stability check that fails unless two builds give every skill the same tier, and a `get_capability` MCP tool that serves the same JSON.

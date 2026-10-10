@@ -66,11 +66,22 @@ class SkillLadder(BaseModel):
     evidence: list[EvidenceLink] = Field(default_factory=list)
 
 
+class PlanLine(BaseModel):
+    gap: str = Field(description="Skill or card the plan is for")
+    work: str = Field(description="What is being done to close the gap")
+    target: str = Field(description="Target tier (skills) and month, e.g. 'Built by 2026-12'")
+    status: str = Field(description="open, overdue, or closed (only once checked evidence reached the target)")
+    closed: Optional[str] = Field(None, description="Year-month the evidence first reached the target")
+
+
 class CapabilityResult(BaseModel):
     person: str
     evidence_as_of: str
     tiers: list[str] = Field(description="Tier labels, lowest to highest")
     skills: list[SkillLadder]
+    plans: list[PlanLine] = Field(default_factory=list,
+                                  description="Gap-closing plans. A plan is intent, never evidence: it fills no tier.")
+    plan_record: str = Field("", description="Closed, on time, open and overdue counts for the plans")
     note: str = ("Strength of documented evidence in public project docs, not a self-rating. "
                  "Tier 0 means the docs don't show it, not that the skill is missing.")
 
@@ -119,8 +130,16 @@ def to_capability_result(data):
             projects=(s.get("projects_by_tier") or {}).get(str(s["tier"]), []),
             evidence=[EvidenceLink(**{k: e.get(k, "") for k in ("tier", "repo", "path", "heading", "url", "quote")})
                       for e in s.get("evidence") or []]))
+    wanted = {s.id for s in skills}
+    plans = [PlanLine(gap=p["name"], work=p["work"],
+                      target=(f"{p['target_label']} by {p['target']}" if p.get("target_label") else f"by {p['target']}"),
+                      status=p["status"], closed=p.get("closed"))
+             for p in data.get("plans") or [] if p.get("card") or p.get("skill") in wanted]
+    r = data.get("plan_record")
+    record = (f"{r['closed']} of {r['total']} closed ({r['on_time']} on time), {r['open']} open, {r['overdue']} overdue"
+              if r else "")
     return CapabilityResult(person=data["person"]["name"], evidence_as_of=data["generated_at"][:10],
-                            tiers=[labels[n] for n in sorted(labels)], skills=skills)
+                            tiers=[labels[n] for n in sorted(labels)], skills=skills, plans=plans, plan_record=record)
 
 
 def capability(skill=None, base_url=None, getter=None):

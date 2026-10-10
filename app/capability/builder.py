@@ -18,6 +18,7 @@ import json
 import time
 from datetime import datetime, timezone
 
+from app.capability.plans import plan_statuses
 from app.quotes import quote_in_sources
 
 SCHEMA_VERSION = "1.0"
@@ -282,6 +283,9 @@ def build_capability(pack, retriever, judge, writer, first_committed=None, now=N
         "skills": skills,
         "cards": cards,
     }
+    plans, record = plan_statuses(pack, skills, cards, previous, now)
+    if plans:
+        capability["plans"], capability["plan_record"] = plans, record
     return capability, {"generated_at": capability["generated_at"], "cards": suggestions}
 
 

@@ -60,3 +60,32 @@ def evidence_for(capability, skill_ref, level=None):
             items = skill["evidence"] if level is None else [e for e in skill["evidence"] if e["tier"] >= level]
             return skill, items
     return None, []
+
+
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+def month_text(value):
+    """'2026-12' -> 'Dec 2026' (anything else is shown as it is)."""
+    try:
+        year, mon = str(value).split("-")
+        return f"{MONTHS[int(mon) - 1]} {year}"
+    except (ValueError, IndexError):
+        return str(value or "")
+
+
+def plan_view(capability):
+    """Gap-closing plans for the page (ASK-50): the next unmet plan per skill and card, every plan for the
+    record table, and the track record. Empty when the profile has no plans."""
+    plans = [{**p, "target_text": month_text(p["target"]), "planned_text": month_text(p["planned"]),
+              "closed_text": month_text(p.get("closed")) if p.get("closed") else ""}
+             for p in capability.get("plans") or []]
+    by_skill, by_card = {}, {}
+    for p in plans:                                     # already sorted by target month
+        if p["status"] == "closed":
+            continue
+        if p.get("skill"):
+            by_skill.setdefault(p["skill"], p)
+        else:
+            by_card.setdefault(p["card"], p)
+    return {"plans": plans, "by_skill": by_skill, "by_card": by_card, "record": capability.get("plan_record")}

@@ -69,6 +69,16 @@ skills:
     queries: ["security and secrets handling", "Entra ID and least privilege access"]
     match: [security, secure, identity, authentication, oauth, entra, iam, secrets, privacy]
 
+  # Not CI/CD: CI/CD is the automated pipeline. Change control is how a change is proposed, traced, reviewed and
+  # let through: an issue per change, a branch and pull request, CI as a gate, infrastructure changes planned
+  # before they're applied. "Change management" is left out of match on purpose: in job ads it usually means
+  # organisational change (people and adoption), not this.
+  - id: change-control
+    name: Change control
+    description: Controlling how changes reach production, with a tracked issue, a branch and pull request per change, required checks before merge or deploy, and reviewed infrastructure changes.
+    queries: ["how changes are made", "pull request and Jira story per change", "deploys only after checks pass"]
+    match: [change control, version control, git, github, gitlab, pull request, pull requests, code review, release management, jira]
+
   # In-demand skills kept on the list on purpose, so gaps are visible (they show as "Not evidenced" until the
   # public docs show them).
   - id: kubernetes
