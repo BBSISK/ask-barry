@@ -60,6 +60,16 @@
     .ev h3 { margin:0; font-size:1rem; display:flex; justify-content:space-between; gap:.5rem; align-items:baseline; }
     .ev .count { font-size:.78rem; color:var(--muted); font-weight:500; white-space:nowrap; }
     .story { border-left:3px solid var(--l3); padding:.1rem 0 .1rem .6rem; }
+    /* Cards stay about two examples tall; more scroll inside the card. Pure-CSS scroll shadows show there's more. */
+    .stories { display:flex; flex-direction:column; gap:.5rem; }
+    .stories.scrolls { position:relative; max-height:21rem; overflow-y:auto; overscroll-behavior:contain; padding-right:.3rem;
+      background:
+        linear-gradient(var(--surface) 30%, transparent) top / 100% 2rem no-repeat local,
+        linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2rem no-repeat local,
+        linear-gradient(rgba(0,0,0,.12), transparent) top / 100% .6rem no-repeat scroll,
+        linear-gradient(transparent, rgba(0,0,0,.12)) bottom / 100% .6rem no-repeat scroll; }
+    .stories.scrolls:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:.3rem; }
+    .more { font-size:.78rem; color:var(--muted); }
     .story b { display:block; font-size:.9rem; }
     .story span { display:block; color:var(--text-2); font-size:.87rem; }
     .story a { font-size:.82rem; }
@@ -151,10 +161,16 @@
     {% for c in cap.cards %}
       <article class="ev{% if c.gap %} gapcard{% endif %}">
         <h3>{{ c.title }}<span class="count">{% if c.gap %}✕ gap{% else %}{{ c.stories|length }} example{{ "s" if c.stories|length != 1 }}{% endif %}</span></h3>
+        {% set many = c.stories|length > 2 %}
+        {% if c.stories %}
+        <div class="stories{% if many %} scrolls{% endif %}"{% if many %} tabindex="0" role="region" aria-label="{{ c.title }}: {{ c.stories|length }} examples, scroll for more"{% endif %}>
         {% for st in c.stories %}
           <div class="story"><b>{{ st.title }}</b><span>{{ st.summary }}</span>
             {% if st.url.startswith("https://github.com/") %}<a href="{{ st.url }}" target="_blank" rel="noopener">{{ st.repo }} / {{ st.path }}{% if st.heading %} › {{ st.heading }}{% endif %}</a>{% endif %}</div>
         {% endfor %}
+        </div>
+        {% if many %}<span class="more" aria-hidden="true">Scroll for {{ c.stories|length - 2 }} more ↓</span>{% endif %}
+        {% endif %}
         {% if c.gap %}<div class="story"><b>Not yet evidenced</b><span>{{ c.gap_note or "No approved examples yet." }}</span></div>{% endif %}
         {% set p = plan.by_card.get(c.id) if plan else None %}
         {% if p %}<span class="plan{% if p.status == 'overdue' %} overdue{% endif %}"><b>{% if p.status == 'overdue' %}Overdue{% else %}Working on it{% endif %}:</b> {{ p.work }} · target {{ p.target_text }}</span>{% endif %}
@@ -187,6 +203,20 @@
     <p>"First evidence" is when the earliest supporting file was first committed. Cards are drafted the same way, and an example appears only after {{ who }} has approved it. Everything comes from public project documentation, so "Not evidenced" means the docs don't show it, not that the skill is missing.</p>
     <p>Plans come from the same profile pack and are published in the repo, so every change to a plan is dated in its history. The nightly build marks a plan closed only when the checked evidence reaches its target.</p>
   </section>
+  <script>
+  // Size each long card to its first two examples plus a peek of the third, so "there's more" is visible.
+  (function () {
+    function fit() {
+      document.querySelectorAll(".stories.scrolls").forEach((box) => {
+        const third = box.children[2];
+        if (!third) return;
+        box.style.maxHeight = (third.offsetTop - box.firstElementChild.offsetTop + 40) + "px";
+      });
+    }
+    fit();
+    window.addEventListener("resize", fit);
+  })();
+  </script>
   <script id="cap-data" type="application/json">{{ cap|tojson }}</script>
   <script>
   (function () {

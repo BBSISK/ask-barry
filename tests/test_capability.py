@@ -587,3 +587,23 @@ def test_change_control_is_its_own_skill_and_not_matched_on_change_management():
     assert view.matching_skills(cap, "Experience with Git, pull requests and Jira") == ["change-control"]
     assert "change-control" not in view.matching_skills(cap, "Leads organisational change management")
     assert "change-control" in view.matching_skills(cap, "Release management and change control")
+
+
+# --- ASK-56: long cards scroll inside the card ------------------------------------------------------------------
+
+def test_cards_with_more_than_two_examples_scroll_and_say_how_many_more():
+    cap, _ = build()
+    card = next(c for c in cap["cards"] if c["id"] == "problem-solving")
+    story = {"id": "x", "title": "T", "summary": "S", "repo": "r", "path": "p", "heading": "h",
+             "url": "https://github.com/BBSISK/r/blob/a/p", "quote": "q", "project": "P",
+             "source_type": "github_readme", "verified_by": "self"}
+    card.update(gap=False, stories=[{**story, "id": f"problem-solving:{i}"} for i in range(4)])
+    card.pop("gap_note", None)
+    two = next(c for c in cap["cards"] if c["id"] == "security-mindset")
+    two.update(gap=False, stories=[{**story, "id": f"security-mindset:{i}"} for i in range(2)])
+    two.pop("gap_note", None)
+    html = app_with(cap).get("/capability").get_data(as_text=True)
+    long_card = html.split("Problem solving", 1)[1].split("</article>", 1)[0]
+    assert 'class="stories scrolls" tabindex="0" role="region"' in long_card and "Scroll for 2 more" in long_card
+    short_card = html.split("Security mindset", 1)[1].split("</article>", 1)[0]
+    assert 'class="stories"' in short_card and "scrolls" not in short_card and "Scroll for" not in short_card
