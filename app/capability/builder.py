@@ -62,7 +62,7 @@ class TierJudge:
 
     def rules(self):
         name = self.pack.person["name"]
-        tiers = "\n".join(f"{t['level']} {t['label']}: {t['criteria']}" for t in self.pack.tiers)
+        tiers = "\n".join(f"{t['level']} {t['label']}: {t['criteria']}" for t in self.pack.judged_tiers)
         return f"""You check evidence of a skill in {name}'s public documentation.
 You get one SECTION, labelled with its repo, file and heading, and one SKILL.
 Decide the HIGHEST tier that this section itself shows for the skill. Each tier includes the ones below it:
@@ -79,7 +79,7 @@ Reply with JSON only: {{"tier": 0, "quote": ""}}"""
         data = _parse(self.provider.generate([{"role": "system", "content": self.rules()},
                                               {"role": "user", "content": user}], max_tokens=200))
         try:
-            tier = max(0, min(4, int(data.get("tier", 0))))
+            tier = max(0, min(self.pack.top_judged, int(data.get("tier", 0))))
         except (TypeError, ValueError):
             tier = 0
         return {"tier": tier, "quote": _short(data.get("quote"))}
@@ -171,7 +171,31 @@ def vote(skill, chunk, judge, votes=VOTES, log=print):
     return chosen
 
 
-def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, votes=VOTES):
+def months_between(start, now):
+    """Whole months from a 'YYYY-MM[-DD]' date to now, or None without a date."""
+    if not start or now is None:
+        return None
+    year, month = int(start[:4]), int(start[5:7])
+    return max(0, (now.year - year) * 12 + now.month - month)
+
+
+def depth_check(pack, items, first_date, now):
+    """The computed top tier (ASK-57): never judged by the model, worked out from the checked evidence.
+
+    Reached when the skill has top-judged-tier evidence in at least min_projects projects whose kind counts for
+    depth (applications, not practice or coursework) AND has been evidenced for at least min_months, OR (when
+    or_third_party is set) any of its evidence was confirmed by a third party."""
+    rule = pack.computed_tier["computed"]
+    top = pack.top_judged
+    at_top = sorted({i["project"] for i in items if i["tier"] >= top and pack.counts_for_depth(i["repo"])})
+    months = months_between(first_date, now)
+    third_party = any(i.get("verified_by") == "third_party" for i in items)
+    sustained = len(at_top) >= rule["min_projects"] and months is not None and months >= rule["min_months"]
+    return {"projects_at_top": at_top, "months": months, "third_party": third_party,
+            "reached": bool(sustained or (rule.get("or_third_party") and third_party))}
+
+
+def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, votes=VOTES, now=None):
     evidence = []
     for rank, chunk in enumerate(find_sections(retriever, skill["queries"])):
         if pack.is_self_description(chunk.get("repo", "")):
@@ -182,19 +206,34 @@ def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, 
         tier, quote = verdict["tier"], verdict["quote"]
         if not tier:
             continue
+        cap = pack.max_tier(chunk.get("repo", ""))
+        if tier > cap:                                 # ASK-57: practice and coursework stop at their kind's cap
+            log(f"  {skill['id']}: {section_label(chunk)} capped at tier {cap} ({pack.project_kind(chunk.get('repo', ''))})")
+            tier = cap
         item = {"tier": tier, **_source_fields(pack, chunk), "quote": quote}
+        kind = pack.project_kind(chunk.get("repo", ""))
+        if kind:
+            item["kind"] = kind
         if first_committed:
             item["first_committed"] = first_committed(chunk.get("repo", ""), chunk.get("path", ""))
         evidence.append((tier, rank, item))
     evidence.sort(key=lambda e: (-e[0], e[1]))
     items = [e[2] for e in evidence]
     tier = items[0]["tier"] if items else 0
-    projects = {str(t): sorted({i["project"] for i in items if i["tier"] >= t}) for t in range(1, 5)}
+    projects = {str(t): sorted({i["project"] for i in items if i["tier"] >= t})
+                for t in range(1, pack.top_judged + 1)}
     dates = sorted(d for d in (i.get("first_committed") for i in items) if d)
+    depth = None
+    if pack.computed_tier:
+        depth = depth_check(pack, items, dates[0] if dates else None, now)
+        if tier >= pack.top_judged and depth["reached"]:
+            tier = pack.computed_tier["level"]
     out = {"id": skill["id"], "name": skill["name"], "tier": tier,
            "first_evidence": dates[0][:7] if dates else None,
            "projects_by_tier": {t: p for t, p in projects.items() if p},
            "evidence": items[:MAX_EVIDENCE]}
+    if depth is not None:
+        out["depth"] = depth
     if skill.get("esco_uri"):
         out["esco_uri"] = skill["esco_uri"]
     if skill.get("match"):
@@ -265,7 +304,7 @@ def build_capability(pack, retriever, judge, writer, first_committed=None, now=N
     skills, cards, suggestions = [], [], []
     for skill in pack.skills:
         log(f"skill {skill['id']}")
-        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes))
+        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes, now))
     for card in pack.cards:
         log(f"card {card['id']}")
         live, suggestion = build_card(pack, card, retriever, writer, log, previous_stories(previous))
@@ -279,7 +318,8 @@ def build_capability(pack, retriever, judge, writer, first_committed=None, now=N
         "person": dict(pack.person),
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "sources": {"repos": repos},
-        "tiers": [{"level": t["level"], "universal": t["universal"], "label": t["label"]} for t in pack.tiers],
+        "tiers": [{"level": t["level"], "universal": t["universal"], "label": t["label"],
+                   **({"computed": True} if t.get("computed") else {})} for t in pack.tiers],
         "skills": skills,
         "cards": cards,
     }

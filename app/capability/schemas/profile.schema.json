@@ -44,8 +44,30 @@
     "projects": {
       "type": "object",
       "additionalProperties": {
-        "type": "string",
-        "minLength": 1
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "kind"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "pattern": "^[a-z][a-z-]{0,30}$"
+              }
+            }
+          }
+        ]
       }
     },
     "planned_headings": {
@@ -54,6 +76,37 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "project_kinds": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "max_tier"
+        ],
+        "properties": {
+          "max_tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "counts_for_depth": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "propertyNames": {
+        "pattern": "^[a-z][a-z-]{0,30}$"
+      }
+    },
+    "default_kind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z-]{0,30}$"
     }
   }
 }

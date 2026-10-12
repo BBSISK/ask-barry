@@ -9,8 +9,8 @@
   "properties": {
     "tiers": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
+      "minItems": 3,
+      "maxItems": 6,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -24,14 +24,16 @@
           "level": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 4
+            "maximum": 6
           },
           "universal": {
             "enum": [
               "Learned",
               "Applied",
               "Delivered",
-              "Proven"
+              "Proven",
+              "Sustained",
+              "Recognised"
             ]
           },
           "label": {
@@ -41,6 +43,30 @@
           "criteria": {
             "type": "string",
             "minLength": 1
+          },
+          "computed": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Makes this the top tier, worked out in code from the evidence, never by the AI judge (ASK-57).",
+            "required": [
+              "min_projects",
+              "min_months"
+            ],
+            "properties": {
+              "min_projects": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "min_months": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 120
+              },
+              "or_third_party": {
+                "type": "boolean"
+              }
+            }
           }
         }
       }

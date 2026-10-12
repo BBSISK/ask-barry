@@ -119,6 +119,7 @@ def capability_page():
                            unmatched=unmatched, fit=view.fit_summary(data, required))
         context["rows"] = view.ladder(data, context["required"])
         context["plan"] = view.plan_view(data)
+        context["has_kinds"] = any(e.get("kind") for sk in data["skills"] for e in sk.get("evidence") or [])
     return render_template("capability.html", **context)
 
 

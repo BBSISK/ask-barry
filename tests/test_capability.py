@@ -95,9 +95,10 @@ def skill(cap, sid):
 
 # --- the profile pack -----------------------------------------------------------------------------------------
 
-def test_barrys_pack_loads_and_has_four_tiers_and_the_agreed_cards():
+def test_barrys_pack_loads_and_has_five_tiers_and_the_agreed_cards():
     pack = load_pack()
-    assert [t["label"] for t in pack.tiers] == ["Used", "Built", "In production", "Tested / evaluated"]
+    assert [t["label"] for t in pack.tiers] == ["Used", "Built", "In production", "Tested / evaluated", "Proven over time"]
+    assert pack.top_judged == 4 and pack.computed_tier["level"] == 5          # ASK-57: tier 5 is never judged
     assert {"kubernetes", "java"} <= {s["id"] for s in pack.skills}          # gaps stay on the list
     assert "data-manipulation" in {c["id"] for c in pack.cards}
     assert pack.is_self_description("BBSISK")
@@ -116,12 +117,12 @@ def test_pack_errors_name_the_file_and_field(tmp_path):
         load_pack(pack)
 
 
-def test_pack_needs_all_four_tiers_and_unique_ids(tmp_path):
+def test_pack_needs_consecutive_tiers_and_unique_ids(tmp_path):
     pack = copy_pack(tmp_path)
     tiers = yaml.safe_load((pack / "tiers.yaml").read_text())
     tiers["tiers"][3]["level"] = 3
     (pack / "tiers.yaml").write_text(yaml.safe_dump(tiers))
-    with pytest.raises(PackError, match="levels 1, 2, 3 and 4"):
+    with pytest.raises(PackError, match="no gaps"):
         load_pack(pack)
     pack2 = copy_pack(tmp_path / "b")
     cards = yaml.safe_load((pack2 / "cards.yaml").read_text())
@@ -607,3 +608,107 @@ def test_cards_with_more_than_two_examples_scroll_and_say_how_many_more():
     assert 'class="stories scrolls" tabindex="0" role="region"' in long_card and "Scroll for 2 more" in long_card
     short_card = html.split("Security mindset", 1)[1].split("</article>", 1)[0]
     assert 'class="stories"' in short_card and "scrolls" not in short_card and "Scroll for" not in short_card
+# --- ASK-57: project kinds cap evidence; the top tier is computed, never judged ------------------------------------
+
+def kinds_pack(tmp_path, **projects):
+    folder = copy_pack(tmp_path)
+    profile = yaml.safe_load((folder / "profile.yaml").read_text())
+    profile["projects"].update(projects)
+    (folder / "profile.yaml").write_text(yaml.safe_dump(profile))
+    return load_pack(folder)
+
+
+def test_practice_and_coursework_stop_at_built(tmp_path):
+    lines = []
+    pack = kinds_pack(tmp_path, wall_inspector={"name": "Wall Inspector", "kind": "practice"})
+    cap, _ = build(pack=pack, log=lines.append)
+    containers = skill(cap, "containers")
+    assert containers["tier"] == 2 and all(e["tier"] <= 2 and e["kind"] == "practice" for e in containers["evidence"])
+    assert any("capped at tier 2 (practice)" in line for line in lines)
+    cap, _ = build(pack=kinds_pack(tmp_path / "b", wall_inspector={"name": "WI", "kind": "application"}))
+    assert skill(cap, "containers")["tier"] == 3
+
+
+def test_an_unlisted_repo_is_treated_as_practice():
+    pack = load_pack()
+    assert pack.project_kind("some-new-repo") == "practice" and pack.max_tier("some-new-repo") == 2
+    assert pack.project_kind("CS627_Advanced_OOP_Java") == "coursework" and pack.max_tier("leetcode-java") == 2
+    assert pack.max_tier("ask-barry") == 4 and pack.project_name("ask-barry") == "Ask Barry"
+
+
+def test_the_judge_never_awards_the_computed_tier():
+    pack = load_pack()
+    judge = TierJudge(FakeProvider({("Containers (Docker)", "Deployment"): (5, "Render auto-deploys the Docker container")}),
+                      pack)
+    assert "Proven over time" not in judge.rules() and "Tested / evaluated" in judge.rules()
+    verdict = judge.judge(next(s for s in pack.skills if s["id"] == "containers"), CHUNKS[0])
+    assert verdict["tier"] == 4
+
+
+def evidence(project, repo, tier=4, verified="self"):
+    return {"tier": tier, "project": project, "repo": repo, "verified_by": verified}
+
+
+@pytest.mark.parametrize("items, first, reached", [
+    ([evidence("Ask Barry", "ask-barry"), evidence("Wall Inspector", "wall_inspector")], "2025-09-01", True),
+    ([evidence("Ask Barry", "ask-barry"), evidence("Wall Inspector", "wall_inspector")], "2026-09-01", False),  # 1 month
+    ([evidence("Ask Barry", "ask-barry"), evidence("Ask Barry", "ask-barry")], "2024-01-01", False),            # 1 project
+    ([evidence("Ask Barry", "ask-barry"), evidence("LeetCode", "leetcode-java")], "2024-01-01", False),         # practice
+    ([evidence("Ask Barry", "ask-barry"), evidence("Wall Inspector", "wall_inspector")], None, False),          # no dates
+    ([evidence("Ask Barry", "ask-barry", tier=2, verified="third_party")], "2026-10-01", True),                 # confirmed
+])
+def test_proven_over_time_needs_two_applications_and_a_year_or_a_third_party(items, first, reached):
+    from app.capability.builder import depth_check
+    depth = depth_check(load_pack(), items, first, NOW)
+    assert depth["reached"] is reached
+
+
+def test_a_skill_reaches_tier_5_only_from_the_top_judged_tier(tmp_path):
+    from app.capability.builder import build_skill
+    pack = load_pack()
+    tiers = {("Containers (Docker)", "Deployment"): (4, "Render auto-deploys the Docker container"),
+             ("Containers (Docker)", "Testing"): (4, "63 tests run in CI on every push")}
+    chunks = [CHUNKS[0], {**CHUNKS[5], "repo": "ask-barry"}]
+    provider = FakeProvider(tiers)
+    containers = next(s for s in pack.skills if s["id"] == "containers")
+    old = build_skill(pack, {**containers, "queries": ["docker tests"]}, FakeRetriever(chunks), TierJudge(provider, pack),
+                      first_committed=lambda repo, path: "2025-06-01", log=lambda *_: None, now=NOW)
+    assert old["tier"] == 5 and old["depth"]["projects_at_top"] == ["Ask Barry", "Wall Inspector"]
+    new = build_skill(pack, {**containers, "queries": ["docker tests"]}, FakeRetriever(chunks), TierJudge(provider, pack),
+                      first_committed=lambda repo, path: "2026-09-01", log=lambda *_: None, now=NOW)
+    assert new["tier"] == 4 and new["depth"]["reached"] is False and new["depth"]["months"] == 1
+
+
+def test_barry_has_no_tier_5_today_and_the_page_shows_five_steps():
+    cap, _ = build()
+    assert problems(cap) == [] and max(s["tier"] for s in cap["skills"]) <= 4
+    assert cap["tiers"][-1] == {"level": 5, "universal": "Sustained", "label": "Proven over time", "computed": True}
+    html = app_with(cap).get("/capability").get_data(as_text=True)
+    assert 'style="--n:5"' in html and "never awarded by the AI judge" in html
+    assert "not yet reached (worked out from the evidence, never self-rated)" in html
+
+
+def test_a_four_tier_pack_without_kinds_still_works():
+    cap, _ = build(pack=load_pack(NURSE))
+    assert len(cap["tiers"]) == 4 and all("depth" not in s for s in cap["skills"])
+    assert all("kind" not in e for s in cap["skills"] for e in s["evidence"])
+    html = app_with(cap).get("/capability").get_data(as_text=True)
+    assert 'style="--n:4"' in html and "never awarded by the AI judge" not in html
+
+
+@pytest.mark.parametrize("change, message", [
+    (lambda t: t["tiers"][2].update(computed={"min_projects": 2, "min_months": 12}), "only the top tier can be computed"),
+    (lambda t: t["tiers"].pop(1), "no gaps"),
+])
+def test_tier_rules_are_checked(tmp_path, change, message):
+    folder = copy_pack(tmp_path)
+    tiers = yaml.safe_load((folder / "tiers.yaml").read_text())
+    change(tiers)
+    (folder / "tiers.yaml").write_text(yaml.safe_dump(tiers))
+    with pytest.raises(PackError, match=message):
+        load_pack(folder)
+
+
+def test_an_unknown_project_kind_is_refused(tmp_path):
+    with pytest.raises(PackError, match="isn't in project_kinds"):
+        kinds_pack(tmp_path, ask_barry2={"name": "X", "kind": "hobby"})

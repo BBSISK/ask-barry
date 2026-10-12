@@ -1,5 +1,7 @@
-# The four universal tiers (Learned -> Applied -> Delivered -> Proven), in this profession's words.
+# The universal tiers (Learned -> Applied -> Delivered -> Proven -> Sustained), in this profession's words.
 # "criteria" is what the judge must see in a section to award the tier. Higher tiers include the lower ones.
+# A pack can have 3 to 6 tiers. The top one may be "computed" (ASK-57): worked out in code from the checked
+# evidence, never awarded by the AI judge, so no single generous judgement can reach it.
 tiers:
   - level: 1
     universal: Learned
@@ -25,3 +27,14 @@ tiers:
     criteria: >-
       The section shows the skill-related work was tested or measured: automated tests that cover it,
       an evaluation with results, or a quality or security check that runs and is reported.
+  - level: 5
+    universal: Sustained
+    label: Proven over time
+    criteria: >-
+      Not judged from one section. Reached when the skill is Tested / evaluated in at least two separate
+      application projects and has been evidenced for at least 12 months, or when someone else (an employer,
+      a lecturer, a certification, a merged contribution to another person's project) has confirmed it.
+    computed:
+      min_projects: 2
+      min_months: 12
+      or_third_party: true

@@ -73,7 +73,7 @@
           "target_tier": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 4
+            "maximum": 6
           },
           "planned": {
             "type": "string",

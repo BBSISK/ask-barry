@@ -50,7 +50,7 @@ plans:
   - id: java-tested
     skill: java
     target_tier: 4
-    work: JUnit tests in CI on the Java repo, applying CS265 Software Testing
+    work: A small deployed Java application (e.g. the CS210 Spring Boot app) with JUnit tests in CI, applying CS265
     planned: 2026-10
     target: 2027-03
 
