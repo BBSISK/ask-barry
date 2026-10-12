@@ -146,7 +146,13 @@ def fetch_repo_docs(client, owner, repo, exclude_paths=()):
     """
     branch = repo["default_branch"]
     name = repo["name"]
-    branch_info = client.get_json(f"{API}/repos/{owner}/{name}/branches/{urllib.parse.quote(branch, safe='/')}")
+    try:
+        branch_info = client.get_json(f"{API}/repos/{owner}/{name}/branches/{urllib.parse.quote(branch, safe='/')}")
+    except urllib.error.HTTPError as err:
+        if err.code in (404, 409):                     # ASK-53: an empty repo has no branch yet; GitHub says so
+            print(f"  skipping {name}: no commits on {branch} yet (empty repository)", file=sys.stderr)
+            return None, []
+        raise
     sha = branch_info["commit"]["sha"]
     tree = client.get_json(f"{API}/repos/{owner}/{name}/git/trees/{sha}?recursive=1")
     if tree.get("truncated"):
@@ -169,7 +175,12 @@ def fetch_all(client, owner, out_dir, exclude=(), exclude_paths=()):
 
     for repo in select_repos(list_public_repos(client, owner), exclude):
         name = repo["name"]
+        if repo.get("size") == 0:                      # ASK-53: a brand-new empty repo crashed refresh #31
+            print(f"{name}: skipped (empty repository)")
+            continue
         sha, docs = fetch_repo_docs(client, owner, repo, exclude_paths)
+        if sha is None:
+            continue
         print(f"{name}: {len(docs)} doc file(s) @ {sha[:7]}")
         for path, text in docs:
             dest = out_dir / name / path
