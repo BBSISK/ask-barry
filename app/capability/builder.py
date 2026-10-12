@@ -23,7 +23,8 @@ from app.quotes import quote_in_sources
 
 SCHEMA_VERSION = "1.0"
 PER_QUERY = 6              # sections retrieved per query
-MAX_SECTIONS = 10          # sections judged per skill or card (keeps the nightly cost small)
+MAX_SECTIONS = 16          # sections judged per skill or card from search (ASK-58: was 10; new repos crowded it)
+MAX_CARRIED = 16           # ASK-58: earlier evidence sections judged again per skill (last build, plus any seed)
 MAX_EVIDENCE = 8           # evidence links kept per skill in the output
 MAX_QUOTE_WORDS = 40
 SEARCH_TRIES = 3           # a search that times out is retried (Azure AI Search can be slow under load)
@@ -195,15 +196,45 @@ def depth_check(pack, items, first_date, now):
             "reached": bool(sustained or (rule.get("or_third_party") and third_party))}
 
 
-def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, votes=VOTES, now=None):
+def carried_sections(skill, retriever, previous, found):
+    """ASK-58: last build's evidence sections for this skill, found again by searching for their quotes.
+
+    Search ranks shift as new repos are published, and a strong section can fall out of a skill's top results.
+    Sections that counted last time are judged again, whatever their rank. A section that has changed so its
+    quote no longer fits, or has gone, simply isn't found, so nothing stale survives."""
+    seen = {c.get("chunk_id") or section_label(c) for c in found}
+    carried = []
+    for item in (previous or {}).get(skill["id"], [])[:MAX_CARRIED]:
+        for result in search(retriever, item["quote"], PER_QUERY):
+            chunk = result.chunk
+            same = (chunk.get("repo"), chunk.get("path"), chunk.get("heading")) == \
+                   (item.get("repo"), item.get("path"), item.get("heading"))
+            key = chunk.get("chunk_id") or section_label(chunk)
+            if same and key not in seen and quote_in_sources(item["quote"], section_text(chunk)):
+                seen.add(key)
+                carried.append(chunk)
+                break
+    return carried
+
+
+def build_skill(pack, skill, retriever, judge, first_committed=None, log=print, votes=VOTES, now=None,
+                previous=None, explain=False):
+    """previous: {skill id: [evidence items]} from the last build (ASK-58). explain: log every judged section."""
     evidence = []
-    for rank, chunk in enumerate(find_sections(retriever, skill["queries"])):
+    found = find_sections(retriever, skill["queries"])
+    carried = carried_sections(skill, retriever, previous, found)
+    carried_keys = {c.get("chunk_id") or section_label(c) for c in carried}
+    for rank, chunk in enumerate(found + carried):
         if pack.is_self_description(chunk.get("repo", "")):
             continue                                   # a self-description isn't evidence of use
         if pack.is_planned(chunk.get("heading", "")):
             continue                                   # nor is a plan
         verdict = vote(skill, chunk, judge, votes, log)
         tier, quote = verdict["tier"], verdict["quote"]
+        if explain:
+            how = "carried from last build" if (chunk.get("chunk_id") or section_label(chunk)) in carried_keys \
+                else f"search rank {rank + 1}"
+            log(f"  explain {skill['id']}: {section_label(chunk)} [{how}] -> tier {tier}")
         if not tier:
             continue
         cap = pack.max_tier(chunk.get("repo", ""))
@@ -291,20 +322,27 @@ def build_card(pack, card, retriever, writer, log=print, previous=None):
     return live, suggestion
 
 
+def previous_evidence(capability):
+    """{skill id: evidence items} from an earlier capability.json (ASK-58), or {}."""
+    return {s["id"]: s.get("evidence") or [] for s in (capability or {}).get("skills", [])}
+
+
 def previous_stories(capability):
     """{story id: story} from an earlier capability.json (or {} if there isn't one)."""
     return {st["id"]: st for c in (capability or {}).get("cards", []) for st in c.get("stories", [])}
 
 
 def build_capability(pack, retriever, judge, writer, first_committed=None, now=None, log=print, votes=VOTES,
-                     previous=None):
+                     previous=None, explain=()):
     """-> (capability dict, suggestions dict). Deterministic given the same retriever and model answers.
     previous: the last published capability.json, so approved examples keep their approved wording."""
     now = now or datetime.now(timezone.utc)
     skills, cards, suggestions = [], [], []
     for skill in pack.skills:
         log(f"skill {skill['id']}")
-        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes, now))
+        skills.append(build_skill(pack, skill, retriever, judge, first_committed, log, votes, now,
+                                  previous=previous_evidence(previous),
+                                  explain=skill["id"] in explain or "all" in explain))
     for card in pack.cards:
         log(f"card {card['id']}")
         live, suggestion = build_card(pack, card, retriever, writer, log, previous_stories(previous))

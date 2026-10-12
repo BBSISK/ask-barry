@@ -720,3 +720,73 @@ def test_each_tier_name_sits_above_its_own_column():
     head = html.split("<thead>", 1)[1].split("</thead>", 1)[0]
     assert 'class="steps heads" style="--n:5"' in head
     assert [t in head for t in ("Used", "Built", "In production", "Tested / evaluated", "Proven over time")] == [True] * 5
+
+
+# --- ASK-58: evidence is carried forward so new repos can't crowd it out -------------------------------------------
+
+class QuoteOnlyRetriever:
+    """Search never ranks the section for the skill's queries (crowded out), but finds it by its quote."""
+
+    def __init__(self, chunk, quote="Render auto-deploys the Docker container"):
+        self.chunk, self.quote, self.calls = chunk, quote, []
+
+    def search(self, query, k=5):
+        self.calls.append(query)
+        return [SearchResult(self.chunk, 1.0, 1)] if query == self.quote else []
+
+
+def containers_skill():
+    return next(s for s in load_pack().skills if s["id"] == "containers")
+
+
+def last_build_evidence(chunk, quote):
+    return {"containers": [{"tier": 3, "repo": chunk["repo"], "path": chunk["path"], "heading": chunk["heading"],
+                            "quote": quote}]}
+
+
+def test_a_section_that_counted_last_night_is_judged_again_even_when_search_misses_it():
+    from app.capability.builder import build_skill
+    pack, lines = load_pack(), []
+    retriever = QuoteOnlyRetriever(CHUNKS[0])
+    judge = TierJudge(FakeProvider(DOCKER_TIERS), pack)
+    without = build_skill(pack, containers_skill(), retriever, judge, log=lambda *_: None, now=NOW)
+    assert without["tier"] == 0                                         # crowded out: nothing found
+    carried = build_skill(pack, containers_skill(), retriever, judge, log=lines.append, now=NOW, explain=True,
+                          previous=last_build_evidence(CHUNKS[0], "Render auto-deploys the Docker container"))
+    assert carried["tier"] == 3 and carried["evidence"][0]["heading"] == "Deployment"
+    assert any("[carried from last build] -> tier 3" in line for line in lines)
+
+
+def test_a_section_whose_quote_no_longer_fits_is_not_carried():
+    from app.capability.builder import build_skill
+    pack = load_pack()
+    edited = {**CHUNKS[0], "text": "Render deploys the app after GitHub Actions runs 63 tests."}
+    out = build_skill(pack, containers_skill(), QuoteOnlyRetriever(edited), TierJudge(FakeProvider(DOCKER_TIERS), pack),
+                      log=lambda *_: None, now=NOW,
+                      previous=last_build_evidence(edited, "Render auto-deploys the Docker container"))
+    assert out["tier"] == 0 and out["evidence"] == []
+
+
+def test_the_build_passes_last_nights_evidence_and_explain_through():
+    lines = []
+    first, _ = build()
+    cap, _ = build(previous=first, log=lines.append)
+    assert skill(cap, "containers")["tier"] == skill(first, "containers")["tier"]
+    pack = load_pack()
+    provider = FakeProvider(DOCKER_TIERS)
+    build_capability(pack, FakeRetriever(), TierJudge(provider, pack), StoryWriter(provider, pack), now=NOW,
+                     log=lines.append, previous=first, explain=("containers",))
+    assert any(line.startswith("  explain containers:") for line in lines)
+    assert not any(line.startswith("  explain kubernetes:") for line in lines)
+
+
+def test_seed_evidence_merges_without_duplicates():
+    from scripts.build_capability import merge_evidence
+    a = {"skills": [{"id": "python-flask", "evidence": [{"repo": "ask-barry", "path": "README.md", "heading": "Run locally"}]}]}
+    b = {"skills": [{"id": "python-flask", "evidence": [{"repo": "ask-barry", "path": "README.md", "heading": "Deployment"},
+                                                        {"repo": "ask-barry", "path": "README.md", "heading": "Run locally"}]},
+                    {"id": "databases-sql", "evidence": [{"repo": "wall_inspector", "path": "README.md", "heading": "Migrations"}]}]}
+    merged = merge_evidence(a, b)
+    by_id = {s["id"]: [e["heading"] for e in s["evidence"]] for s in merged["skills"]}
+    assert by_id == {"python-flask": ["Run locally", "Deployment"], "databases-sql": ["Migrations"]}
+    assert [e["heading"] for e in a["skills"][0]["evidence"]] == ["Run locally"]          # the input is not changed
