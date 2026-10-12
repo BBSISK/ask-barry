@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-12T11:39:24Z",
+  "generated_at": "2026-10-12T11:56:25Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -47,7 +47,7 @@
     {
       "id": "python-flask",
       "name": "Python & Flask",
-      "tier": 4,
+      "tier": 3,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
@@ -62,24 +62,9 @@
         ],
         "3": [
           "Ask Barry"
-        ],
-        "4": [
-          "Ask Barry"
         ]
       },
       "evidence": [
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Deployment",
-          "url": "https://github.com/BBSISK/ask-barry/blob/3f05cbf3efa5ae06d7f1a8e7cf694d06d9369a42/README.md#deployment",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "CI runs the full pytest suite on every push. It includes tests that call the Flask routes (the home page, `/evidence`, `/capability`, the JSON APIs, `/health` and `/ready`) through Flask's test client, so a broken route blocks the deploy.",
-          "first_committed": "2026-09-27"
-        },
         {
           "tier": 3,
           "repo": "ask-barry",
@@ -89,7 +74,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m pytest -v # run the tests flask --app wsgi run # open http://127.0.0.1:5000",
+          "quote": "flask --app wsgi run # open http://127.0.0.1:5000",
           "first_committed": "2026-09-27"
         },
         {
@@ -115,6 +100,18 @@
           "verified_by": "self",
           "quote": "python3 -m venv .venv source .venv/bin/activate python -m pip install -e \"[.dev]\" python -m pytest -q",
           "first_committed": "2026-10-08"
+        },
+        {
+          "tier": 1,
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Architecture",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#architecture",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email] W --> F F --- DB[(SQLite<br/>users, entries,<br/>groups, capsules)] O[Google / Microsoft<br/>OAuth] --> F",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
@@ -186,18 +183,6 @@
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
-          "first_committed": "2026-09-27"
-        },
-        {
           "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "docs/bootstrap.md",
@@ -218,7 +203,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| IAM + GitHub OIDC provider | Keyless sign-in for CI: a read-only plan role for pull requests, an apply role for `main` only | Bootstrap | Built |",
+          "quote": "IAM + GitHub OIDC provider | Keyless sign-in for CI: a read-only plan role for pull requests, an apply role for `main` only | Bootstrap | Built |",
           "first_committed": "2026-10-11"
         },
         {
@@ -242,7 +227,19 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "This guide creates the three Azure pieces Ask Barry needs.",
+          "quote": "This guide creates the three Azure pieces Ask Barry needs. Everything is done in the portal first (good AI-901 practice)",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 7: Verify",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "python -m scripts.check_azure Expected: PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
           "first_committed": "2026-09-27"
         },
         {
@@ -374,7 +371,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "terraform init -backend-config=../backend.hcl terraform plan -out runtime.tfplan terraform apply runtime.tfplan",
+          "quote": "cd infra/runtime terraform init -backend-config=../backend.hcl terraform plan -out runtime.tfplan terraform apply runtime.tfplan",
           "first_committed": "2026-10-11"
         },
         {
@@ -398,7 +395,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Fork the repo, sign in to your own AWS account and run the same script.",
+          "quote": "Fork the repo, sign in to your own AWS account and run the same script. The bucket name includes your account ID, and `infra/backend.hcl` is generated for you",
           "first_committed": "2026-10-11"
         }
       ],
@@ -445,7 +442,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "- **Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... - **On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the",
+          "quote": "Every pull request runs CI (GitHub Actions), and main only accepts a merge when all three required checks pass... On every merge to main, the publish workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
           "first_committed": "2026-10-11"
         },
         {
@@ -469,7 +466,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset):",
+          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset)",
           "first_committed": "2026-10-11"
         },
         {
@@ -554,7 +551,7 @@
           "first_committed": "2026-10-12"
         },
         {
-          "tier": 3,
+          "tier": 4,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Testing and CI",
@@ -562,7 +559,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds anything critical.",
+          "quote": "`producer-image`: builds the producer container and runs it on a small fake dataset, checking every record against the contract. On every merge to `main`, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
           "first_committed": "2026-10-11"
         },
         {
@@ -795,7 +792,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
+          "quote": "python3 mcp_server.py --self-test",
           "first_committed": "2026-09-25"
         },
         {
@@ -954,7 +951,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`.",
+          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
           "first_committed": "2026-09-27"
         },
         {
@@ -1117,7 +1114,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch.",
           "first_committed": "2026-09-27"
         },
         {
@@ -1131,18 +1128,6 @@
           "verified_by": "self",
           "quote": "Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
           "first_committed": "2026-10-08"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Security",
-          "url": "https://github.com/BBSISK/ask-barry/blob/75fb9744c48e366047f9b136b39c50e459a2cd2d/README.md#security",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The app refuses to start in production without `SECRET_KEY`. API key access is switched off on both Azure resources. Everything signs in with Microsoft Entra ID (`DefaultAzureCredential`).",
-          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -1189,7 +1174,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "There are **no long-lived AWS access keys** anywhere in this project: not in GitHub secrets, not in the repo, not in a `.env` file.",
+          "quote": "There are no long-lived AWS access keys anywhere in this project: not in GitHub secrets, not in the repo, not in a `.env` file.",
           "first_committed": "2026-10-11"
         },
         {
@@ -1203,6 +1188,18 @@
           "verified_by": "self",
           "quote": "Turn keys off (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them, then rotate the old keys so any copy left anywhere is useless.",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🛠️ Quick Start & Verification > 3. Security & Environment Variables (Production)",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#3-security--environment-variables-production",
+          "project": "Wall Inspector",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "All credentials and cloud endpoints are injected strictly via environment variables (never hardcoded)",
+          "first_committed": "2026-09-25"
         }
       ],
       "match": [
@@ -1327,18 +1324,6 @@
           "verified_by": "self",
           "quote": "Read the plan's summary line before applying. Stop if anything would change or be destroyed that you didn't expect.",
           "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/model-card.md",
-          "heading": "Ask Barry: model card > How it works",
-          "url": "https://github.com/BBSISK/ask-barry/blob/fc255e68293a3895e4d60455f2e17bd65ac77aa4/docs/model-card.md#how-it-works",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Every night, a GitHub Action fetches the public documentation, pinned to exact commits.",
-          "first_committed": "2026-09-27"
         }
       ],
       "match": [
@@ -1491,6 +1476,18 @@
           "verified_by": "self",
           "quote": "A graded ladder of 40 React + TypeScript challenges, from first components to small capstone apps.",
           "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
+          "repo": "react-challenges",
+          "path": "README.md",
+          "heading": "React Challenges > Run it",
+          "url": "https://github.com/BBSISK/react-challenges/blob/16347c72e7b6046d4deaee3a5f6db66f0dfc63d0/README.md#run-it",
+          "project": "react-challenges",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "npm run dev # playground in the browser",
+          "first_committed": "2026-10-11"
         }
       ],
       "match": [
@@ -1528,7 +1525,7 @@
           "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract...",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
           "first_committed": "2026-10-11"
         },
         {
