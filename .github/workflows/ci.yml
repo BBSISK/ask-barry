@@ -43,3 +43,33 @@ jobs:
         run: |
           terraform init -backend=false -input=false
           terraform validate
+
+  security:
+    name: Security checks (dependencies, code, secrets, infrastructure)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      GITLEAKS_VERSION: "8.28.0"
+      GITLEAKS_SHA256: "a65b5253807a68ac0cafa4414031fd740aeb55f54fb7e55f386acb52e6a840eb"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pinned scanners
+        run: pip install pip-audit==2.10.1 bandit==1.9.4 checkov==3.3.28
+      - name: Dependencies have no known vulnerabilities (pip-audit)
+        run: pip-audit -r requirements.txt
+      - name: Python code analysis, medium severity and above (bandit)
+        run: bandit -q -r app scripts ask_barry_mcp.py wsgi.py -ll
+      - name: No secrets anywhere in the git history (gitleaks)
+        run: |
+          curl -sSfL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks git --redact --no-banner .
+      - name: Terraform misconfiguration policy (Checkov)
+        run: checkov -d infra --framework terraform --quiet --compact --skip-download

@@ -47,10 +47,13 @@ REQUEST_TIMEOUT = 45                  # seconds per attempt
 
 def post_json(url, payload, headers, timeout=REQUEST_TIMEOUT):
     """POST JSON, return (status, parsed body or {})."""
+    if not url.startswith("https://"):
+        raise ValueError("model APIs are called over https only")
     req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), method="POST",
                                  headers={"Content-Type": "application/json", **headers})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        # bandit B310 (urlopen scheme): https only (checked above)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310
             return resp.status, json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as err:
         try:

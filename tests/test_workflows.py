@@ -114,3 +114,53 @@ def test_publish_survives_a_merge_during_the_refresh():
     commit = publish["steps"][-1]["run"]
     assert "git pull --rebase origin main" in commit and "for attempt in 1 2 3" in commit
     assert "--force" not in commit                      # never overwrite someone else's work on main
+
+
+CI = WORKFLOW.parent / "ci.yml"
+
+
+def _job(text, name):
+    start = text.index(f"\n  {name}:\n")
+    nxt = re.search(r"\n  [a-z_-]+:\n", text[start + 1:])
+    return text[start: start + 1 + nxt.start()] if nxt else text[start:]
+
+
+def test_ci_runs_every_security_scanner_pinned_and_read_only():
+    """ASK-59: shift-left checks. Each scanner is pinned so a new release can't change the gate silently."""
+    job = _job(CI.read_text(encoding="utf-8"), "security")
+    assert "contents: read" in job and "contents: write" not in job
+    assert "pip-audit==2.10.1" in job and "pip-audit -r requirements.txt" in job
+    assert "bandit==1.9.4" in job and "bandit -q -r app scripts ask_barry_mcp.py wsgi.py -ll" in job
+    assert "checkov==3.3.28" in job and "checkov -d infra --framework terraform" in job
+    assert "|| true" not in job and "continue-on-error" not in job      # a finding must fail the build
+
+
+def test_gitleaks_scans_the_whole_history_with_a_verified_download():
+    job = _job(CI.read_text(encoding="utf-8"), "security")
+    assert "fetch-depth: 0" in job                                     # every commit, not just the last
+    assert re.search(r'GITLEAKS_SHA256: "[0-9a-f]{64}"', job) and "sha256sum -c -" in job
+    assert job.index("sha256sum -c -") < job.index("./gitleaks git")
+    assert "--redact" in job                                           # a found secret never reaches the log
+
+
+def test_gitleaks_allowlist_covers_only_the_fake_test_keys():
+    text = (WORKFLOW.parents[2] / ".gitleaks.toml").read_text(encoding="utf-8")
+    assert "useDefault = true" in text
+    assert re.findall(r"paths = \['''(.+?)'''\]", text) == [r"^tests/test_check_azure\.py$"]
+
+
+def test_every_security_skip_carries_a_reason():
+    root = WORKFLOW.parents[2]
+    for path in list((root / "infra").glob("*.tf")) + list((root / "app").rglob("*.py")) + \
+            list((root / "scripts").glob("*.py")) + [root / "ask_barry_mcp.py"]:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines):
+            if "checkov:skip=" in line:
+                assert re.search(r"checkov:skip=CKV2?_[A-Z]+_\d+:\s*\S", line), f"{path.name}:{i + 1}"
+            if "# nosec" in line:
+                assert lines[i - 1].strip().startswith("#"), f"{path.name}:{i + 1} needs a reason above it"
+
+
+def test_dependabot_watches_python_packages_and_actions():
+    text = (WORKFLOW.parent.parent / "dependabot.yml").read_text(encoding="utf-8")
+    assert 'package-ecosystem: "pip"' in text and 'package-ecosystem: "github-actions"' in text

@@ -209,7 +209,7 @@ Since Sprint 1 (October 2026), every change follows the same controlled path fro
 
 1. **One story per change.** Each change starts as a Jira story (project key ASK). The branch, the commits and the pull request carry the story key, for example `ASK-42-capability`, so any line of code traces back to why it changed.
 2. **A branch and a pull request.** I don't push code changes to `main` directly: each story gets its own branch and a pull request into `main`. The only direct commits are the nightly data rebuilds in point 6.
-3. **Checks before merge.** GitHub Actions CI runs on every pull request: the full pytest suite, plus `terraform fmt -check` and `terraform validate` for the infrastructure code.
+3. **Checks before merge.** GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).
 4. **Checks before deploy.** Render deploys a commit on `main` only after CI passes (`autoDeployTrigger: checksPass`), so a failing change never reaches the live site.
 5. **Infrastructure changes are planned first.** Azure changes go through Terraform: `terraform plan` is read before every `apply`. The original Azure resources are marked `prevent_destroy`, and the state file never enters the repo.
 6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code. It commits on top of the latest `main`, and if a pull request is merged while the refresh runs, it rebases its one data commit and tries again; it never force-pushes.
@@ -477,3 +477,21 @@ Secrets are environment variables only. The app refuses to start in production w
 - **Least privilege, as code:** the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.
 - **One secret left, and why:** Render isn't Azure, so the live app can't have a managed identity. Its service principal has one client secret, kept only in Render's environment, created with the Azure CLI so it never enters Terraform state, and set to expire after a year.
 - **Next step:** when the app moves to Azure compute, a managed identity replaces that last secret.
+
+### Security checks before anything ships (ASK-59)
+
+Security is checked on every pull request, before merge, not after deploy ("shift left"). A finding fails CI, and Render deploys only commits that passed CI, so it never reaches the live site.
+
+| Check | Tool (pinned) | Catches |
+|---|---|---|
+| Dependencies | pip-audit 2.10.1 | Python packages with published vulnerabilities |
+| Code analysis | bandit 1.9.4 | Risky Python patterns, medium severity and above |
+| Secrets | gitleaks 8.28.0 | Keys or tokens anywhere in the full git history, not just the latest commit |
+| Infrastructure policy | Checkov 3.3.28 | Terraform misconfigurations, such as public access or weak encryption |
+| Updates | Dependabot | Weekly pull requests for outdated packages and GitHub Actions |
+
+- **Accepted risks are written down, not hidden.** Each Checkov skip in `infra/` and each bandit `nosec` carries its reason on the line, for example why the search service is reachable from the internet (Render runs outside Azure; keys are off). A test fails if a skip has no reason.
+- **The gitleaks allowlist is narrow.** It covers only the fake keys in the test that proves secrets are masked; a planted real-looking key is still caught.
+- **The scanner download is verified.** gitleaks is checked against its published SHA-256 before it runs, and findings are redacted in the log.
+- **Failure alerts:** GitHub emails me when a check or the nightly refresh fails.
+- **Next:** for the projects that ship Docker images (SECOM pipeline, Wall Inspector), add hadolint for the Dockerfile and a Trivy image scan that blocks HIGH and CRITICAL findings.

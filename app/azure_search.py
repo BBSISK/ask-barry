@@ -68,7 +68,7 @@ def diversify(results, k, per_repo_cap):
 
 def doc_key(chunk_id):
     """Azure document keys allow only letters, digits, '_', '-' and '='; chunk_ids contain ':' '/' '#'."""
-    return hashlib.sha1(chunk_id.encode("utf-8")).hexdigest()
+    return hashlib.sha1(chunk_id.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 def build_index(name, dims=EMBED_DIMS):

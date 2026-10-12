@@ -48,7 +48,9 @@ def github_first_commit(owner, token=None, timeout=20):
             while page <= 10:
                 url = (f"{API}/repos/{owner}/{repo}/commits?path={urllib.parse.quote(path)}"
                        f"&per_page=100&page={page}")
-                with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as r:
+                # bandit B310 (urlopen scheme): fixed https GitHub API URL
+                with urllib.request.urlopen(  # nosec B310
+                        urllib.request.Request(url, headers=headers), timeout=timeout) as r:
                     batch = json.loads(r.read().decode("utf-8"))
                 if batch:
                     oldest = batch[-1]["commit"]["committer"]["date"][:10]

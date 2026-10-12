@@ -81,6 +81,7 @@ resource "azuread_service_principal" "github" {
 }
 
 resource "azuread_application_federated_identity_credential" "github_main" {
+  #checkov:skip=CKV_AZURE_249:False positive: the subject uses GitHub's numeric-ID form for this repo's main branch only; tests/test_infra.py checks it.
   application_id = azuread_application.github.id
   display_name   = "github-main"
   description    = "GitHub Actions on ${var.github_repo}, main branch only"

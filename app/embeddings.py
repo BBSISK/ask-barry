@@ -96,7 +96,7 @@ class FakeEmbedder:
     def _one(self, text):
         vec = [0.0] * self.dims
         for word in re.findall(r"[a-z0-9]+", text.lower()):
-            h = int(hashlib.md5(word.encode()).hexdigest(), 16)
+            h = int(hashlib.md5(word.encode(), usedforsecurity=False).hexdigest(), 16)
             vec[h % self.dims] += 1.0
         norm = math.sqrt(sum(v * v for v in vec)) or 1.0
         return [v / norm for v in vec]

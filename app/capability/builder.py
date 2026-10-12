@@ -139,7 +139,7 @@ def find_sections(retriever, queries, k=PER_QUERY, limit=MAX_SECTIONS):
 
 def story_id(card_id, chunk):
     key = chunk.get("chunk_id") or section_label(chunk)
-    return f"{card_id}:{hashlib.sha1(key.encode('utf-8')).hexdigest()[:10]}"
+    return f"{card_id}:{hashlib.sha1(key.encode('utf-8'), usedforsecurity=False).hexdigest()[:10]}"
 
 
 # --- the build ------------------------------------------------------------------------------------------------

@@ -92,13 +92,21 @@ class AskBarryError(Exception):
     """A user-facing problem (rate limit, bad question, service asleep or down)."""
 
 
+def _web_only(url):
+    """Ask Barry is reached over https (or http for a local dev server); never file:// or other schemes."""
+    if not str(url).startswith(("https://", "http://")):
+        raise AskBarryError("ASK_BARRY_URL must be an http(s) address.")
+
+
 def post_json(url, payload, timeout=TIMEOUT_SECONDS):
     """POST JSON and return (status, parsed body). Separate so tests can replace it."""
+    _web_only(url)
     req = urllib.request.Request(
         url, data=json.dumps(payload).encode("utf-8"), method="POST",
         headers={"Content-Type": "application/json", "Accept": "application/json", "User-Agent": USER_AGENT})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        # bandit B310 (urlopen scheme): http(s) only (_web_only)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310
             return resp.status, json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as err:
         try:
@@ -110,9 +118,11 @@ def post_json(url, payload, timeout=TIMEOUT_SECONDS):
 
 def get_json(url, timeout=TIMEOUT_SECONDS):
     """GET JSON and return (status, parsed body). Separate so tests can replace it."""
+    _web_only(url)
     req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": USER_AGENT})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        # bandit B310 (urlopen scheme): http(s) only (_web_only)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310
             return resp.status, json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as err:
         try:

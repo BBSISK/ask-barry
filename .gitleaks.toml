@@ -1,0 +1,11 @@
+# Secret scanning (ASK-59). Gitleaks' default rules, plus one narrow exception.
+[extend]
+useDefault = true
+
+# tests/test_check_azure.py checks that keys are never printed in full, so it holds two FAKE keys.
+# Only those exact strings, in that file, are allowed: a real key anywhere, even in that file, still fails CI.
+[[allowlists]]
+description = "Fake keys in the test that checks secrets are masked"
+condition = "AND"
+paths = ['''^tests/test_check_azure\.py$''']
+regexes = ['''^abcdefgh12345678SECRET9f3a$''', '''^abcdSECRETxyz1234$''']
