@@ -164,3 +164,4 @@ def test_every_security_skip_carries_a_reason():
 def test_dependabot_watches_python_packages_and_actions():
     text = (WORKFLOW.parent.parent / "dependabot.yml").read_text(encoding="utf-8")
     assert 'package-ecosystem: "pip"' in text and 'package-ecosystem: "github-actions"' in text
+    assert 'versioning-strategy: "increase-if-necessary"' in text      # no PRs that only raise a minimum

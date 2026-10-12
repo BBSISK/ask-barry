@@ -2,6 +2,9 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
+    # requirements.txt sets minimum versions only, so a newer release is already installed on every deploy.
+    # Only open a pull request when the range itself has to change (ASK-63; a lock file will follow).
+    versioning-strategy: "increase-if-necessary"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
