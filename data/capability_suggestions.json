@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T16:32:05Z",
+  "generated_at": "2026-10-12T11:39:24Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -7,9 +7,23 @@
       "approved_but_not_found": [],
       "candidates": [
         {
+          "id": "problem-solving:84dbcd1ba7",
+          "title": "Fixing data quality issues",
+          "summary": "Barry identified missing coordinate data and fixed it by requesting geometry projection, ensuring all applications had valid locations. He also addressed unreliable residential unit counts by using LLM extraction from descriptions and refined classification of housing grants.",
+          "repo": "housing-pipeline-ireland",
+          "path": "docs/data-profile.md",
+          "heading": "Data profile — Sprint 1 (8–22 Oct 2026) > National Planning Applications — South Dublin County Council (HOUSE-9) > Top 5 quality issues",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/6e9e1fe07c4266efc29405b6511be6bd7aba6adb/docs/data-profile.md#top-5-quality-issues-1",
+          "project": "Housing Pipeline Ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Fix (done, 10 Oct): the downloader now requests the geometry projected to ITM (EPSG:2157) and uses it when the columns are blank. Re-profiled: 0 of 33,304 applications have no location... Fix: this is exactly the case for LLM extraction (HOUSE-20):",
+          "approved": false
+        },
+        {
           "id": "problem-solving:d01d06712f",
-          "title": "Problem solving and root cause",
-          "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
+          "title": "Problem solving and root cause example",
+          "summary": "Barry traced a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -22,7 +36,7 @@
         },
         {
           "id": "problem-solving:1162028e47",
-          "title": "Fixing silent alert failures",
+          "title": "Fixed silent alert failures",
           "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
           "repo": "inmytime-showcase",
           "path": "README.md",
@@ -49,45 +63,17 @@
           "approved": true
         },
         {
-          "id": "problem-solving:6da147fbb5",
-          "title": "Fixing data quality issues",
-          "summary": "Barry identified VAT exclusion, duplicate rows, and encoding issues in property price data, then implemented fixes including flagging VAT-inclusive prices, marking duplicates, and correcting text encoding.",
-          "repo": "housing-pipeline-ireland",
-          "path": "docs/data-profile.md",
-          "heading": "Data profile — Sprint 1 > Property Price Register (HOUSE-8) > Top 5 quality issues",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/docs/data-profile.md#top-5-quality-issues",
-          "project": "Housing Pipeline Ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Fix: keep the flag, add a VAT-inclusive price (×1.135)... Flag duplicates, keep them in the reject log... read the file explicitly as cp1252, and add a test that fails on any unmapped value.",
-          "approved": false
-        },
-        {
-          "id": "problem-solving:ab6ed376a9",
-          "title": "Built AgentMath for tailored learning",
-          "summary": "Barry built AgentMath to address mixed-ability challenges and provide real-time insights into student struggles during Junior Cycle maths teaching.",
-          "repo": "agentmath_showcase",
+          "id": "problem-solving:3bfb002f5c",
+          "title": "Improved solution approach",
+          "summary": "Barry wrote every solution himself, used Claude as a coach for hints and reviews, and improved solutions from brute force to hash map, documenting changes in commit history.",
+          "repo": "leetcode-java",
           "path": "README.md",
-          "heading": "🕵️ AgentMath > The problem",
-          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#the-problem",
-          "project": "AgentMath",
+          "heading": "leetcode-java > How I work",
+          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#how-i-work",
+          "project": "leetcode-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "I built AgentMath while teaching Junior Cycle maths, to give every student practice at the right level and to give me, as the teacher, a clear view of where each student and the class were struggling.",
-          "approved": false
-        },
-        {
-          "id": "problem-solving:113994a61c",
-          "title": "Fixing data quality issues",
-          "summary": "Barry identified key data quality issues in property sales data and implemented fixes including address normalization, excluding non-market prices, and adjusting for VAT in new-build prices.",
-          "repo": "housing-pipeline-ireland",
-          "path": "docs/data-profile.md",
-          "heading": "Data profile — Sprint 1 > Property Price Register (HOUSE-8) > Top 5 quality issues",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/docs/data-profile.md#top-5-quality-issues",
-          "project": "Housing Pipeline Ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Fix: normalise addresses (Sprint 3), geocode them with Azure Maps and keep a confidence score... exclude \"not full market price\" sales from price statistics... keep the flag, add a VAT-inclusive price (×1.135) for comparisons",
+          "quote": "When I improve a solution (for example from brute force to a hash map), the commit history shows both versions.",
           "approved": false
         }
       ]
@@ -102,7 +88,7 @@
         {
           "id": "security-mindset:8d011cfc3a",
           "title": "Handled credential exposure incident",
-          "summary": "Barry rotated all exposed API secrets, rebuilt Git history as a single clean commit, and locked the repository with a strict .gitignore after a secret scanner flagged credentials in an early commit.",
+          "summary": "Barry rotated all exposed API secrets, rebuilt Git history as a single clean commit, and locked the repository with a strict .gitignore after a secret was found in an early commit.",
           "repo": "my30words_showcase",
           "path": "README.md",
           "heading": "✍️ Brief > Problems I solved along the way",
@@ -110,13 +96,13 @@
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "an automated secret scanner flagged API credentials in an early commit. I rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down",
+          "quote": "I rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down with a strict `.gitignore` for databases, configuration and backups.",
           "approved": true
         },
         {
           "id": "security-mindset:0dad7318bc",
           "title": "Privacy by design in server architecture",
-          "summary": "Barry designed a server that relays answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
+          "summary": "Barry designed the server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
@@ -142,9 +128,37 @@
           "approved": false
         },
         {
+          "id": "security-mindset:a90abade77",
+          "title": "GitHub OIDC token exchange",
+          "summary": "Barry configured GitHub Actions to request OIDC tokens and use AWS STS AssumeRoleWithWebIdentity, resolving an authorization failure by adding numeric repo IDs to trust policies.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Keyless from the first commit > How the GitHub OIDC exchange works",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#how-the-github-oidc-exchange-works",
+          "project": "SECOM_Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The first CI run failed with `Not authorized to perform sts:AssumeRoleWithWebIdentity` until the ID form was added.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:64187254f6",
+          "title": "Secure AWS Access in CI Pipeline",
+          "summary": "Barry implemented short-lived AWS credentials via GitHub OIDC in CI, separated roles for plan and apply stages, and restricted CI permissions to prevent privilege escalation.",
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Security",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#security",
+          "project": "SECOM_Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session. Two CI roles. CI can't widen its own permissions.",
+          "approved": false
+        },
+        {
           "id": "security-mindset:ec802ba64d",
           "title": "Implementing Least Privilege Access",
-          "summary": "Barry configured identities and roles in code with least privilege, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
+          "summary": "Barry configured identities and roles with least privilege in code, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security",
@@ -156,60 +170,32 @@
           "approved": false
         },
         {
-          "id": "security-mindset:1162028e47",
-          "title": "Fixing silent alert failures",
-          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#problems-i-solved-along-the-way",
-          "project": "In My Time",
+          "id": "security-mindset:91ce972132",
+          "title": "CI AWS Role Verification",
+          "summary": "Barry configured the CI pipeline to verify AWS role assumption without stored keys by running a terraform job that confirmed identity via AWS STS on each pull request and main push.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Checking it",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#checking-it",
+          "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template",
+          "quote": "The `terraform` job in `.github/workflows/ci.yml` runs on every pull request and every push to `main`. It signs in with the plan role, runs `aws sts get-caller-identity`, then plans the runtime stack.",
           "approved": false
         },
         {
-          "id": "security-mindset:b60a771efe",
-          "title": "Privacy by design in messaging app",
-          "summary": "Barry designed privacy into the architecture of a messaging platform, working within real-world platform rules and testing encryption and media playback.",
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > What this project demonstrates",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#what-this-project-demonstrates",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Designing privacy into the architecture, not bolting it on afterwards; Building on real-world messaging platforms and working within their rules; Testing at depth, including browser tests that exercise real encryption and media playback",
-          "approved": false
-        },
-        {
-          "id": "security-mindset:3a075dfa62",
+          "id": "security-mindset:1bbf63e5a7",
           "title": "Implemented keyless security",
           "summary": "Barry implemented keyless security from the first commit, using az login, GitHub OIDC, and managed identities, with least-privilege roles defined in Terraform and tests to prevent key usage.",
           "repo": "housing-pipeline-ireland",
           "path": "README.md",
           "heading": "Housing Pipeline Ireland > Security",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/0aa8b91f700f7694105c8cd815ff9ffacecf7d2c/README.md#security",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/6e9e1fe07c4266efc29405b6511be6bd7aba6adb/README.md#security",
           "project": "Housing Pipeline Ireland",
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Keyless from the first commit. No API keys or passwords anywhere... Key-based access is switched off on every Azure resource, roles are least-privilege and defined in Terraform, and a test (`tests/test_no_keys.py`) fails if any module reads a key-style setting.",
           "approved": false
-        },
-        {
-          "id": "security-mindset:b75a31933f",
-          "title": "Azure sign-in with Entra ID",
-          "summary": "Barry configured Azure to sign in using Entra ID instead of keys, created identities and roles, updated search service authentication, tested locally, managed secrets securely, and set up GitHub OIDC for nightly index refresh without storing Azure secrets in GitHub.",
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential that Entra accepts only from this repo's main branch.",
-          "approved": true
         }
       ]
     },
@@ -219,17 +205,31 @@
       "approved_but_not_found": [],
       "candidates": [
         {
-          "id": "data-manipulation:9edbd02b52",
-          "title": "Real-time fault detection at factory scale",
-          "summary": "Barry led a factory-wide program for real-time fault detection using data pipelines and anomaly detection, implementing nightly ingestion re-processes and fault classification to improve yield and system reliability.",
-          "repo": "BBSISK",
-          "path": "manufacturing-to-software.md",
-          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > Real-time fault detection at factory scale",
-          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#real-time-fault-detection-at-factory-scale",
-          "project": "Profile",
+          "id": "data-manipulation:ca4940cd5e",
+          "title": "Data flow and processing in SECOM",
+          "summary": "Barry implemented a data pipeline where a Lambda processor read Kinesis stream batches, wrote records to S3, validated them, stored clean and rejected runs in PostgreSQL, computed SPC signals, and handled failures with an SQS dead-letter queue.",
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Architecture",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
+          "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Responsible for the programme across the whole factory | Data pipelines, ingestion, streaming telemetry | Ask Barry's nightly ingestion re-processes only what changed",
+          "quote": "A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects (with reason codes) in PostgreSQL, and computes SPC health signals. Batches that keep",
+          "approved": false
+        },
+        {
+          "id": "data-manipulation:22c2299390",
+          "title": "Data persistence in teardown",
+          "summary": "Barry documented which data components persist after a demo and which are destroyed to control costs.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/teardown.md",
+          "heading": "Cost controls and teardown > What persists and what doesn't",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/teardown.md#what-persists-and-what-doesnt",
+          "project": "SECOM_Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Stack Contains After a demo Bootstrap State bucket, GitHub OIDC provider and roles, AWS Budget, ECR repository (from SECOM-16) Kept. IAM, OIDC and the budget cost nothing or close to it. The bucket holds a few KB of state. Runtime",
           "approved": false
         }
       ]
@@ -251,20 +251,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "1. Go to https://ai.azure.com (Microsoft Foundry portal) and sign in. 2. Create a new project. Let it create a new Foundry resource in rg-ask-barry and your region. 3. In the project, open Models + endpoints → Deploy model → Deploy",
-          "approved": false
-        },
-        {
-          "id": "written-communication:c1c860c661",
-          "title": "Documented Azure resource group setup",
-          "summary": "Barry documented the steps to create an Azure resource group, specifying the name and region, and explained the effect of deleting the group.",
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 3: Resource group",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ba39a931b28da61684b20536d601f69359e6abb0/docs/azure-setup.md#step-3-resource-group",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Portal → **Resource groups** → **+ Create** - Name: `rg-ask-barry` - Region: your chosen region (e.g. Sweden Central) Everything below goes in this group, so deleting the group later removes everything.",
           "approved": false
         }
       ]
@@ -291,7 +277,7 @@
         {
           "id": "teaching-mentoring:fa7966fadc",
           "title": "Teaching Maths and Supporting Students",
-          "summary": "Taught maths to Junior Cycle and Leaving Certificate students, supported small-group resource teaching, and completed a programme to increase Higher Level maths uptake.",
+          "summary": "Taught maths to Junior Cycle and Leaving Certificate students, supported small-group resource teaching, and completed a programme to increase Higher Level maths participation.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Post-primary maths teacher, Pobalscoil Iosolde, Palmerstown, Dublin (October 2024 – August 2026)",
@@ -299,8 +285,22 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Taught maths to Junior Cycle and Leaving Certificate students, and supported small-group resource maths teaching. Completed the Trinity Access IMPACT Maths programme, which aims to increase the number of students taking Higher Level Junior Cycle maths",
+          "quote": "Taught maths to Junior Cycle and Leaving Certificate students, and supported small-group resource maths teaching.",
           "approved": true
+        },
+        {
+          "id": "teaching-mentoring:b07336dc00",
+          "title": "Teaching informs software design",
+          "summary": "Barry designed software based on his teaching curriculum and tested it with real students, using classroom feedback to iteratively improve the project over several years.",
+          "repo": "agentmath_showcase",
+          "path": "README.md",
+          "heading": "🕵️ AgentMath > What this project demonstrates",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#what-this-project-demonstrates",
+          "project": "AgentMath",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "designed by someone who teaches the curriculum, and tested with real students",
+          "approved": false
         }
       ]
     },
@@ -324,20 +324,6 @@
           "approved": false
         },
         {
-          "id": "leadership:5299616047",
-          "title": "Led 7nm Start-up Qualification",
-          "summary": "Led teams managing safety, quality, output, and cost in CMP operation and led 7nm equipment qualification start-up, applying Lean methods and strategic planning to meet production ramp commitments.",
-          "repo": "BBSISK",
-          "path": "career.md",
-          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
-          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#cmp-chemical-mechanical-polish-area-manager-714nm-and-lead-7nm-start-up-equipment-qualification-programme-august-2019--october-2024",
-          "project": "Profile",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation, responsible for its safety, quality, output and cost metrics. Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland. Set clear deliverables (MBOs)",
-          "approved": true
-        },
-        {
           "id": "leadership:d362007369",
           "title": "Leading Equipment Qualification",
           "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
@@ -352,18 +338,18 @@
           "approved": false
         },
         {
-          "id": "leadership:d0a57cfcea",
-          "title": "Managed OEM Service Contracts",
-          "summary": "Managed service contracts for lithography and dry etch suppliers, aligned their objectives with Intel's, intervened when performance fell short, and measured quality of their work.",
+          "id": "leadership:5299616047",
+          "title": "Led 7nm Start-up Programme",
+          "summary": "Led teams and the equipment qualification programme for 7nm manufacturing start-up, managing safety, quality, output, and cost with Lean methods and strategic planning.",
           "repo": "BBSISK",
           "path": "career.md",
-          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
-          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#200mm300mm-oem-equipment-service-contract-manager-june-2000--april-2005",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#cmp-chemical-mechanical-polish-area-manager-714nm-and-lead-7nm-start-up-equipment-qualification-programme-august-2019--october-2024",
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Managed service contracts for installing and maintaining semiconductor manufacturing equipment from equipment suppliers (OEMs). Responsible for the lithography and dry etch supplier companies: kept their objectives aligned with Intel's, intervened when performance fell short, and measured the quality of their",
-          "approved": false
+          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods... Led strategic planning to meet production ramp commitments and tool",
+          "approved": true
         },
         {
           "id": "leadership:035538d07a",
@@ -380,9 +366,37 @@
           "approved": true
         },
         {
+          "id": "leadership:d0a57cfcea",
+          "title": "Managed OEM Service Contracts",
+          "summary": "Managed service contracts for semiconductor equipment suppliers, aligned their objectives with Intel's, intervened when performance fell short, and measured quality of installation and sustaining work.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#200mm300mm-oem-equipment-service-contract-manager-june-2000--april-2005",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Managed service contracts for installing and maintaining semiconductor manufacturing equipment from equipment suppliers (OEMs). Responsible for the lithography and dry etch supplier companies: kept their objectives aligned with Intel's, intervened when performance fell short, and measured the quality of their",
+          "approved": false
+        },
+        {
+          "id": "leadership:73f7ff9703",
+          "title": "Led 300mm Implant Team",
+          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led multinational team selling obsolete equipment.",
+          "repo": "BBSISK",
+          "path": "career.md",
+          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#300mm-implant-group-leader-october-2016--august-2019",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost. Completed return-on-investment (ROI) analyses for equipment selection and capital projects. Led a multinational team that sold obsolete manufacturing equipment",
+          "approved": true
+        },
+        {
           "id": "leadership:d01d06712f",
           "title": "Leadership in Strategic Planning",
-          "summary": "Led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification. In software, planned sprints with written goals and measured results using Jira.",
+          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification. He planned software sprints with written goals and measured results in Jira.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -406,20 +420,6 @@
           "verified_by": "self",
           "quote": "most of them in leadership roles in high-volume manufacturing (HVM), across the 65nm, 22nm, 14nm and 7nm technologies... I worked on new-technology start-ups and built teams to meet the demands of high-volume manufacturing.",
           "approved": false
-        },
-        {
-          "id": "leadership:73f7ff9703",
-          "title": "Led 300mm Implant Team",
-          "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led a multinational team selling obsolete equipment.",
-          "repo": "BBSISK",
-          "path": "career.md",
-          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
-          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#300mm-implant-group-leader-october-2016--august-2019",
-          "project": "Profile",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost.",
-          "approved": true
         }
       ]
     },
@@ -430,8 +430,8 @@
       "candidates": [
         {
           "id": "teamwork:a04e8657ea",
-          "title": "Team Collaboration in Lab Project",
-          "summary": "Barry and a teammate brainstormed challenges, coded aligned copies in different environments, uploaded matched versions to Gitlab, and Barry helped troubleshoot errors in the code.",
+          "title": "Team Collaboration in Car Dealership Project",
+          "summary": "Barry and AB brainstormed challenges, coded aligned copies in CLI and VSCode, uploaded matched versions to GitLab, and AB helped troubleshoot errors in BBS code.",
           "repo": "CS627_Advanced_OOP_Java",
           "path": "CS627B_Lab2_AB_BS/Readme.md",
           "heading": "Programming Module Repository > Class Summary",
@@ -455,20 +455,6 @@
           "verified_by": "self",
           "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers",
           "approved": false
-        },
-        {
-          "id": "teamwork:73f7ff9703",
-          "title": "Led multinational team selling equipment",
-          "summary": "Led a multinational team that sold obsolete manufacturing equipment from the 14nm production lines.",
-          "repo": "BBSISK",
-          "path": "career.md",
-          "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 300mm Implant Group Leader (October 2016 – August 2019)",
-          "url": "https://github.com/BBSISK/BBSISK/blob/a786c446d0b2a4bbd63b55a5bd7806fa75a10b18/career.md#300mm-implant-group-leader-october-2016--august-2019",
-          "project": "Profile",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Led a multinational team that sold obsolete manufacturing equipment from the 14nm production lines.",
-          "approved": true
         }
       ]
     },
@@ -479,7 +465,7 @@
       "candidates": [
         {
           "id": "change-control-discipline:b038c7f3bd",
-          "title": "Change Control in Database Migration",
+          "title": "Change Control in Wall Inspector",
           "summary": "Barry added new columns via a non-destructive auto-migration on start-up, preserving existing production records in PostgreSQL.",
           "repo": "wall_inspector",
           "path": "README.md",
@@ -494,7 +480,7 @@
         {
           "id": "change-control-discipline:d362007369",
           "title": "Change control in software delivery",
-          "summary": "Barry implemented code review, pull requests, risk-based approvals, staged rollouts, and post-release monitoring with rollback to ensure every change was reviewed and tested before merge and deployment.",
+          "summary": "Barry implemented code review, risk-based approvals, staged rollouts, and post-release monitoring with rollback to ensure every change was reviewed and tested before merge and deployment.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -507,44 +493,58 @@
         },
         {
           "id": "change-control-discipline:c7c274bbfa",
-          "title": "Controlled change process",
-          "summary": "Barry established a controlled change process from Jira story to production with branches, pull requests, CI checks, and Terraform planning, ensuring only tested changes reach production.",
+          "title": "Controlled Change Process",
+          "summary": "Since Sprint 1, Barry implemented a controlled change process using Jira stories, branches, pull requests, CI checks, Terraform planning, and automated job controls to ensure disciplined change management.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > How changes are made",
-          "url": "https://github.com/BBSISK/ask-barry/blob/75fb9744c48e366047f9b136b39c50e459a2cd2d/README.md#how-changes-are-made",
+          "url": "https://github.com/BBSISK/ask-barry/blob/c8710ecb95e6b3c20bee203ab8714c98cf767bc7/README.md#how-changes-are-made",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Since Sprint 1 (October 2026), every change follows the same controlled path from a Jira story to production... The rules are tested, not just written down.",
+          "quote": "Since Sprint 1 (October 2026), every change follows the same controlled path from a Jira story to production: ... The rules are tested, not just written down.",
           "approved": false
         },
         {
-          "id": "change-control-discipline:7092d55633",
-          "title": "Human-in-the-Loop Provenance Tracking",
-          "summary": "Barry implemented a 3-tier audit lineage system tagging defect proposals as auto_suggested, auto_accepted with assessor info, or human_graded, enabling verified ground-truth pools for model training.",
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🚀 Key Capabilities",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-key-capabilities",
-          "project": "Wall Inspector",
+          "id": "change-control-discipline:7e7cfb0bb6",
+          "title": "AWS Budget Caps Monthly Spend",
+          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns, and destroyed runtime stacks after demos to keep costs low.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/teardown.md",
+          "heading": "Cost controls and teardown > The budget",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/teardown.md#the-budget",
+          "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Every Gemini Vision defect proposal is tagged `auto_suggested`; when an assessor reviews and saves it, it is upgraded to `auto_accepted` with the assessor's name and a timestamp; specimens marked from scratch are `human_graded` gold-standard benchmarks.",
+          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget; AWS **forecasts** the month will end over budget",
           "approved": false
         },
         {
-          "id": "change-control-discipline:701e484608",
-          "title": "Terraform Import and Safe Design",
-          "summary": "Barry imported existing Azure resources into Terraform using import blocks, ensuring no resources were recreated. He added missing settings, used prevent_destroy for safety, and maintained secrets outside the repo.",
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/75fb9744c48e366047f9b136b39c50e459a2cd2d/README.md#infrastructure-as-code-stage-7e",
-          "project": "Ask Barry",
+          "id": "change-control-discipline:22c2299390",
+          "title": "Cost controls in teardown process",
+          "summary": "Barry documented which infrastructure components to keep or destroy after demos to control costs, keeping low-cost items and destroying hourly-billed resources.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/teardown.md",
+          "heading": "Cost controls and teardown > What persists and what doesn't",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/teardown.md#what-persists-and-what-doesnt",
+          "project": "SECOM_Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The Azure resources were first created by hand in the portal... `infra/` now describes them in Terraform and adopts them with import blocks, so nothing is recreated... Safe by design: every resource has `prevent_destroy`... After adding them, the plan was",
+          "quote": "Bootstrap ... Kept. IAM, OIDC and the budget cost nothing or close to it. The bucket holds a few KB of state. Runtime ... Destroyed. These are the parts that bill by the hour.",
+          "approved": false
+        },
+        {
+          "id": "change-control-discipline:93a930b5de",
+          "title": "Branch and PR Discipline",
+          "summary": "Barry enforced change control by protecting the main branch, requiring pull requests with passing CI checks, using one branch per Jira story, and merging with squash and merge before deleting branches.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/workflow.md",
+          "heading": "Way of working > Branches and pull requests",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/workflow.md#branches-and-pull-requests",
+          "project": "SECOM_Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "`main` is protected: changes arrive only through a pull request, and the required CI checks must pass before merge.",
           "approved": false
         }
       ]
