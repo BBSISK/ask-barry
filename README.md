@@ -4,7 +4,7 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry.onrender.com
 
-## Current status: Stage 10b complete (RAG live in production, answer quality evaluated, job-ad agent live and evaluated, a second judge tested against hand labels, the same evaluation run on AWS Bedrock)
+## Current status: Sprint 1 complete (RAG live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge)
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -23,6 +23,9 @@ A portfolio assistant that answers questions about my software projects using **
 - Answer-quality evaluation with an evidence-checking LLM judge, cross-checked against a second judge of a different kind (TypeSafe Jev) and my own labels
 - An MCP server, so AI assistants can query it as a tool
 - Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
+- A [capability ladder](#capability-ladder-and-evidence-cards-ask-42) rebuilt every night from quotes that code checks, with evidence cards I approve and a gap-closing plan with a track record
+- [Change control](#how-changes-are-made) from Jira story to branch, pull request, CI and deploy, with the rules enforced by tests
+- [Security checks](#security-checks-before-anything-ships-ask-59) on every pull request: dependencies, code, secrets in the git history and Terraform policy
 
 | Stage | Scope | Status |
 |---|---|---|
@@ -42,6 +45,8 @@ A portfolio assistant that answers questions about my software projects using **
 | 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
+| Sprint 1 | Two-week sprint planned and tracked in Jira (project ASK): capability ladder and evidence cards, gap-closing plans, computed top tier and project kinds, stable nightly tiers, change control, security checks | Done: [ladder](#capability-ladder-and-evidence-cards-ask-42), [change control](#how-changes-are-made), [security](#security-checks-before-anything-ships-ask-59) |
+| Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to | Planned |
 
 ## Architecture
 
@@ -452,7 +457,7 @@ The evaluation also checks citation completeness. The judge sees the retrieved s
 
 [/capability](https://ask-barry.onrender.com/capability) shows how far each skill goes in my public projects, in five tiers: **Used · Built · In production · Tested / evaluated · Proven over time**. Every filled tier links to the section that proves it, with a quote. Professional skills are shown as **evidence cards**: short documented examples, not ratings. Skills and cards without evidence are shown as gaps on purpose.
 
-- **How a tier is decided:** each skill's searches run through the production retriever. For every section found, the model answers one narrow question, "the highest tier this section shows", and must quote the proof. Code checks that the quote is really in the section, or that answer counts as 0. The question is asked up to three times per section and the middle answer wins, because two builds from the same index once disagreed by two tiers on one skill: a single borderline answer was deciding it. A skill's tier is the highest checked tier; there are no scores or averages. My own profile README and career summary never fill a tier, because a self-description isn't evidence of use. Nor does a section whose heading marks it as a plan, such as "Architecture (planned)".
+- **How a tier is decided:** each skill's searches run through the production retriever. For every section found, the model answers one narrow question, "the highest tier this section shows", and must quote the proof. Code checks that the quote is really in the section, or that answer counts as 0. The question is asked up to three times per section and the middle answer wins, because two builds from the same index once disagreed by two tiers on one skill: a single borderline answer was deciding it. If an answer's quote isn't in the section, that answer is asked again rather than counted as 0, so a copying slip can't pull a tier down overnight (ASK-60); a tier still never counts without a checked quote, and the build log shows each rejected quote. A skill's tier is the highest checked tier; there are no scores or averages. My own profile README and career summary never fill a tier, because a self-description isn't evidence of use. Nor does a section whose heading marks it as a plan, such as "Architecture (planned)".
 - **Nightly, not per visit:** the refresh workflow builds `data/capability.json` after the index sync and a separate job commits it only when the content changed. The live app reads that file from `main`, so the page updates without a redeploy and git history records how the ladder changed. Visitors trigger no model calls.
 - **The top tier is computed, not judged (ASK-57):** "Proven over time" needs Tested / evaluated evidence in at least two of my real application projects with the skill evidenced for 12+ months, or confirmation from someone else (an employer, a lecturer, a certification, a merged contribution to another person's project). The AI judge only ever awards tiers 1 to 4. Without this, most skills sat on the top step one month into my HDip, which said more about the scale than about me. No skill has reached it yet, by design.
 - **Evidence doesn't drop because search ranks shift (ASK-58):** each skill is judged on its top 16 search results plus every section that counted in the last build, found again by searching for its quote. When new repos were published, older strong sections fell out of the top results and three skills dropped a tier overnight; now a section only stops counting if it changes or disappears. `python -m scripts.build_capability --explain <skill>` lists every section judged, its tier, and whether search found it or it was carried forward.

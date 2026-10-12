@@ -1,6 +1,6 @@
 {
   "profile_id": "barry-sisk",
-  "status": "Confirmed by Barry on 9 Oct 2026 after the first build.",
+  "status": "Confirmed by Barry on 9 Oct 2026 after the first build; updated 12 Oct 2026 (ASK-60, see notes).",
   "tiers": {
     "0": "Not evidenced",
     "1": "Used",
@@ -13,27 +13,28 @@
     "cloud": 4,
     "infrastructure-as-code": 4,
     "ci-cd": 4,
-    "containers": 1,
+    "containers": 4,
     "rag-llm": 4,
     "agents-mcp": 4,
     "testing-evaluation": 4,
-    "databases-sql": 3,
+    "databases-sql": 2,
     "security-identity": 4,
     "kubernetes": 0,
     "java": 2,
-    "front-end-frameworks": 0,
+    "front-end-frameworks": 2,
     "data-streaming": 0,
     "change-control": 4
   },
   "traps": [
     "kubernetes",
-    "front-end-frameworks",
     "data-streaming"
   ],
   "notes": {
-    "traps": "Same skills as the golden set's trap questions: anything above 0 is over-claiming.",
+    "traps": "Skills with no real evidence yet: anything above 0 is over-claiming. data-streaming stays a trap until the stream is built (SECOM Sprint 2).",
     "java": "Raised 0 -> 2 by Claude on 10 Oct 2026: the nightly build found the public CS627_Advanced_OOP_Java repo (CS627B Lab 2 README). Barry to confirm.",
-    "containers": "Docker is mentioned in the READMEs but no app runs in a container in production (Render runs Ask Barry as a Python service), so Used is the honest tier.",
-    "change-control": "Proposed by Claude on 10 Oct 2026 for the new skill (README 'How changes are made' + workflow and infrastructure tests). Barry to confirm."
+    "containers": "Raised 1 -> 4 on 12 Oct 2026: the SECOM pipeline's Testing and CI section shows its container built and tested in CI.",
+    "change-control": "Proposed by Claude on 10 Oct 2026 for the new skill (README 'How changes are made' + workflow and infrastructure tests). Barry to confirm.",
+    "databases-sql": "Lowered 3 -> 2, confirmed by Barry on 12 Oct 2026: the Wall Inspector provenance section shows new columns built, not a database run and tested in production.",
+    "front-end-frameworks": "Raised 0 -> 2 and no longer a trap (12 Oct 2026): the public react-challenges repo shows components built; it's practice, so it can't go above Built."
   }
 }
