@@ -103,3 +103,14 @@ def test_the_publish_check_runs_with_the_standard_library_only(tmp_path):
     from app.capability.builder import same_content                 # and it agrees with the app's rule
     a, b = old, {**old, "generated_at": "later"}
     assert same_content(a, b) and not same_content(a, {**old, "skills": []})
+
+
+def test_publish_survives_a_merge_during_the_refresh():
+    """ASK-54: a PR merged while the refresh ran left the publish job on an old main; its push was rejected."""
+    import yaml
+    publish = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))["jobs"]["publish-capability"]
+    checkout = publish["steps"][0]
+    assert checkout["uses"].startswith("actions/checkout") and checkout["with"]["ref"] == "main"
+    commit = publish["steps"][-1]["run"]
+    assert "git pull --rebase origin main" in commit and "for attempt in 1 2 3" in commit
+    assert "--force" not in commit                      # never overwrite someone else's work on main
