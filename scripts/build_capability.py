@@ -144,7 +144,7 @@ def main(argv=None):
             previous = None
     for path in args.seed_evidence:
         previous = merge_evidence(previous, json.loads(Path(path).read_text(encoding="utf-8")))
-        capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
+    capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
                                                StoryWriter(provider, pack), first_committed=first,
                                                votes=args.votes, previous=previous, explain=tuple(args.explain))
     found = problems(capability)

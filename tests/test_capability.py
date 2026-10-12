@@ -853,3 +853,28 @@ def test_answer_evaluation_keeps_the_strict_rule():
     """Elided quotes are for the capability judge only; Stage 6 answer checks are unchanged."""
     from app.quotes import quote_in_sources
     assert not quote_in_sources("mvn test", README_SECTION)
+
+
+# --- ASK-64: the nightly command line runs the build with or without --seed-evidence ------------------------------
+
+@pytest.mark.parametrize("seeded", [False, True])
+def test_build_command_builds_once_with_or_without_seeds(tmp_path, monkeypatch, seeded):
+    """The ASK-58 version only built inside the --seed-evidence loop, so the nightly run (no seeds) crashed."""
+    import scripts.build_capability as cli
+    cap, _ = build()
+    calls = []
+
+    def fake_build(*args, **kwargs):
+        calls.append(kwargs.get("previous"))
+        return cap, {"suggestions": []}
+
+    monkeypatch.setattr(cli, "load_env", lambda: None)
+    monkeypatch.setattr(cli, "live_parts", lambda: (None, None))
+    monkeypatch.setattr(cli, "build_capability", fake_build)
+    seed = tmp_path / "seed.json"
+    seed.write_text(json.dumps(cap))
+    argv = ["--no-dates", "--previous", str(tmp_path / "none.json"),
+            "--out", str(tmp_path / "out.json"), "--suggestions", str(tmp_path / "sugg.json")]
+    cli.main(argv + (["--seed-evidence", str(seed)] if seeded else []))
+    assert len(calls) == 1 and (calls[0] is not None) == seeded
+    assert json.loads((tmp_path / "out.json").read_text())["skills"]
