@@ -46,6 +46,12 @@
     .step.on.t5 { background:var(--l5); color:#fff; } .step.on.t6 { background:var(--l6); color:#fff; }
     .step.computed:not(.on) { background:repeating-linear-gradient(135deg, var(--track) 0 6px, transparent 6px 10px); border:1px dashed var(--line); }
     .depth { color:var(--text-2); font-size:.85rem; margin:.4rem 0 0; }
+    /* Each tier's name sits above its own column (phones show the number only, as in the legend). */
+    .steps.heads > span { display:flex; align-items:flex-end; justify-content:center; text-align:center;
+      font-size:.72rem; line-height:1.15; font-weight:600; color:var(--muted); padding:0 .1rem; }
+    .steps.heads .lvl { display:none; }
+    .visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+    @media (max-width: 40rem) { .steps.heads .name { display:none; } .steps.heads .lvl { display:inline; } }
     @media (prefers-color-scheme: dark) { .step.on.t1, .step.on.t2 { color:#fff; } .step.on.t3, .step.on.t4, .step.on.t5, .step.on.t6 { color:var(--ink-dark); } }
     .step.on:hover, .step.on:focus-visible { outline:2px solid var(--text); outline-offset:1px; }
     .since { color:var(--text-2); font-size:.85rem; white-space:nowrap; }
@@ -129,7 +135,7 @@
     {% endif %}
     <div class="scroll">
       <table class="ladder">
-        <thead><tr><th scope="col">Skill</th><th scope="col">{{ cap.tiers|map(attribute="label")|join(" · ") }}</th><th scope="col" class="col-since">First evidence</th></tr></thead>
+        <thead><tr><th scope="col">Skill</th><th scope="col"><span class="visually-hidden">{{ cap.tiers|map(attribute="label")|join(", ") }}</span><div class="steps heads" style="--n:{{ cap.tiers|length }}" aria-hidden="true">{% for t in cap.tiers %}<span><b class="lvl">{{ t.level }}</b><span class="name">{{ t.label }}</span></span>{% endfor %}</div></th><th scope="col" class="col-since">First evidence</th></tr></thead>
         <tbody>
         {% for s in rows %}
           <tr data-skill="{{ s.id }}">

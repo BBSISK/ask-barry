@@ -80,6 +80,23 @@ def write_json(path, data):
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def merge_evidence(previous, older):
+    """Add an older build's evidence items to last night's, per skill, without duplicating a section."""
+    previous = json.loads(json.dumps(previous)) if previous else {"skills": []}
+    by_id = {s["id"]: s for s in previous.setdefault("skills", [])}
+    for skill in older.get("skills", []):
+        target = by_id.setdefault(skill["id"], {"id": skill["id"], "evidence": []})
+        if target not in previous["skills"]:
+            previous["skills"].append(target)
+        have = {(e.get("repo"), e.get("path"), e.get("heading")) for e in target.setdefault("evidence", [])}
+        for item in skill.get("evidence") or []:
+            key = (item.get("repo"), item.get("path"), item.get("heading"))
+            if key not in have:
+                target["evidence"].append(item)
+                have.add(key)
+    return previous
+
+
 def summary_lines(capability):
     tiers = {t["level"]: t["label"] for t in capability["tiers"]}
     lines = [f"  {s['name']:<28} {tiers.get(s['tier'], 'Not evidenced')}  ({len(s['evidence'])} sources)"
@@ -97,6 +114,12 @@ def main(argv=None):
     parser.add_argument("--no-dates", action="store_true", help="skip GitHub first-commit lookups")
     parser.add_argument("--previous", default=str(ROOT / "data" / "capability.json"),
                         help="last published build; approved examples keep their wording from it")
+    parser.add_argument("--seed-evidence", nargs="*", default=[], metavar="FILE",
+                        help="older capability.json files whose evidence sections are also judged again (ASK-58), "
+                             "e.g. a build from before new repos crowded them out")
+    parser.add_argument("--explain", nargs="*", default=[], metavar="SKILL",
+                        help="log every section judged for these skill ids ('all' for every skill), with its tier "
+                             "and whether search found it or it was carried from the last build")
     parser.add_argument("--votes", type=int, default=VOTES, help="judge answers per section (median wins)")
     args = parser.parse_args(argv)
 
@@ -117,9 +140,11 @@ def main(argv=None):
         if problems(previous):
             print(f"Ignoring {args.previous}: it isn't a valid capability.json")
             previous = None
-    capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
+    for path in args.seed_evidence:
+        previous = merge_evidence(previous, json.loads(Path(path).read_text(encoding="utf-8")))
+        capability, suggestions = build_capability(pack, retriever, TierJudge(provider, pack),
                                                StoryWriter(provider, pack), first_committed=first,
-                                               votes=args.votes, previous=previous)
+                                               votes=args.votes, previous=previous, explain=tuple(args.explain))
     found = problems(capability)
     if found:
         sys.exit("Refusing to write an invalid capability.json:\n  " + "\n  ".join(found[:10]))
