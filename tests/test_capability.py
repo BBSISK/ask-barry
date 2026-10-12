@@ -329,7 +329,7 @@ def test_page_says_not_generated_yet_without_a_file():
 def test_page_shows_tiers_evidence_buttons_and_gaps():
     cap, _ = build()
     html = app_with(cap).get("/capability").get_data(as_text=True)
-    assert "Used · Built · In production · Tested / evaluated" in html
+    assert "Used, Built, In production, Tested / evaluated, Proven over time" in html     # screen-reader header
     assert 'aria-label="Containers (Docker): In production, evidenced. Show the evidence"' in html
     assert html.count("✕ Not evidenced") >= 3                               # Java, front end, streaming...
     assert html.index("Containers (Docker)") < html.index("Java")           # deepest first
@@ -712,3 +712,11 @@ def test_tier_rules_are_checked(tmp_path, change, message):
 def test_an_unknown_project_kind_is_refused(tmp_path):
     with pytest.raises(PackError, match="isn't in project_kinds"):
         kinds_pack(tmp_path, ask_barry2={"name": "X", "kind": "hobby"})
+
+
+def test_each_tier_name_sits_above_its_own_column():
+    cap, _ = build()
+    html = app_with(cap).get("/capability").get_data(as_text=True)
+    head = html.split("<thead>", 1)[1].split("</thead>", 1)[0]
+    assert 'class="steps heads" style="--n:5"' in head
+    assert [t in head for t in ("Used", "Built", "In production", "Tested / evaluated", "Proven over time")] == [True] * 5
