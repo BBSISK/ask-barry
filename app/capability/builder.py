@@ -29,6 +29,7 @@ MAX_EVIDENCE = 8           # evidence links kept per skill in the output
 MAX_QUOTE_WORDS = 40
 SEARCH_TRIES = 3           # a search that times out is retried (Azure AI Search can be slow under load)
 VOTES = 3                  # judge answers per section; the section gets the median (ASK-42 stability check)
+REQUOTES = 2               # ASK-60: an answer whose quote isn't in the section is asked again, up to this often
 
 
 def section_label(chunk):
@@ -150,25 +151,36 @@ def _source_fields(pack, chunk):
             "source_type": "github_readme", "verified_by": "self"}
 
 
-def vote(skill, chunk, judge, votes=VOTES, log=print):
-    """Ask the judge up to `votes` times; return the median answer. A quote that isn't in the section makes
-    that answer 0. Stops early once one answer has a majority."""
-    answers = []
-    for _ in range(max(1, votes)):
+def _ask(skill, chunk, judge, requotes, rejected):
+    """One vote. An answer whose quote isn't in the section is asked again (ASK-60), so a copying slip can't
+    pull a tier down; if every try misquotes, the vote is 0. Rejected quotes are kept for the log."""
+    for _ in range(max(0, requotes) + 1):
         verdict = judge.judge(skill, chunk)
-        if verdict["tier"] and not quote_in_sources(verdict["quote"], section_text(chunk)):
-            verdict = {"tier": 0, "quote": "", "discarded": verdict["tier"]}
-        answers.append(verdict)
+        if not verdict["tier"] or quote_in_sources(verdict["quote"], section_text(chunk)):
+            return verdict
+        rejected.append(verdict)
+    return {"tier": 0, "quote": "", "discarded": rejected[-1]["tier"]}
+
+
+def vote(skill, chunk, judge, votes=VOTES, log=print, requotes=REQUOTES):
+    """Ask the judge up to `votes` times; return the median answer. A tier only counts with a quote that code
+    found in the section. Stops early once one answer has a majority."""
+    answers, rejected = [], []
+    for _ in range(max(1, votes)):
+        answers.append(_ask(skill, chunk, judge, requotes, rejected))
         tiers = [a["tier"] for a in answers]
         if max(tiers.count(t) for t in tiers) * 2 > votes:
             break
     ordered = sorted(answers, key=lambda a: a["tier"])
     chosen = ordered[(len(ordered) - 1) // 2]          # the median; with an even count, the lower middle
     tiers = [a["tier"] for a in answers]
-    if len(set(tiers)) > 1 or any("discarded" in a for a in answers):
+    if len(set(tiers)) > 1 or rejected:
         shown = ", ".join(f"{a['tier']}" + (f" (quote not found for {a['discarded']})" if "discarded" in a else "")
                           for a in answers)
-        log(f"  {skill['id']}: {section_label(chunk)} answers {shown} -> {chosen['tier']}")
+        asked = f" ({len(rejected)} misquoted, asked again)" if rejected else ""
+        log(f"  {skill['id']}: {section_label(chunk)} answers {shown}{asked} -> {chosen['tier']}")
+        for r in rejected:                             # what the judge claimed, so a matcher gap can be spotted
+            log(f"    quote not in section (tier {r['tier']}): \"{' '.join(str(r['quote']).split())[:160]}\"")
     return chosen
 
 

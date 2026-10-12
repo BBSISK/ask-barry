@@ -462,8 +462,36 @@ def test_an_answer_with_an_invented_quote_counts_as_zero():
     judge = ScriptedJudge({"tier": 4, "quote": "evaluated with 500 tests"}, {"tier": 2, "quote": "Flask"},
                           {"tier": 4, "quote": "evaluated with 500 tests"})
     lines = []
-    assert vote(SKILL, SECTION, judge, log=lines.append)["tier"] == 0
+    assert vote(SKILL, SECTION, judge, log=lines.append, requotes=0)["tier"] == 0
     assert "quote not found for 4" in lines[0]
+
+
+def test_a_misquote_is_asked_again_and_a_good_quote_keeps_the_tier():
+    """ASK-60: a copying slip used to count as a 0 vote and could pull a tier down overnight."""
+    from app.capability.builder import vote
+    judge = ScriptedJudge({"tier": 3, "quote": "Deployed to production on Render"},   # not the section's words
+                          {"tier": 3, "quote": "Deployed on Render"},
+                          {"tier": 3, "quote": "Deployed on Render with Flask"})
+    lines = []
+    assert vote(SKILL, SECTION, judge, log=lines.append)["tier"] == 3 and judge.calls == 3
+    assert "1 misquoted, asked again" in lines[0]
+    assert 'quote not in section (tier 3): "Deployed to production on Render"' in lines[1]
+
+
+def test_a_judge_that_keeps_inventing_quotes_still_gets_nothing():
+    from app.capability.builder import vote
+    invented = {"tier": 4, "quote": "evaluated with 500 automated tests"}
+    judge = ScriptedJudge(*[dict(invented) for _ in range(6)])
+    lines = []
+    result = vote(SKILL, SECTION, judge, log=lines.append, requotes=2)
+    assert result["tier"] == 0 and result["quote"] == "" and judge.calls == 6     # 2 votes x 3 tries, then majority
+    assert "answers 0 (quote not found for 4), 0 (quote not found for 4)" in lines[0]
+
+
+def test_a_genuine_zero_is_never_asked_again():
+    from app.capability.builder import vote
+    judge = ScriptedJudge({"tier": 0, "quote": ""}, {"tier": 0, "quote": ""})
+    assert vote(SKILL, SECTION, judge, log=lambda *_: None)["tier"] == 0 and judge.calls == 2
 
 
 def test_one_vote_is_the_old_behaviour():
