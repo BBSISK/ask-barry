@@ -432,6 +432,22 @@ A GitHub Action (`.github/workflows/refresh-index.yml`) runs every night and on 
 
 The evaluation also checks citation completeness. The judge sees the retrieved sections the answer did *not* cite, so a claim supported only by one of those is reported as **"true but uncited"**, separately from an invented claim. Both count as failures, because a reader can only check what is cited.
 
+## Incident review: nightly refresh failures (11-12 October 2026)
+
+**Summary.** The nightly index refresh failed three times in two days, for three different reasons. Visitors saw no errors: the safety checks stopped each run before it changed anything, so the live index and the capability page kept their last good versions. I traced each failure to its root cause, fixed it, and added a test so it can't come back unnoticed (Jira ASK-53 and ASK-54).
+
+| Run | Symptom | Root cause | Fix |
+|---|---|---|---|
+| #31, 11 Oct | The fetch stopped after `inmytime-showcase`, with no error message | A new public repo had no commits yet, so GitHub's API had no branch to return for it | Empty repos are skipped with a note; a GitHub rate limit still stops the fetch, so a partial corpus can't slip through |
+| #32, 12 Oct | The sync stopped with `429 RateLimitReached` | New repos took the corpus from 155 to 269 sections. Embedding 128 sections in back-to-back batches of 64 went over the embedding deployment's per-minute limit | The sync waits the time Azure asks for (up to 7 times per request) and sends batches of 16 |
+| Manual run after the fix | Everything built, then publishing `capability.json` was rejected (`fetch first`) | A pull request was merged while the run waited out the rate limit, so the publish job's copy of `main` was out of date | The publish job starts from the latest `main`; if `main` moves again, it rebases its one data commit and retries. It never force-pushes |
+
+**How the root causes were found.** GitHub emailed each failed run, and the step logs named the failing step and the error. Run #31 had no error message, so the clue was where the log stopped: repos are fetched in alphabetical order, which pointed to the next repo, created that day and still empty.
+
+**How the fixes were checked.** Each failure has a unit test that reproduces it (a fake GitHub with an empty repo, a fake embedding client that answers 429). The merge race was reproduced with two clones of a repository before the fix was trusted. A manual refresh then ran green end to end and published the rebuilt capability page on its own.
+
+**Lessons.** A job that works for a small corpus can fail when it grows, so test the batch sizes and limits it will meet, not just the ones it meets today. Safety checks that stop without changing anything turned three failures into three harmless ones. A step that publishes should work from the latest state, not the state from when the job started.
+
 ## Capability ladder and evidence cards (ASK-42)
 
 [/capability](https://ask-barry.onrender.com/capability) shows how far each skill goes in my public projects, in four tiers: **Used · Built · In production · Tested / evaluated**. Every filled tier links to the section that proves it, with a quote. Professional skills are shown as **evidence cards**: short documented examples, not ratings. Skills and cards without evidence are shown as gaps on purpose.
