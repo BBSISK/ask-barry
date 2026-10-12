@@ -67,10 +67,62 @@ class FakeOpenAI:
 def test_azure_embedder_batches_and_keeps_order():
     fake = FakeOpenAI()
     emb = AzureOpenAIEmbedder(deployment="text-embedding-3-small", client=fake)
-    texts = [f"t{'x' * i}" for i in range(130)]           # 130 texts -> 3 batches of <=64
+    texts = [f"t{'x' * i}" for i in range(130)]           # 130 texts -> 9 batches of <=16
     vectors = emb.embed(texts)
     assert [v[0] for v in vectors] == [float(len(t)) for t in texts]
-    assert emb.calls == 3 and all(m == "text-embedding-3-small" for m, _ in fake.requests)
+    assert emb.calls == 9 and all(m == "text-embedding-3-small" for m, _ in fake.requests)
+    assert max(len(batch) for _, batch in fake.requests) == 16
+
+
+class RateLimited(Exception):
+    """Shaped like openai.RateLimitError: a status code and a response with headers."""
+
+    def __init__(self, status=429, retry_after="60"):
+        super().__init__("rate limit")
+        self.status_code = status
+        self.response = SimpleNamespace(headers={"retry-after": retry_after} if retry_after else {})
+
+
+class FlakyOpenAI(FakeOpenAI):
+    """Fails the first `fails` requests with the given error, then answers."""
+
+    def __init__(self, fails, error):
+        super().__init__()
+        self.fails, self.error = fails, error
+
+    def _create(self, model, input):
+        if self.fails:
+            self.fails -= 1
+            raise self.error
+        return super()._create(model, input)
+
+
+def test_embedder_waits_out_a_rate_limit_instead_of_failing():
+    """ASK-53: the nightly refresh failed when 128 new sections hit the per-minute limit."""
+    waits, lines = [], []
+    emb = AzureOpenAIEmbedder(deployment="d", client=FlakyOpenAI(2, RateLimited(retry_after="17")),
+                              sleep=waits.append, log=lines.append)
+    assert emb.embed(["a", "b"]) == [[1.0], [1.0]]
+    assert waits == [17, 17] and "waiting 17s" in lines[0]
+
+
+def test_embedder_uses_60s_without_a_header_and_caps_long_waits():
+    from app.embeddings import retry_after
+    assert retry_after(RateLimited(retry_after=None)) == 60
+    assert retry_after(RateLimited(retry_after="900")) == 120
+
+
+def test_embedder_gives_up_after_its_tries_and_never_retries_other_errors():
+    from app.embeddings import RATE_LIMIT_TRIES
+    emb = AzureOpenAIEmbedder(deployment="d", client=FlakyOpenAI(99, RateLimited()), sleep=lambda s: None,
+                              log=lambda *_: None)
+    with pytest.raises(RateLimited):
+        emb.embed(["a"])
+    assert emb.calls == RATE_LIMIT_TRIES
+    bad = AzureOpenAIEmbedder(deployment="d", client=FlakyOpenAI(1, RateLimited(status=400)), sleep=lambda s: None)
+    with pytest.raises(RateLimited):
+        bad.embed(["a"])
+    assert bad.calls == 1
 
 
 def test_fake_embedder_is_deterministic_and_normalised():

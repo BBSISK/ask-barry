@@ -8,9 +8,12 @@ import hashlib
 import math
 import os
 import re
+import time
 
 EMBED_DIMS = 1536
-BATCH_SIZE = 64          # well under Azure's 2,048-inputs-per-request limit
+BATCH_SIZE = 16          # small requests: one batch of long sections must fit in a minute's token allowance
+RATE_LIMIT_TRIES = 8     # ASK-53: on "429 rate limit", wait and retry rather than fail the nightly refresh
+RATE_LIMIT_WAIT = 60     # seconds, when Azure doesn't say how long (it usually says 60)
 
 
 def openai_base_url(endpoint):
@@ -24,7 +27,7 @@ def openai_base_url(endpoint):
 class AzureOpenAIEmbedder:
     """Calls an Azure OpenAI embeddings deployment via the OpenAI v1-compatible endpoint."""
 
-    def __init__(self, endpoint=None, api_key=None, deployment=None, client=None):
+    def __init__(self, endpoint=None, api_key=None, deployment=None, client=None, sleep=time.sleep, log=print):
         self.deployment = deployment or os.environ["AZURE_OPENAI_EMBED_DEPLOYMENT"]
         if client is None:
             from openai import OpenAI
@@ -36,17 +39,43 @@ class AzureOpenAIEmbedder:
             )
         self.client = client
         self.calls = 0            # API requests made (for cost reporting)
+        self.sleep, self.log = sleep, log
 
     def embed(self, texts):
         """Embed a list of strings, batching requests; returns vectors in the same order."""
         vectors = []
         for start in range(0, len(texts), BATCH_SIZE):
             batch = texts[start:start + BATCH_SIZE]
-            resp = self.client.embeddings.create(model=self.deployment, input=batch)
-            self.calls += 1
+            resp = self._create(batch)
             ordered = sorted(resp.data, key=lambda d: d.index)
             vectors.extend(d.embedding for d in ordered)
         return vectors
+
+    def _create(self, batch):
+        """One request, waiting out Azure's per-minute rate limit when it's hit (ASK-53).
+
+        A big refresh (for example after new repos are published) can need more tokens than the deployment's
+        per-minute allowance. Azure answers 429 with how long to wait; waiting is cheaper than failing."""
+        for attempt in range(1, RATE_LIMIT_TRIES + 1):
+            try:
+                self.calls += 1
+                return self.client.embeddings.create(model=self.deployment, input=batch)
+            except Exception as err:
+                if getattr(err, "status_code", None) != 429 or attempt == RATE_LIMIT_TRIES:
+                    raise
+                wait = retry_after(err)
+                self.log(f"  embedding rate limit reached; waiting {wait}s (retry {attempt} of {RATE_LIMIT_TRIES - 1})")
+                self.sleep(wait)
+
+
+def retry_after(err, default=RATE_LIMIT_WAIT):
+    """Seconds to wait, from the 429 response's Retry-After header when present (capped at 2 minutes)."""
+    headers = getattr(getattr(err, "response", None), "headers", None) or {}
+    try:
+        seconds = int(float(headers.get("retry-after") or headers.get("Retry-After") or default))
+    except (TypeError, ValueError):
+        seconds = default
+    return max(1, min(seconds, 120))
 
 
 class FakeEmbedder:
