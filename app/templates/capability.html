@@ -7,11 +7,11 @@
   <meta name="description" content="How far each skill goes, tier by tier, with a link to the evidence for every step. Gaps are shown on purpose.">
   <style>
     :root { --page:#fbfbfa; --surface:#fff; --line:#e3e3e0; --track:#ebe9e4; --text:#1d1d1f; --text-2:#4f5257; --muted:#6b6f75;
-            --l1:#b7d3f2; --l2:#7fb0e8; --l3:#3f86d9; --l4:#1c5aa8; --accent:#2f5bd3; --critical:#c62f2f;
+            --l1:#b7d3f2; --l2:#7fb0e8; --l3:#3f86d9; --l4:#1c5aa8; --l5:#0b2c52; --l6:#061a33; --accent:#2f5bd3; --critical:#c62f2f;
             --chip:#eef3fa; --chip-ink:#1c4f8f; --sel:rgba(47,91,211,.07); --ink-light:#0b2c52; --ink-dark:#fff; }
     @media (prefers-color-scheme: dark) {
       :root { --page:#141416; --surface:#1d1e21; --line:#2e3035; --track:#2b2c30; --text:#ececec; --text-2:#c3c6cc; --muted:#a0a4ab;
-              --l1:#2a4566; --l2:#2f6aae; --l3:#4b93e6; --l4:#9cc6f5; --accent:#8fa9ff; --critical:#ef6a6a;
+              --l1:#2a4566; --l2:#2f6aae; --l3:#4b93e6; --l4:#9cc6f5; --l5:#d6e8ff; --l6:#f0f6ff; --accent:#8fa9ff; --critical:#ef6a6a;
               --chip:#22324a; --chip-ink:#bcd6f5; --sel:rgba(143,169,255,.1); --ink-light:#e8f1fc; --ink-dark:#0b2c52; }
     }
     * { box-sizing: border-box; }
@@ -38,12 +38,15 @@
     .ladder td { padding:.45rem .4rem; border-top:1px solid var(--line); vertical-align:middle; }
     .skill { font-weight:600; }
     .req { font-size:.72rem; font-weight:600; color:var(--accent); border:1px solid currentColor; border-radius:999px; padding:0 .4rem; margin-left:.35rem; white-space:nowrap; }
-    .steps { display:grid; grid-template-columns:repeat(4, 1fr); gap:3px; min-width:12rem; }
+    .steps { display:grid; grid-template-columns:repeat(var(--n, 4), 1fr); gap:3px; min-width:12rem; }
     .step { height:1.4rem; border-radius:4px; background:var(--track); border:0; padding:0; font:inherit; font-size:.72rem; font-weight:700; }
     .step.on { cursor:pointer; color:var(--ink-light); }
     .step.on.t1 { background:var(--l1); } .step.on.t2 { background:var(--l2); }
     .step.on.t3 { background:var(--l3); color:#fff; } .step.on.t4 { background:var(--l4); color:#fff; }
-    @media (prefers-color-scheme: dark) { .step.on.t1, .step.on.t2 { color:#fff; } .step.on.t3, .step.on.t4 { color:var(--ink-dark); } }
+    .step.on.t5 { background:var(--l5); color:#fff; } .step.on.t6 { background:var(--l6); color:#fff; }
+    .step.computed:not(.on) { background:repeating-linear-gradient(135deg, var(--track) 0 6px, transparent 6px 10px); border:1px dashed var(--line); }
+    .depth { color:var(--text-2); font-size:.85rem; margin:.4rem 0 0; }
+    @media (prefers-color-scheme: dark) { .step.on.t1, .step.on.t2 { color:#fff; } .step.on.t3, .step.on.t4, .step.on.t5, .step.on.t6 { color:var(--ink-dark); } }
     .step.on:hover, .step.on:focus-visible { outline:2px solid var(--text); outline-offset:1px; }
     .since { color:var(--text-2); font-size:.85rem; white-space:nowrap; }
     .gap { color:var(--critical); font-size:.85rem; font-weight:600; white-space:nowrap; }
@@ -99,7 +102,7 @@
   <p class="lede">The capability profile hasn't been generated yet. It's built every night from the search index, so check back tomorrow.</p>
 {% else %}
   {% set who = cap.person.short_name %}
-  <p class="lede">How far each skill goes in {{ who }}'s public projects, from {{ cap.tiers[0].label|lower }} to {{ cap.tiers[3].label|lower }}. Every filled step links to the evidence. It's rebuilt every night from the search index, and gaps are shown on purpose.</p>
+  <p class="lede">How far each skill goes in {{ who }}'s public projects, from {{ cap.tiers[0].label|lower }} to {{ (cap.tiers|last).label|lower }}. Every filled step links to the evidence. It's rebuilt every night from the search index, and gaps are shown on purpose.</p>
 
   <section class="card" aria-labelledby="ladder-h">
     <h2 id="ladder-h">Capability ladder</h2>
@@ -131,13 +134,13 @@
         {% for s in rows %}
           <tr data-skill="{{ s.id }}">
             <th scope="row" class="skill">{{ s.name }}{% if s.required %}<span class="req">In the ad</span>{% endif %}</th>
-            <td><div class="steps">
+            <td><div class="steps" style="--n:{{ cap.tiers|length }}">
               {% for t in cap.tiers %}
                 {% if t.level <= s.tier %}
                 <button type="button" class="step on t{{ t.level }}" data-skill="{{ s.id }}" data-level="{{ t.level }}"
                         aria-label="{{ s.name }}: {{ t.label }}, evidenced. Show the evidence">{{ t.level }}</button>
                 {% else %}
-                <span class="step" role="img" aria-label="{{ s.name }}: {{ t.label }}, not evidenced"></span>
+                <span class="step{% if t.computed %} computed{% endif %}" role="img" aria-label="{{ s.name }}: {{ t.label }}, {% if t.computed %}not yet reached (worked out from the evidence, never self-rated){% else %}not evidenced{% endif %}"></span>
                 {% endif %}
               {% endfor %}
             </div></td>
@@ -201,6 +204,9 @@
     <h2>How this is worked out</h2>
     <p>Every night, each skill's searches run against the same index as the question box. For each section found, an AI judge answers one narrow question: which is the highest tier this section shows? It must quote the words that prove it, and code checks that the quote is really in the section, otherwise the section counts for nothing. A skill's tier is the highest tier any checked section shows. There are no scores or averages.</p>
     <p>"First evidence" is when the earliest supporting file was first committed. Cards are drafted the same way, and an example appears only after {{ who }} has approved it. Everything comes from public project documentation, so "Not evidenced" means the docs don't show it, not that the skill is missing.</p>
+    {% set top = cap.tiers|last %}
+    {% if top.computed %}<p>The top step, “{{ top.label }}”, is never awarded by the AI judge. Code works it out from the checked evidence: the skill must reach “{{ cap.tiers[-2].label }}” in more than one real project and stay evidenced over time, or be confirmed by someone else. Select a filled step to see how close each skill is.</p>{% endif %}
+    {% if has_kinds %}<p>Practice exercises and coursework show that a skill is written, not that it has been delivered, so their evidence stops at a lower step than real projects.</p>{% endif %}
     <p>Plans come from the same profile pack and are published in the repo, so every change to a plan is dated in its history. The nightly build marks a plan closed only when the checked evidence reaches its target.</p>
   </section>
   <script>
@@ -227,8 +233,11 @@
     document.querySelectorAll(".step.on").forEach((b) => b.addEventListener("click", () => {
       const skill = cap.skills.find((s) => s.id === b.dataset.skill), level = Number(b.dataset.level);
       document.querySelectorAll("tr[data-skill]").forEach((r) => r.classList.toggle("sel", r.dataset.skill === skill.id));
-      const items = skill.evidence.filter((e) => e.tier >= level);
-      const projects = (skill.projects_by_tier || {})[String(level)] || [];
+      const computed = cap.tiers.find((t) => t.computed);
+      const topJudged = Math.max(...cap.tiers.filter((t) => !t.computed).map((t) => t.level));
+      const isComputed = computed && level === computed.level;
+      const items = skill.evidence.filter((e) => e.tier >= (isComputed ? topJudged : level));
+      const projects = (skill.projects_by_tier || {})[String(isComputed ? topJudged : level)] || [];
       const box = document.createDocumentFragment();
       box.append(el("h3", `${skill.name}: ${label(level)}`));
       const chips = el("p"); projects.forEach((p) => chips.append(el("span", p, { class: "chip" }))); box.append(chips);
@@ -241,6 +250,14 @@
         ul.append(li);
       });
       box.append(ul);
+      if (computed && skill.depth && level >= topJudged) {
+        // ASK-57: how close the skill is to the computed top step, from the evidence (never self-rated).
+        const rule = computed.label, d = skill.depth;
+        const months = d.months === null ? "no dates yet" : `${d.months} month${d.months === 1 ? "" : "s"} evidenced`;
+        box.append(el("p", `${rule}: ${d.reached ? "reached" : "not yet"} · ${d.projects_at_top.length} project` +
+          `${d.projects_at_top.length === 1 ? "" : "s"} at ${label(topJudged)} (${d.projects_at_top.join(", ") || "none"}) · ` +
+          `${months} · ${d.third_party ? "confirmed by a third party" : "no third-party confirmation yet"}`, { class: "depth" }));
+      }
       box.append(el("p", `Highest tier reached: ${label(skill.tier)}${skill.first_evidence ? " · first evidence " + skill.first_evidence : ""} · self-published docs`, { class: "meta" }));
       detail.replaceChildren(box);
     }));

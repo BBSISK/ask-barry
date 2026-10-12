@@ -48,7 +48,7 @@ class AskBarryResult(BaseModel):
 
 
 class EvidenceLink(BaseModel):
-    tier: int = Field(description="Highest tier this source shows (1-4)")
+    tier: int = Field(description="Highest tier this source shows (1 up to the top judged tier)")
     repo: str
     path: str
     heading: str = ""
@@ -59,7 +59,9 @@ class EvidenceLink(BaseModel):
 class SkillLadder(BaseModel):
     id: str
     name: str
-    tier: int = Field(description="0 = not evidenced in the public docs; 1-4 = highest tier evidenced")
+    tier: int = Field(description="0 = not evidenced in the public docs; otherwise the highest tier evidenced. "
+                                  "The top tier, when the profile has a computed one, is worked out from the evidence "
+                                  "(several real projects over time, or third-party confirmation), never self-rated")
     tier_label: str
     first_evidence: Optional[str] = Field(None, description="Year-month the earliest supporting file was committed")
     projects: list[str] = Field(default_factory=list, description="Projects that reached the skill's tier")

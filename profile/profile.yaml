@@ -16,12 +16,35 @@ self_description_repos: [BBSISK]
 # (the judge is told the same, but a heading like "Architecture (planned)" still swayed it some nights).
 planned_headings: [planned, roadmap, future, ideas for later]
 
-# Friendly project names for repo names, shown as chips on the ladder.
+# Projects: a friendly name and a kind for each repo (ASK-57). The kind caps how far that repo's evidence can go,
+# because a LeetCode solution or a lab isn't a deployed, tested system:
+#   application  a real project of mine, deployed or built to be: evidence can reach Tested / evaluated, and counts
+#                toward "Proven over time"
+#   practice     exercises (LeetCode, React challenges): shows I write it, so it stops at Built
+#   coursework   HDip labs and assignments: stops at Built
+# A repo not listed here is treated as practice, so a new repo can never over-claim by accident.
+project_kinds:
+  application:
+    max_tier: 4
+    counts_for_depth: true
+    description: A real project, deployed or built to be.
+  practice:
+    max_tier: 2
+    description: Exercises and challenges.
+  coursework:
+    max_tier: 2
+    description: HDip labs and assignments.
+default_kind: practice
+
 projects:
-  ask-barry: Ask Barry
-  wall_inspector: Wall Inspector
-  inmytime-showcase: In My Time
-  my30words_showcase: Brief
-  agentmath_showcase: AgentMath
-  housing-pipeline-ireland: Housing Pipeline Ireland
+  ask-barry: {name: Ask Barry, kind: application}
+  wall_inspector: {name: Wall Inspector, kind: application}
+  inmytime-showcase: {name: In My Time, kind: application}
+  my30words_showcase: {name: Brief, kind: application}
+  agentmath_showcase: {name: AgentMath, kind: application}
+  housing-pipeline-ireland: {name: Housing Pipeline Ireland, kind: application}
+  SECOM_Pipeline: {name: SECOM Pipeline, kind: application}
+  CS627_Advanced_OOP_Java: {name: CS627 Java labs, kind: coursework}
+  leetcode-java: {name: LeetCode in Java, kind: practice}
+  react-challenges: {name: React challenges, kind: practice}
   BBSISK: Profile

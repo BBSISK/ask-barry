@@ -46,8 +46,8 @@
     },
     "tiers": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
+      "minItems": 3,
+      "maxItems": 6,
       "items": {
         "type": "object",
         "required": [
@@ -66,6 +66,9 @@
           "label": {
             "type": "string",
             "minLength": 1
+          },
+          "computed": {
+            "type": "boolean"
           }
         }
       }
@@ -101,7 +104,7 @@
           "tier": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 4
+            "maximum": 6
           },
           "first_evidence": {
             "type": [
@@ -131,7 +134,7 @@
                 "tier": {
                   "type": "integer",
                   "minimum": 1,
-                  "maximum": 4
+                  "maximum": 6
                 },
                 "repo": {
                   "type": "string",
@@ -171,7 +174,39 @@
                     "string",
                     "null"
                   ]
+                },
+                "kind": {
+                  "type": "string"
                 }
+              }
+            }
+          },
+          "depth": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "projects_at_top",
+              "months",
+              "third_party"
+            ],
+            "properties": {
+              "projects_at_top": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "months": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "third_party": {
+                "type": "boolean"
+              },
+              "reached": {
+                "type": "boolean"
               }
             }
           }
@@ -305,7 +340,7 @@
           "target_tier": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 4
+            "maximum": 6
           },
           "target_label": {
             "type": "string"
