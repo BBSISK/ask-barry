@@ -156,7 +156,7 @@ def _ask(skill, chunk, judge, requotes, rejected):
     pull a tier down; if every try misquotes, the vote is 0. Rejected quotes are kept for the log."""
     for _ in range(max(0, requotes) + 1):
         verdict = judge.judge(skill, chunk)
-        if not verdict["tier"] or quote_in_sources(verdict["quote"], section_text(chunk)):
+        if not verdict["tier"] or quote_in_sources(verdict["quote"], section_text(chunk), elided=True):
             return verdict
         rejected.append(verdict)
     return {"tier": 0, "quote": "", "discarded": rejected[-1]["tier"]}

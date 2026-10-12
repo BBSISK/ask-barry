@@ -818,3 +818,38 @@ def test_seed_evidence_merges_without_duplicates():
     by_id = {s["id"]: [e["heading"] for e in s["evidence"]] for s in merged["skills"]}
     assert by_id == {"python-flask": ["Run locally", "Deployment"], "databases-sql": ["Migrations"]}
     assert [e["heading"] for e in a["skills"][0]["evidence"]] == ["Run locally"]          # the input is not changed
+
+
+# --- ASK-60: the quote check reads the judge's quotes the way the judge writes them -------------------------------
+
+README_SECTION = ("Ask Barry is a Flask app running in production on Render at "
+                  "[ask-barry.onrender.com](https://ask-barry.onrender.com), served by gunicorn (`gunicorn wsgi:app`). "
+                  "`render.yaml` defines the web service (starter plan).\n\n"
+                  "CI runs the full pytest suite on every push.\n\n```bash\nmvn test\n```")
+
+
+@pytest.mark.parametrize("quote", [
+    "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com, served by gunicorn.",
+    "served by gunicorn (`gunicorn wsgi:app`). CI runs the full pytest suite on every push.",      # a sentence left out
+    "mvn test",                                                                                     # a short command
+])
+def test_quotes_with_links_dropped_sentences_or_a_short_command_are_found(quote):
+    from app.quotes import quote_in_sources
+    assert quote_in_sources(quote, README_SECTION, elided=True)
+
+
+@pytest.mark.parametrize("quote", [
+    "Ask Barry is a Flask app running in production on Kubernetes with 500 tests",                 # invented ending
+    "CI runs the full pytest suite on every push and deploys to AWS Lambda nightly",
+    "Flask",                                                                                         # one word proves nothing
+    "Ask Barry runs the full pytest suite",                                                          # 2-word run stitched on
+])
+def test_invented_or_stitched_quotes_still_fail(quote):
+    from app.quotes import quote_in_sources
+    assert not quote_in_sources(quote, README_SECTION, elided=True)
+
+
+def test_answer_evaluation_keeps_the_strict_rule():
+    """Elided quotes are for the capability judge only; Stage 6 answer checks are unchanged."""
+    from app.quotes import quote_in_sources
+    assert not quote_in_sources("mvn test", README_SECTION)
