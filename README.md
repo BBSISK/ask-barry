@@ -427,6 +427,7 @@ python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedro
 A GitHub Action (`.github/workflows/refresh-index.yml`) runs every night and on demand. It fetches the public docs, chunks them and syncs Azure AI Search, so answers keep up with README changes without a manual step.
 - **Cheap when nothing changed:** only new or changed sections are re-embedded.
 - **Safe when unattended:** the sync refuses to run on an empty corpus, or if it would delete more than 30% of the index (for example after a rate-limited fetch). A deliberate large removal needs `--allow-large-delete` run by hand.
+- **Patient with big refreshes:** when new repos add many sections at once, the embedding deployment's per-minute limit can be reached. Azure then answers "429, retry after 60 seconds", and the sync waits that long and carries on (up to 7 waits per request) instead of failing. Requests go in batches of 16 so each fits within a minute's allowance. This was added after the refresh of 12 Oct 2026 stopped on 128 new sections (ASK-53).
 - **No stored secret:** the job signs in with GitHub OIDC as `ask-barry-github`. Entra trusts that token only from this repo's `main` branch, so GitHub holds no Azure key or password at all.
 
 The evaluation also checks citation completeness. The judge sees the retrieved sections the answer did *not* cite, so a claim supported only by one of those is reported as **"true but uncited"**, separately from an invented claim. Both count as failures, because a reader can only check what is cited.
