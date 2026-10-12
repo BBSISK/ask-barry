@@ -116,3 +116,36 @@ def test_folder_exclusion_keeps_eval_reports_out_of_the_corpus():
     assert not is_excluded("ask-barry", "docs/azure-setup.md", DEFAULT_EXCLUDED_PATHS)
     assert not is_excluded("ask-barry", "README.md", DEFAULT_EXCLUDED_PATHS)
     assert is_excluded("Wall_Inspector", "INTERVIEW_ARCHITECTURE_GUIDE.md", DEFAULT_EXCLUDED_PATHS)
+
+
+class GitHubWithEmptyRepos(FakeGitHub):
+    """ASK-53: refresh #31 stopped on a new public repo with no commits yet."""
+
+    def get_json(self, url):
+        if "/users/BBSISK/repos" in url:
+            return [{"name": "brand-new", "private": False, "fork": False, "default_branch": "main", "size": 0},
+                    {"name": "no-branch", "private": False, "fork": False, "default_branch": "main", "size": 5},
+                    {"name": "demo", "private": False, "fork": False, "default_branch": "main"}]
+        if url.endswith("/repos/BBSISK/no-branch/branches/main"):
+            import urllib.error
+            raise urllib.error.HTTPError(url, 409, "Git Repository is empty.", {}, None)
+        if "brand-new" in url:
+            raise AssertionError("an empty repo should not be queried at all")
+        return super().get_json(url)
+
+
+def test_empty_repositories_are_skipped_not_fatal(tmp_path):
+    manifest = fetch_all(GitHubWithEmptyRepos(), "BBSISK", tmp_path)
+    assert [d["repo"] for d in manifest["documents"]] == ["demo"]
+
+
+def test_rate_limits_still_stop_the_fetch(tmp_path):
+    import urllib.error
+
+    class Limited(FakeGitHub):
+        def get_json(self, url):
+            if url.endswith("/branches/main"):
+                raise urllib.error.HTTPError(url, 403, "rate limit", {}, None)
+            return super().get_json(url)
+    with pytest.raises(urllib.error.HTTPError):
+        fetch_all(Limited(), "BBSISK", tmp_path)
