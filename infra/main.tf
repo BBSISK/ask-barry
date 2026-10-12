@@ -20,6 +20,9 @@ resource "azurerm_resource_group" "ask_barry" {
 }
 
 resource "azurerm_cognitive_account" "ai_services" {
+  # ASK-59 accepted risks (Checkov). Each is a decision, not an oversight:
+  #checkov:skip=CKV_AZURE_134:Render runs outside Azure and must reach this over the internet; keys are off (Entra ID only, least-privilege roles). Private endpoints need paid Azure networking.
+  #checkov:skip=CKV2_AZURE_22:Microsoft-managed encryption keys; customer-managed keys need Key Vault (ASK-9). Revisit then.
   name                          = var.ai_services_name
   resource_group_name           = azurerm_resource_group.ask_barry.name
   location                      = azurerm_resource_group.ask_barry.location
@@ -90,6 +93,11 @@ resource "azurerm_cognitive_deployment" "embedding" {
 }
 
 resource "azurerm_search_service" "search" {
+  # ASK-59 accepted risks (Checkov). Each is a decision, not an oversight:
+  #checkov:skip=CKV_AZURE_124:Render runs outside Azure and must reach this over the internet; keys are off (Entra ID only, read-only role for the app).
+  #checkov:skip=CKV_AZURE_207:No indexers or data sources: the app pushes documents, so the service never calls other Azure resources.
+  #checkov:skip=CKV_AZURE_208:Free tier has one replica; an SLA needs paid replicas. Accepted for a portfolio app.
+  #checkov:skip=CKV_AZURE_209:Free tier has one replica; an SLA needs paid replicas. Accepted for a portfolio app.
   name                          = var.search_service_name
   resource_group_name           = azurerm_resource_group.ask_barry.name
   location                      = var.search_location

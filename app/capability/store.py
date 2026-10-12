@@ -23,7 +23,8 @@ TTL_SECONDS = 600
 def _fetch(source, timeout=10):
     if source.startswith("https://"):
         req = urllib.request.Request(source, headers={"User-Agent": "ask-barry-capability"})
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        # bandit B310 (urlopen scheme): https only (checked above)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310
             return json.loads(resp.read().decode("utf-8"))
     path = Path(source)
     if not path.exists():

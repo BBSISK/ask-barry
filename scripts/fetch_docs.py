@@ -118,8 +118,11 @@ class GitHubClient:
         headers = {"Accept": accept, "User-Agent": "ask-barry-fetch-docs"}
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
+        if not url.startswith(("https://api.github.com/", "https://raw.githubusercontent.com/")):
+            raise ValueError(f"refusing to fetch a non-GitHub URL: {url[:80]}")
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+        # bandit B310 (urlopen scheme): GitHub https only (checked)
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:  # nosec B310
             return resp.read()
 
     def get_json(self, url):
