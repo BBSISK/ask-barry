@@ -13,6 +13,8 @@ cards:
     approved:
       - "problem-solving:1162028e47"
       - "problem-solving:8d011cfc3a"
+      - "problem-solving:9a4cbf0000"
+      - "problem-solving:84dbcd1ba7"
     gap_note: No approved examples yet.
 
   - id: security-mindset
