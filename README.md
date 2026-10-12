@@ -212,7 +212,7 @@ Since Sprint 1 (October 2026), every change follows the same controlled path fro
 3. **Checks before merge.** GitHub Actions CI runs on every pull request: the full pytest suite, plus `terraform fmt -check` and `terraform validate` for the infrastructure code.
 4. **Checks before deploy.** Render deploys a commit on `main` only after CI passes (`autoDeployTrigger: checksPass`), so a failing change never reaches the live site.
 5. **Infrastructure changes are planned first.** Azure changes go through Terraform: `terraform plan` is read before every `apply`. The original Azure resources are marked `prevent_destroy`, and the state file never enters the repo.
-6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code.
+6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code. It commits on top of the latest `main`, and if a pull request is merged while the refresh runs, it rebases its one data commit and tries again; it never force-pushes.
 
 **The rules are tested, not just written down.** Tests fail the build if a workflow gains a stored key, if the publish job loses its separation, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`, or if CI stops checking the Terraform.
 
