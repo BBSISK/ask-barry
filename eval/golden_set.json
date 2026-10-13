@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-10-08",
+  "updated": "2026-10-13",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -240,11 +240,13 @@
       "question": "Has Barry used Terraform for infrastructure as code?",
       "expected": [
         "wall_inspector/README.md",
-        "BBSISK/README.md"
+        "BBSISK/README.md",
+        "ask-barry/README.md"
       ],
       "evidence": [
         "Terraform"
-      ]
+      ],
+      "history": "13 Oct 2026 (ASK-61): ask-barry/README.md added to expected: its Infrastructure as code section documents real Terraform work and now outranks Wall Inspector, which is a correct answer, not a miss."
     },
     {
       "id": "wall-09",
@@ -323,20 +325,24 @@
         "BBSISK/README.md"
       ],
       "evidence": [
+        "only ciphertext",
         "stores nothing",
         "without their content ever being stored"
-      ]
+      ],
+      "history": "13 Oct 2026 (ASK-61): Showcase README rewritten around StoryCatcher (zero-knowledge encryption); evidence now matches 'The server stores only ciphertext'."
     },
     {
       "id": "inmytime-02",
       "type": "answerable",
-      "question": "How does In My Time get the grandparent's consent?",
+      "question": "How does StoryCatcher send a photo from a phone to a laptop?",
       "expected": [
         "inmytime-showcase/README.md"
       ],
       "evidence": [
-        "consent message"
-      ]
+        "one-time key",
+        "QR code"
+      ],
+      "history": "13 Oct 2026 (ASK-61): Replaced 'How does In My Time get the grandparent's consent?': the consent flow is no longer in the showcase README."
     },
     {
       "id": "inmytime-03",
@@ -346,19 +352,23 @@
         "inmytime-showcase/README.md"
       ],
       "evidence": [
-        "record interviews"
-      ]
+        "ask good",
+        "LifeLine"
+      ],
+      "history": "13 Oct 2026 (ASK-61): Evidence updated to the rewritten StoryCatcher section."
     },
     {
       "id": "inmytime-04",
       "type": "answerable",
-      "question": "Why were admin WhatsApp alerts failing silently, and how was it fixed?",
+      "question": "How does StoryCatcher encrypt family recordings?",
       "expected": [
         "inmytime-showcase/README.md"
       ],
       "evidence": [
-        "24-hour session rule"
-      ]
+        "encrypted in your browser",
+        "AES-GCM"
+      ],
+      "history": "13 Oct 2026 (ASK-61): Replaced the WhatsApp alerts question (24-hour session rule): that story is no longer in the showcase README."
     },
     {
       "id": "inmytime-05",
@@ -369,23 +379,27 @@
         "BBSISK/README.md"
       ],
       "evidence": [
-        "German translation",
+        "English, German, French and Spanish",
+        "Flask-Babel",
         "German localisation",
+        "German translation",
         "internationalisation"
-      ]
+      ],
+      "history": "13 Oct 2026 (ASK-61): Evidence adds the rewritten README's language list."
     },
     {
       "id": "inmytime-06",
       "type": "answerable",
       "question": "What browser testing has Barry done?",
       "expected": [
-        "inmytime-showcase/README.md",
         "BBSISK/README.md"
       ],
       "evidence": [
         "Playwright",
+        "browser test suites",
         "browser tests"
-      ]
+      ],
+      "history": "13 Oct 2026 (ASK-61): The showcase README no longer describes its tests; the profile README still does ('automated API and browser test suites', Playwright)."
     },
     {
       "id": "brief-01",
@@ -481,10 +495,23 @@
       "expected": []
     },
     {
-      "id": "trap-04",
-      "type": "trap",
+      "id": "react-01",
+      "type": "answerable",
       "question": "Has Barry built front ends with React?",
-      "expected": []
+      "expected": [
+        "react-challenges/README.md"
+      ],
+      "evidence": [
+        "React + TypeScript challenges",
+        "Vitest + React Testing Library"
+      ],
+      "checks": {
+        "must_not_include": [
+          "production React",
+          "React in production"
+        ]
+      },
+      "history": "13 Oct 2026 (ASK-61): Was trap-04. The public react-challenges repo now shows React + TypeScript practice with tests (capability label Front-end: Built). A grounded answer says practice, not production."
     },
     {
       "id": "trap-05",
@@ -574,11 +601,18 @@
       "history": "Added 8 Oct 2026 alongside the trap-10 rewrite: solo two-week sprints in Jira on Ask Barry since October 2026, documented in BBSISK/manufacturing-to-software.md. The answer must mention Jira and must not inflate this into team or long-standing Agile experience."
     },
     {
-      "id": "trap-10",
+      "id": "trap-11",
       "type": "trap",
-      "question": "Has Barry worked in an Agile or Scrum team?",
+      "question": "Has Barry built a GraphQL API?",
       "expected": [],
-      "history": "Added 3 Oct 2026 to replace trap-02. Barry confirmed no Agile/Scrum experience yet. Near-misses in the docs (Lean and Kaizen at Intel, 'iterative delivery', a 'sprint' maths lesson) make it a real test. 8 Oct 2026: kept as a trap after BBSISK/manufacturing-to-software.md documented solo two-week Jira sprints on Ask Barry. That is not team experience, and the doc says so ('not yet in a Scrum team'), so a grounded 'no, solo sprints only' passes and any claim of team experience fails. The solo practice is tested by agile-01. Retire this trap when team experience is documented."
+      "history": "13 Oct 2026 (ASK-61): Replaces trap-10 (Agile or Scrum team), retired by Barry now that Ask Barry runs in Jira Scrum sprints; agile-01 still checks the solo-sprint answer. GraphQL appears in no public doc (it is already 'not documented' in the Tessellate job ad)."
+    },
+    {
+      "id": "trap-12",
+      "type": "trap",
+      "question": "Has Barry built front ends with Angular?",
+      "expected": [],
+      "history": "13 Oct 2026 (ASK-61): Replaces trap-04 (React), which became answerable. A near miss: React practice exists, Angular appears in no public doc."
     }
   ]
 }

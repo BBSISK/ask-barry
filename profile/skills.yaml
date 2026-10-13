@@ -60,7 +60,7 @@ skills:
   - id: databases-sql
     name: Databases & SQL
     description: Designing and using databases, including writing SQL.
-    queries: ["PostgreSQL database", "SQL queries and data model"]
+    queries: ["PostgreSQL database", "SQL queries and data model", "database schema, tables and migrations"]
     match: [sql, database, databases, postgresql, postgres, mysql, sqlite]
 
   - id: security-identity
