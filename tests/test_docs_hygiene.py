@@ -8,8 +8,10 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TRAP_TERMS = ("kubernetes", "swift", "kotlin", "react", "phd", "mongodb", "kafka", "yolov8", "scrum", "agile")
+TRAP_TERMS = ("kubernetes", "swift", "kotlin", "phd", "mongodb", "kafka", "yolov8", "agile", "graphql", "angular")
 # "aws" left the list on 3 Oct 2026: trap-02 became answerable (aws-01) once Stage 10 documented real AWS work.
+# 13 Oct 2026 (ASK-61): "scrum" left (Ask Barry runs in Jira Scrum sprints; trap-10 retired) and "react" left
+# (trap-04 became react-01: the react-challenges repo). "graphql" and "angular" joined with trap-11 and trap-12.
 
 
 def indexed_docs():

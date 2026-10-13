@@ -45,7 +45,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
-| Sprint 1 | Two-week sprint planned and tracked in Jira (project ASK): capability ladder and evidence cards, gap-closing plans, computed top tier and project kinds, stable nightly tiers, change control, security checks | Done: [ladder](#capability-ladder-and-evidence-cards-ask-42), [change control](#how-changes-are-made), [security](#security-checks-before-anything-ships-ask-59) |
+| Sprint 1 | Two-week Scrum sprint planned and tracked in Jira (project ASK): capability ladder and evidence cards, gap-closing plans, computed top tier and project kinds, stable nightly tiers, change control, security checks | Done: [ladder](#capability-ladder-and-evidence-cards-ask-42), [change control](#how-changes-are-made), [security](#security-checks-before-anything-ships-ask-59) |
 | Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to | Planned |
 
 ## Architecture
