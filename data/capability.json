@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-12T23:13:00Z",
+  "generated_at": "2026-10-13T15:15:40Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -65,10 +65,12 @@
           "Wall Inspector"
         ],
         "2": [
-          "Ask Barry"
+          "Ask Barry",
+          "In My Time"
         ],
         "3": [
-          "Ask Barry"
+          "Ask Barry",
+          "In My Time"
         ],
         "4": [
           "Ask Barry"
@@ -84,9 +86,22 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com, served by gunicorn. CI runs the full pytest suite on every push. It includes tests that call the Flask routes through Flask's test client.",
+          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com, served by gunicorn. CI runs the full pytest suite on every push. It includes tests that call the Flask routes",
           "kind": "application",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Technical highlights > Architecture and engineering",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#architecture-and-engineering",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API), each with its own schema module and no cross-module foreign keys, so a product can be reasoned about, or split out, on its own.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
         },
         {
           "tier": 3,
@@ -97,20 +112,33 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "flask --app wsgi run # open http://127.0.0.1:5000",
+          "quote": "python -m pytest -v # run the tests flask --app wsgi run # open http://127.0.0.1:5000",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 1,
-          "repo": "my30words_showcase",
+          "tier": 2,
+          "repo": "inmytime-showcase",
           "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
+          "heading": "🌸 In My Time > Technical highlights > The project by the numbers",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#the-project-by-the-numbers",
+          "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Backend | Python, Flask, scheduled jobs",
+          "quote": "around 340 commits, roughly 22,000 lines of Python, 57 page templates, 200+ routes across four schema modules, and dozens of database tables.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "agentmath_showcase",
+          "path": "README.md",
+          "heading": "🕵️ AgentMath > Tech stack",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#tech-stack",
+          "project": "AgentMath",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "| Backend | Python, Flask |",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -131,53 +159,27 @@
           "tier": 1,
           "repo": "my30words_showcase",
           "path": "README.md",
-          "heading": "✍️ Brief > Architecture",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#architecture",
+          "heading": "✍️ Brief > Tech stack",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
           "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "SCH[Weekly scheduler] --> F[Flask app] F -- prompt --> TW[Twilio<br/>WhatsApp Business API] F -- prompt --> EM[Email] W --> F F --- DB[(SQLite<br/>users, entries,<br/>groups, capsules)] O[Google / Microsoft<br/>OAuth] --> F",
+          "quote": "Backend | Python, Flask, scheduled jobs",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
         {
           "tier": 1,
-          "repo": "agentmath_showcase",
+          "repo": "inmytime-showcase",
           "path": "README.md",
-          "heading": "🕵️ AgentMath > Tech stack",
-          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#tech-stack",
-          "project": "AgentMath",
+          "heading": "🌸 In My Time > Tech stack",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#tech-stack",
+          "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask |",
+          "quote": "Backend | Python, Flask, scheduled jobs (weekly prompts, billing sweep, activity digests)",
           "kind": "application",
           "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🏗️ System & DevOps Architecture",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-system--devops-architecture",
-          "project": "Wall Inspector",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Flask + Gunicorn (/portal & /admin)",
-          "kind": "application",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
         }
       ],
       "depth": {
@@ -223,6 +225,19 @@
         {
           "tier": 4,
           "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Azure and AWS Bedrock compared (Stage 10)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#azure-and-aws-bedrock-compared-stage-10",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Stage 10 runs the same answer evaluation through **Amazon Bedrock** on AWS, so the comparison measures the model and the cloud, not the plumbing.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 7: Verify",
           "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
@@ -255,20 +270,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "After the deploy, `/ready` must say `ready`; then delete `AZURE_OPENAI_API_KEY` and `AZURE_SEARCH_API_KEY` from Render. 6. **The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all.** Terraform creates the `ask-barry-github` app registration with",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Azure and AWS Bedrock compared (Stage 10)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#azure-and-aws-bedrock-compared-stage-10",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS...",
+          "quote": "Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → **Variables**, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -307,7 +309,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| IAM + GitHub OIDC provider | Keyless sign-in for CI: a read-only plan role for pull requests, an apply role for `main` only | Bootstrap | Built |",
+          "quote": "IAM + GitHub OIDC provider | Keyless sign-in for CI: a read-only plan role for pull requests, an apply role for `main` only | Bootstrap | Built | S3 (state bucket) | Terraform state for both stacks: versioned, encrypted, private,",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -676,7 +678,7 @@
           "first_committed": "2026-10-12"
         },
         {
-          "tier": 4,
+          "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Testing and CI",
@@ -684,22 +686,9 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`producer-image`: builds the producer container and runs it on a small fake dataset, checking every record against the contract. On every merge to `main`, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
+          "quote": "**On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds anything critical.",
           "kind": "application",
           "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 3,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/replay-producer.md",
-          "heading": "Replay producer",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Container: `producer/Dockerfile`.",
-          "kind": "application",
-          "first_committed": "2026-10-12"
         },
         {
           "tier": 1,
@@ -726,6 +715,19 @@
           "quote": "subgraph App_Container[\" 93B Docker Container (Dockerfile)\"]",
           "kind": "application",
           "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/replay-producer.md",
+          "heading": "Replay producer",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Container: `producer/Dockerfile`.",
+          "kind": "application",
+          "first_committed": "2026-10-12"
         },
         {
           "tier": 1,
@@ -786,7 +788,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Retrieval-augmented generation is live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge",
+          "quote": "RAG live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -812,7 +814,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md",
+          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md - **Golden set:** `eval/golden_set.json` holds 41 answerable questions... The final assistant must decline the traps. - **No test leakage:** the evaluation reports under `docs/eval/` are",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -909,7 +911,6 @@
       "projects_by_tier": {
         "1": [
           "Ask Barry",
-          "SECOM Pipeline",
           "Wall Inspector"
         ],
         "2": [
@@ -966,6 +967,19 @@
           "first_committed": "2026-09-25"
         },
         {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Job-ad evidence agent (Stage 8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#job-ad-evidence-agent-stage-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The in-code defences against the blunt case are covered by offline tests with a scripted model.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
           "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
@@ -1000,7 +1014,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "* **Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
+          "quote": "**Application & AI Agents**: [`app.py`](app.py) | [`sentinel_agent.py`](sentinel_agent.py) | [`models.py`](models.py) * **Model Context Protocol (MCP) Server**: [`mcp_server.py`](mcp_server.py)",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1013,22 +1027,9 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "MCP[\"MCP Server (mcp_server.py)\"]",
+          "quote": "Sentinel [Intake Sentinel Agent], Director [Curriculum Director Agent], MCP [MCP Server (mcp_server.py)]",
           "kind": "application",
           "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Job-ad evidence agent (Stage 8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#job-ad-evidence-agent-stage-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
         }
       ],
       "depth": {
@@ -1143,7 +1144,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
+          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1169,7 +1170,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset): ... `lint-and-test` | `ruff check` and `ruff format --check` (style and",
+          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset): `lint-and-test` ... then `pytest` (unit tests)",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1212,16 +1213,62 @@
     {
       "id": "databases-sql",
       "name": "Databases & SQL",
-      "tier": 1,
+      "tier": 3,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
           "In My Time",
           "SECOM Pipeline",
           "Wall Inspector"
+        ],
+        "2": [
+          "In My Time",
+          "Wall Inspector"
+        ],
+        "3": [
+          "In My Time"
         ]
       },
       "evidence": [
+        {
+          "tier": 3,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Technical highlights > Architecture and engineering",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#architecture-and-engineering",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Dual database layer. SQLite in development and PostgreSQL in production through a small adapter that translates placeholders and wraps connections, with connection pooling, so the same SQL runs in both.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 2,
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-human-in-the-loop-provenance-model",
+          "project": "Wall Inspector",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "New columns (`grading_status`, `graded_by_user_*`, `graded_at`, `provenance`, `confidence_score`) are added by a non-destructive auto-migration on start-up, so existing production records in PostgreSQL are preserved.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Technical highlights > The project by the numbers",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#the-project-by-the-numbers",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "dozens of database tables.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
         {
           "tier": 1,
           "repo": "wall_inspector",
@@ -1239,12 +1286,25 @@
           "tier": 1,
           "repo": "inmytime-showcase",
           "path": "README.md",
-          "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#privacy-by-design-the-shallow-room",
+          "heading": "🌸 In My Time > Tech stack",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#tech-stack",
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The database schema has no column capable of holding an answer. If an answers table ever appears in a migration, that is treated as an alarm bell.",
+          "quote": "Storage | PostgreSQL on Neon (SQLite in development; progress and metadata only)",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#privacy-by-design-the-shallow-room",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The database schema has no column capable of holding an answer. If an `answers` table ever appears in a migration, that is treated as an alarm bell.",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1260,19 +1320,6 @@
           "quote": "| Runtime | Kinesis stream, Fargate producer, Lambda processor, RDS database, VPC (from Sprint 2) | **Destroyed.** These are the parts that bill by the hour.",
           "kind": "application",
           "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Tech stack",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#tech-stack",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Storage | Relational database (progress only)",
-          "kind": "application",
-          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
@@ -1376,6 +1423,19 @@
         },
         {
           "tier": 3,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs: ... Render ... a service principal still needs one secret, but it is scoped to two read-and-call roles, expires, and can be rotated",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Security",
@@ -1383,7 +1443,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "- **No long-lived AWS keys anywhere.** GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session.",
+          "quote": "GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session. The maintainer signs in with `aws login` (browser and MFA).",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1399,19 +1459,6 @@
           "quote": "rotated every exposed secret (Google, Microsoft and Twilio) so the leaked values were dead, rebuilt the Git history as a single clean commit, and locked the repository down with a strict `.gitignore`",
           "kind": "application",
           "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
-          "kind": "application",
-          "first_committed": "2026-09-27"
         },
         {
           "tier": 1,
@@ -1529,19 +1576,6 @@
         },
         {
           "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Current status: Sprint 1 complete (RAG live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#current-status-sprint-1-complete-rag-live-in-production-and-evaluated-job-ad-agent-live-capability-ladder-rebuilt-nightly-from-checked-evidence-every-change-controlled-from-jira-story-to-deploy-security-checks-before-merge",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "every change controlled from Jira story to deploy, security checks before merge",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
           "repo": "SECOM_Pipeline",
           "path": "docs/workflow.md",
           "heading": "Way of working > Typical loop",
@@ -1555,6 +1589,19 @@
         },
         {
           "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Current status: Sprint 1 complete (RAG live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/59e35144b0d93c6e634c59de8bb22473bb2653ea/README.md#current-status-sprint-1-complete-rag-live-in-production-and-evaluated-job-ad-agent-live-capability-ladder-rebuilt-nightly-from-checked-evidence-every-change-controlled-from-jira-story-to-deploy-security-checks-before-merge",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "every change controlled from Jira story to deploy, security checks before merge",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Run it yourself > What is in place",
@@ -1562,7 +1609,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "A branch ruleset (`protect-main`) applies to everyone, including the owner. Nobody can push straight to `main`, force-push over its history, or delete it. Every change arrives through a pull request. One branch and pull request per Jira story, merged with",
+          "quote": "A branch ruleset (`protect-main`) applies to everyone, including the owner. Nobody can push straight to `main`, force-push over its history, or delete it. Every change arrives through a pull request. CI checks required before merge. `lint-and-test`, `terraform` and `producer-image` are",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1699,7 +1746,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
+          "quote": "| Pattern | Solved | Total | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1752,7 +1799,7 @@
           "project": "React challenges",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "I write every component and hook myself. I use Claude as a coach: it picks the next challenge, writes the test file in advance, gives hints only when I ask for one, and reviews my code once the tests pass.",
+          "quote": "Tests come first. Each challenge comes with a Vitest + React Testing Library test file, and I work until it passes. GitHub Actions runs the type-checker and the full test suite on every push.",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1811,7 +1858,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the [record contract]",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects in PostgreSQL,",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1824,7 +1871,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The stream is a simulated replay of real fab data. SECOM is a fixed, historical dataset, so a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set",
+          "quote": "a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1857,6 +1904,19 @@
         {
           "tier": 1,
           "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Way of working > Sprint log",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#sprint-log",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Replay producer with seeded chaos mode, container image, CI smoke test",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
+          "repo": "SECOM_Pipeline",
           "path": "docs/record-contract.md",
           "heading": "Stream record contract > Example (illustrative values, sensors shortened)",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/record-contract.md#example-illustrative-values-sensors-shortened",
@@ -1871,25 +1931,12 @@
           "tier": 1,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Way of working > Sprint log",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#sprint-log",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Replay producer with seeded chaos mode, container image, CI smoke test",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Architecture",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the [record contract]",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
@@ -1915,19 +1962,6 @@
       "title": "Problem solving & debugging",
       "gap": false,
       "stories": [
-        {
-          "id": "problem-solving:1162028e47",
-          "title": "Fixed silent alert failures",
-          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/adecf68e3f617d663a789cc3c94d792c99c15fd6/README.md#problems-i-solved-along-the-way",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template"
-        },
         {
           "id": "problem-solving:8d011cfc3a",
           "title": "Fixed prompt scheduling bugs",
@@ -2142,7 +2176,9 @@
       "name": "Databases & SQL",
       "target_tier": 3,
       "target_label": "In production",
-      "status": "open"
+      "status": "closed",
+      "closed": "2026-10",
+      "on_time": true
     },
     {
       "id": "java-own-repo",
@@ -2206,9 +2242,9 @@
   ],
   "plan_record": {
     "total": 8,
-    "closed": 4,
-    "on_time": 4,
-    "open": 4,
+    "closed": 5,
+    "on_time": 5,
+    "open": 3,
     "overdue": 0
   }
 }
