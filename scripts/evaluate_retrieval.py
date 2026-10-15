@@ -78,6 +78,15 @@ def first_section_rank(results, expected, evidence):
     return None
 
 
+def first_elsewhere_rank(results, expected, evidence):
+    """ASK-65: rank of the first result that states the answer but comes from a file not listed in `expected`.
+    Not scored; it points at the golden-set fix when a doc moved or a new repo now answers the question."""
+    for r in results:
+        if source_key(r.chunk) not in expected and contains_evidence(r.chunk, evidence):
+            return r.rank
+    return None
+
+
 def check_evidence(questions, chunks):
     """Ids of answerable questions whose evidence no longer appears in the corpus (docs drifted)."""
     missing = []
@@ -101,6 +110,11 @@ def evaluate(retriever, questions, k_max=max(KS)):
             "rank": first_relevant_rank(results, set(q["expected"])) if q["type"] == "answerable" else None,
             "section_rank": (first_section_rank(results, set(q["expected"]), q.get("evidence", []))
                              if q["type"] == "answerable" else None),
+            "elsewhere": (first_elsewhere_rank(results, set(q["expected"]), q.get("evidence", []))
+                          if q["type"] == "answerable" else None),
+            "elsewhere_source": next((source_key(r.chunk) for r in results
+                                      if q["type"] == "answerable" and source_key(r.chunk) not in set(q["expected"])
+                                      and contains_evidence(r.chunk, q.get("evidence", []))), None),
             "top_score": results[0].score if results else 0.0,
             "top_source": source_key(results[0].chunk) if results else "-",
             "top_heading": results[0].chunk.get("heading", "") if results else "",
@@ -259,7 +273,10 @@ def main(argv=None):
                         default="bm25", help="'hybrid-variants' compares the self-crowding fixes")
     parser.add_argument("--save", action="store_true", help="write reports to docs/eval/")
     parser.add_argument("--min-section-recall", type=float, default=None,
-                        help="exit with an error if section-level recall@8 is below this (nightly guardrail)")
+                        help="exit with an error if section-level recall@8 is below this (nightly guardrail for "
+                             "systemic breakage)")
+    parser.add_argument("--warn-section-recall", type=float, default=None,
+                        help="warn, without failing, if section-level recall@8 is below this (docs drifted)")
     args = parser.parse_args(argv)
 
     if args.retriever != "bm25":
@@ -311,20 +328,46 @@ def main(argv=None):
         print(f"Embedding API calls for queries: {embedder.calls}")
     if args.save:
         print(f"Saved reports to {out_dir}/")
-    if args.min_section_recall is not None:
-        failures = below_threshold(results, args.min_section_recall)
-        if failures:
-            sys.exit("Retrieval quality check FAILED: " + "; ".join(failures))
-        print(f"Retrieval quality check passed (section recall@8 >= {args.min_section_recall:.2f}).")
+    if args.min_section_recall is not None or args.warn_section_recall is not None:
+        sys.exit(gate(results, args.min_section_recall, args.warn_section_recall, stale))
 
 
-def below_threshold(results, minimum):
-    """Retrievers whose section-level recall@8 is below `minimum`, with the questions they missed."""
+def drift_hints(rows):
+    """Missed questions whose answer was retrieved from a file the golden set doesn't list (ASK-65)."""
+    return [f"{r['id']} answered by {r['elsewhere_source']} (rank {r['elsewhere']})"
+            for r in rows if r["type"] == "answerable" and not r.get("section_rank") and r.get("elsewhere")]
+
+
+def gate(results, fail_below, warn_below, stale=(), out=print):
+    """ASK-65: the nightly guardrail. Below `fail_below` means systemic breakage (empty index, broken embeddings,
+    wrong retriever) and fails the run. Below `warn_below` usually means the docs drifted under the golden set
+    (a README rewritten, a new repo answering a question): it is reported as a warning with the likely fix, and
+    the run carries on. Questions whose evidence vanished from the corpus are left out of both. Returns the exit
+    message, or None."""
+    failures = below_threshold(results, fail_below, exclude=stale) if fail_below is not None else []
+    if failures:
+        return "Retrieval quality check FAILED: " + "; ".join(failures)
+    warnings = below_threshold(results, warn_below, exclude=stale) if warn_below is not None else []
+    hints = [h for rows, _ in results.values() for h in drift_hints(rows)]
+    for line in warnings + ([f"stale (evidence gone from the docs): {', '.join(stale)}"] if stale else []) + hints:
+        out(f"::warning title=Retrieval drift::{line}")     # shown on the run page; update eval/golden_set.json
+    floor = fail_below if fail_below is not None else 0.0
+    out(f"Retrieval quality check passed (section recall@8 >= {floor:.2f})"
+        + (f"; {len(warnings)} drift warning(s), see above." if warnings or stale else "."))
+    return None
+
+
+def below_threshold(results, minimum, exclude=()):
+    """Retrievers whose section-level recall@8 is below `minimum`, with the questions they missed. Questions in
+    `exclude` (evidence no longer in the corpus) don't count either way."""
     failures = []
     for name, (rows, summary) in results.items():
-        if summary["section_recall@8"] < minimum:
-            misses = [r["id"] for r in rows if r["type"] == "answerable" and not r.get("section_rank")]
-            failures.append(f"{name} section recall@8 {summary['section_recall@8']:.2f} < {minimum:.2f} "
+        scored = [r for r in rows if r["type"] == "answerable" and r["id"] not in set(exclude)]
+        recall = (sum(1 for r in scored if r.get("section_rank") and r["section_rank"] <= 8) / len(scored)
+                  if exclude and scored else summary["section_recall@8"])
+        if recall < minimum:
+            misses = [r["id"] for r in scored if not r.get("section_rank")]
+            failures.append(f"{name} section recall@8 {recall:.2f} < {minimum:.2f} "
                             f"(missed: {', '.join(misses)})")
     return failures
 
