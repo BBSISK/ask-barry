@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14T08:49:49Z",
+  "generated_at": "2026-10-15T10:23:14Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -12,7 +12,7 @@
         {
           "id": "problem-solving:485108dbfd",
           "title": "Debugging nightly refresh failures",
-          "summary": "Barry identified root causes from logs and emails, reproduced failures with unit tests, verified fixes by reproducing merge races and manual refresh, and learned to test batch sizes and implement safety checks.",
+          "summary": "Barry identified root causes from logs and emails, reproduced failures with unit tests, and verified fixes by reproducing merge races and running manual refreshes successfully.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026)",
@@ -24,8 +24,36 @@
           "approved": false
         },
         {
-          "id": "problem-solving:419ea9a4b6",
+          "id": "problem-solving:a2053a1761",
           "title": "Fixing nightly refresh failures",
+          "summary": "Barry identified thresholds to distinguish systemic failures from expected changes, enabling quick fixes and reducing false incident alerts during nightly refreshes.",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026) > Follow-up: 13-15 October 2026",
+          "url": "https://github.com/BBSISK/ask-barry/blob/04e96b3080da7366753298d60e9b17a808c3068a/README.md#follow-up-13-15-october-2026",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Below 0.85 means something systemic... The run fails and GitHub emails me. Between 0.85 and 0.95 is almost always the docs drifting under the test set... updating the test set takes minutes.",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:f96e1104e0",
+          "title": "Fixing a failing scheduled job",
+          "summary": "Barry diagnosed a failing 6-hourly digest job by tracing logs, fixed configuration errors, improved error messages, and removed a security risk, then documented the lessons in the issue log.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#problems-i-solved-along-the-way",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "A new 6-hourly digest job died first with a database error... I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:419ea9a4b6",
+          "title": "Resolved nightly refresh failures",
           "summary": "Barry traced three nightly index refresh failures to root causes, fixed each, and added tests to prevent unnoticed recurrence.",
           "repo": "ask-barry",
           "path": "README.md",
@@ -38,23 +66,23 @@
           "approved": false
         },
         {
-          "id": "problem-solving:f96e1104e0",
-          "title": "Fixing a failing scheduled job",
-          "summary": "Barry diagnosed a failing 6-hourly digest job by tracing logs, fixed configuration errors, improved error messages, and removed a credential-exposing debug aid, then documented lessons in the issue log.",
-          "repo": "inmytime-showcase",
+          "id": "problem-solving:ec802ba64d",
+          "title": "Debugged nightly refresh failures",
+          "summary": "Barry identified causes of nightly build failures, corrected code indentation, updated test coverage, and adjusted retrieval checks to accommodate document changes, restoring successful runs.",
+          "repo": "ask-barry",
           "path": "README.md",
-          "heading": "🌸 In My Time > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#problems-i-solved-along-the-way",
-          "project": "In My Time",
+          "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026) > Follow-up: 13-15 October 2026",
+          "url": "https://github.com/BBSISK/ask-barry/blob/04e96b3080da7366753298d60e9b17a808c3068a/README.md#follow-up-13-15-october-2026",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "A new 6-hourly digest job died first with a database error... I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid",
+          "quote": "My ASK-58 change indented the build call into the `--seed-evidence` loop, so a run without seeds (every nightly run) never built anything. Tests covered the builder, not the command the workflow runs",
           "approved": false
         },
         {
           "id": "problem-solving:84dbcd1ba7",
           "title": "Fixing data quality issues",
-          "summary": "Barry identified missing coordinate data and fixed it by requesting geometry projection, ensured residential units were accurately extracted using LLM from descriptions, and refined classification of housing grants to avoid counting extensions and retention permissions as new housing.",
+          "summary": "Barry identified missing coordinate data and unreliable residential unit counts, then fixed the downloader to use geometry data and developed an LLM extraction method to improve unit counts.",
           "repo": "housing-pipeline-ireland",
           "path": "docs/data-profile.md",
           "heading": "Data profile — Sprint 1 (8–22 Oct 2026) > National Planning Applications — South Dublin County Council (HOUSE-9) > Top 5 quality issues",
@@ -66,23 +94,9 @@
           "approved": true
         },
         {
-          "id": "problem-solving:8d011cfc3a",
-          "title": "Fixed prompt scheduling bugs",
-          "summary": "Barry rebuilt the prompt scheduling system to calculate week position purely from time, preventing schedule drift and back-filled existing users with a migration.",
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "I rebuilt it so the week is calculated purely from time (from sign-up to now), so the schedule can no longer drift, and I back-filled existing users with a one-off migration.",
-          "approved": true
-        },
-        {
           "id": "problem-solving:3bfb002f5c",
-          "title": "Improved solution approach",
-          "summary": "Barry wrote every solution himself, used Claude as a coach for hints and reviews, and documented improvements from brute force to hash map in commit history.",
+          "title": "Improving LeetCode Solutions",
+          "summary": "Barry wrote every solution himself, used Claude as a coach for hints and reviews, and documented his approach and complexity. He improved solutions, showing both versions in commit history.",
           "repo": "leetcode-java",
           "path": "README.md",
           "heading": "leetcode-java > How I work",
@@ -94,18 +108,32 @@
           "approved": false
         },
         {
-          "id": "problem-solving:d01d06712f",
-          "title": "Problem solving and root cause analysis",
-          "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
-          "repo": "BBSISK",
-          "path": "manufacturing-to-software.md",
-          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
-          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
-          "project": "Profile",
+          "id": "problem-solving:5a65144910",
+          "title": "Solved multiple technical issues",
+          "summary": "Barry identified and fixed several technical problems including silent alert failures, lost context in follow-ups, HTTPS certificate issues, language addition, and a failing scheduled job with misleading errors.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#problems-i-solved-along-the-way",
+          "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Scheduling bug traced to its root cause and rebuilt; search regression measured, three fixes compared, simplest shipped",
+          "quote": "Admin alerts weren't arriving... I added an automatic fallback... I added a short-lived pending-follow-up field... Moving DNS to Cloudflare... I traced each layer from the logs, fixed the configuration, made the code fail loudly... I recorded the lessons in the",
           "approved": false
+        },
+        {
+          "id": "problem-solving:8d011cfc3a",
+          "title": "Fixed prompt scheduling bugs",
+          "summary": "Barry rebuilt the prompt scheduling system to calculate weeks purely from time, preventing schedule drift and back-filled existing users with a migration.",
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#problems-i-solved-along-the-way",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I rebuilt it so the week is calculated purely from time (from sign-up to now), so the schedule can no longer drift, and I back-filled existing users with a one-off migration.",
+          "approved": true
         }
       ]
     },
@@ -133,7 +161,7 @@
         {
           "id": "security-mindset:7848f34d39",
           "title": "Privacy by design in WhatsApp",
-          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding collection of special-category personal data.",
+          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding storage of personal data.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
@@ -174,8 +202,8 @@
         },
         {
           "id": "security-mindset:f96e1104e0",
-          "title": "Fixing scheduled job errors",
-          "summary": "Barry traced errors in a scheduled job, fixed configuration and code to fail loudly with clear messages, removed a credential-exposing debug aid, and documented lessons in the issue log.",
+          "title": "Fixing a failing scheduled job",
+          "summary": "Barry diagnosed a failing 6-hourly digest job, fixed configuration errors, improved error reporting, removed a credential-exposing debug aid, and documented lessons in the issue log.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Problems I solved along the way",
@@ -201,37 +229,9 @@
           "approved": false
         },
         {
-          "id": "security-mindset:91ce972132",
-          "title": "CI AWS Role Verification",
-          "summary": "Barry configured the CI pipeline to verify AWS role assumption without stored keys by running a terraform job that confirmed access via assumed roles on every pull request and main push.",
-          "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Checking it",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#checking-it",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The `terraform` job in `.github/workflows/ci.yml` runs on every pull request and every push to `main`. It signs in with the plan role, runs `aws sts get-caller-identity`, then plans the runtime stack.",
-          "approved": false
-        },
-        {
-          "id": "security-mindset:6b2eac979b",
-          "title": "Implementing Least Privilege Access",
-          "summary": "Barry configured identities and roles in code with least privilege, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Security",
-          "url": "https://github.com/BBSISK/ask-barry/blob/4b0906de999a2dd3ea4a5cc761afbf72ee71b810/README.md#security",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Least privilege, as code: the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.",
-          "approved": false
-        },
-        {
           "id": "security-mindset:a90abade77",
-          "title": "GitHub OIDC token exchange",
-          "summary": "Barry configured GitHub Actions to request OIDC tokens and use AWS STS AssumeRoleWithWebIdentity, resolving an authorization failure by adding numeric repo IDs to trust policies.",
+          "title": "GitHub OIDC token usage",
+          "summary": "Barry configured GitHub workflows to request OIDC tokens and use AWS STS AssumeRoleWithWebIdentity, resolving an authorization failure by adding numeric repo IDs to trust policies.",
           "repo": "SECOM_Pipeline",
           "path": "docs/security.md",
           "heading": "Security design > Keyless from the first commit > How the GitHub OIDC exchange works",
@@ -240,6 +240,34 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "The first CI run failed with `Not authorized to perform sts:AssumeRoleWithWebIdentity` until the ID form was added.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:92d9c07505",
+          "title": "Implementing Least Privilege Access",
+          "summary": "Barry configured identities and roles in code with least privilege, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Security",
+          "url": "https://github.com/BBSISK/ask-barry/blob/04e96b3080da7366753298d60e9b17a808c3068a/README.md#security",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "No API keys anywhere. API key access is switched off on both Azure resources... Least privilege, as code: the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:91ce972132",
+          "title": "CI AWS Role Verification",
+          "summary": "Barry configured the CI pipeline to verify AWS role assumption without stored keys by running a terraform job that confirmed identity via AWS STS on each pull request and main push.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Checking it",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#checking-it",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The `terraform` job in `.github/workflows/ci.yml` runs on every pull request and every push to `main`. It signs in with the plan role, runs `aws sts get-caller-identity`, then plans the runtime stack.",
           "approved": false
         }
       ]
@@ -252,7 +280,7 @@
         {
           "id": "data-manipulation:ca4940cd5e",
           "title": "Data flow and processing pipeline",
-          "summary": "Barry implemented a data pipeline where a Lambda processor reads Kinesis stream batches, writes records to S3, validates and stores clean data in PostgreSQL, computes signals, and handles failures with an SQS dead-letter queue.",
+          "summary": "Barry designed a data pipeline where a Lambda processor reads Kinesis stream batches, writes records to S3, validates them, stores clean and rejected runs in PostgreSQL, computes health signals, and handles failures with an SQS dead-letter queue.",
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Architecture",
@@ -265,8 +293,8 @@
         },
         {
           "id": "data-manipulation:c9e315d2b1",
-          "title": "Data quality issues identified and fixed",
-          "summary": "Barry analyzed three data sources, identified 15 quality issues, fixed 2 in Sprint 1, and planned fixes for others to improve data reliability for joining and analysis.",
+          "title": "Data quality issues identified",
+          "summary": "Barry analyzed three data sources, identified 15 quality issues, fixed 2, and planned fixes for others, highlighting challenges in geocoding, unreliable official fields, and incomplete recent data.",
           "repo": "housing-pipeline-ireland",
           "path": "docs/data-profile.md",
           "heading": "Data profile — Sprint 1 (8–22 Oct 2026) > Summary",
@@ -288,7 +316,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry's nightly ingestion re-processes only what changed",
+          "quote": "Responsible for the programme across the whole factory | Data pipelines, ingestion, streaming telemetry | Ask Barry's nightly ingestion re-processes only what changed",
           "approved": false
         }
       ]
@@ -310,6 +338,20 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Each product has a written design document (the StoryCatcher one runs to roughly 3,000 lines) covering the data model, API surface, key distribution, open questions and trade-offs",
+          "approved": false
+        },
+        {
+          "id": "written-communication:e9fd13724a",
+          "title": "Documentation and Training Leadership",
+          "summary": "Barry led engineering teams, designed structured technical training, and created documentation such as READMEs and model cards for projects. He taught IT and AI to over 300 students in Tanzania.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers | Mentoring, documentation, onboarding, growing junior engineers | A README and model card for every project; two years teaching; IT and AI training for",
           "approved": false
         }
       ]
@@ -356,8 +398,8 @@
       "candidates": [
         {
           "id": "leadership:e9fd13724a",
-          "title": "Led engineering and training teams",
-          "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
+          "title": "Led Engineering and Training Teams",
+          "summary": "Barry led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -370,8 +412,8 @@
         },
         {
           "id": "leadership:5299616047",
-          "title": "Led 7nm Start-up Programme",
-          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and meet production ramp commitments.",
+          "title": "Led 7nm Start-up and CMP Teams",
+          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and cost in a high-volume manufacturing environment.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
@@ -379,7 +421,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Managed several engineering and technician teams across four shifts... Led the equipment qualification programme for the start-up of 7nm manufacturing... Applied Lean methods... Led strategic planning to meet production ramp commitments",
+          "quote": "Managed several engineering and technician teams across four shifts in a high-volume CMP operation... Led the equipment qualification programme for the start-up of 7nm manufacturing in Ireland... Applied Lean methods, including Kaizen waste reduction and value stream mapping... Led strategic",
           "approved": true
         },
         {
@@ -398,7 +440,7 @@
         },
         {
           "id": "leadership:73f7ff9703",
-          "title": "Led 300mm Implant Team",
+          "title": "Led 300mm Implant Engineering Team",
           "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost. Completed ROI analyses and led a multinational team selling obsolete equipment.",
           "repo": "BBSISK",
           "path": "career.md",
@@ -412,8 +454,8 @@
         },
         {
           "id": "leadership:d362007369",
-          "title": "Leadership in Equipment Qualification",
-          "summary": "Led the 7nm start-up equipment qualification programme, ensuring release validation and readiness checks before production.",
+          "title": "Leading Equipment Qualification",
+          "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -427,7 +469,7 @@
         {
           "id": "leadership:d0a57cfcea",
           "title": "Managed OEM Service Contracts",
-          "summary": "Managed service contracts for lithography and dry etch suppliers, aligned their objectives with Intel's, intervened on performance issues, and measured installation and sustaining work quality.",
+          "summary": "Managed service contracts for semiconductor equipment, aligned supplier objectives with Intel's, intervened on performance issues, and measured installation and maintenance quality.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
@@ -455,7 +497,7 @@
         {
           "id": "leadership:9edbd02b52",
           "title": "Led Factory-wide Fault Detection",
-          "summary": "Barry led a factory-wide programme for real-time fault detection on machine sensor data, managing deployment and adoption across engineering teams, improving yield through variation reduction and system tuning.",
+          "summary": "Barry led a factory-wide programme for real-time fault detection on machine sensor data, managing data pipelines, fault classification, and variation reduction, resulting in improved yield and deployment across engineering teams.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > Real-time fault detection at factory scale",
@@ -463,7 +505,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Responsible for the programme across the whole factory... Real-time fault detection on machine sensor data... Part of the programme I ran... Responsible for deployment and adoption across the factory's engineering teams",
+          "quote": "Responsible for the programme across the whole factory... Real-time fault detection on machine sensor data... Part of the programme I ran... Fault detection and variation reduction programme to drive yield improvement... Responsible for deployment and adoption across the factory's engineering",
           "approved": false
         },
         {
@@ -489,8 +531,8 @@
       "candidates": [
         {
           "id": "teamwork:a04e8657ea",
-          "title": "Team Collaboration in Lab2 Project",
-          "summary": "Barry and AB brainstormed challenges, coded aligned copies in CLI and VSCode, uploaded matched versions to Gitlab, and AB helped troubleshoot errors in Barry's code.",
+          "title": "Team Collaboration in Lab2",
+          "summary": "Barry and AB brainstormed challenges, coded aligned copies in CLI and VSCode, uploaded matched versions to Gitlab, and AB helped troubleshoot BBS code errors.",
           "repo": "CS627_Advanced_OOP_Java",
           "path": "CS627B_Lab2_AB_BS/Readme.md",
           "heading": "Programming Module Repository > Class Summary",
@@ -503,7 +545,7 @@
         },
         {
           "id": "teamwork:e9fd13724a",
-          "title": "Led engineering and training teams",
+          "title": "Led engineering and technician teams",
           "summary": "Barry led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -513,6 +555,20 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers",
+          "approved": false
+        },
+        {
+          "id": "teamwork:b75a31933f",
+          "title": "Azure sign-in with Entra ID",
+          "summary": "Barry configured Azure sign-in using Entra ID by creating identities and roles, updating search service authentication, testing locally, creating secrets securely, and setting environment variables to avoid storing secrets in GitHub.",
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential that Entra accepts only from this repo's main branch.",
           "approved": false
         }
       ]
@@ -524,8 +580,8 @@
       "candidates": [
         {
           "id": "change-control-discipline:b038c7f3bd",
-          "title": "Change Control in Data Schema",
-          "summary": "Barry added new columns via a non-destructive auto-migration on start-up to preserve existing production records in PostgreSQL.",
+          "title": "Change Control in Database Schema",
+          "summary": "Barry added new columns to the database via a non-destructive auto-migration on start-up, preserving existing production records in PostgreSQL.",
           "repo": "wall_inspector",
           "path": "README.md",
           "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
@@ -553,7 +609,7 @@
         {
           "id": "change-control-discipline:f3f4f056f2",
           "title": "Controlled change process",
-          "summary": "Barry implemented a disciplined change control process using Jira stories, branches, pull requests, CI checks, and Terraform plans to ensure all changes were traceable, tested, and controlled before deployment.",
+          "summary": "Barry implemented a controlled change process from Jira story to production with branches, pull requests, CI checks, and planned infrastructure changes, ensuring only tested changes reach production.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > How changes are made",
@@ -567,7 +623,7 @@
         {
           "id": "change-control-discipline:7e7cfb0bb6",
           "title": "AWS Budget Caps Monthly Spend",
-          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns, and kept alert emails out of the repo.",
+          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns. The budget covers the whole account and alert emails are kept out of the repo.",
           "repo": "SECOM_Pipeline",
           "path": "docs/teardown.md",
           "heading": "Cost controls and teardown > The budget",
@@ -575,7 +631,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget AWS **forecasts** the month will end over budget",
+          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget; AWS **forecasts** the month will end over budget",
           "approved": false
         },
         {
@@ -594,8 +650,8 @@
         },
         {
           "id": "change-control-discipline:6cd5970557",
-          "title": "Enforced change control via Jira and PRs",
-          "summary": "Barry's team linked all work to Jira tickets in branches, commits, and PR titles, required PR approval and checklist completion, and enforced peer reviews each sprint.",
+          "title": "Change control with Jira and PRs",
+          "summary": "Barry used Jira ticket keys in branches, commits, and PR titles to link work automatically. The main branch was protected, requiring pull requests with one approval and blocking force pushes.",
           "repo": "CS385_Mobile_App",
           "path": "README.md",
           "heading": "CS385 Student Marketplace > How we work > Branches, commits and PRs",
@@ -603,7 +659,7 @@
           "project": "CS385_Mobile_App",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Every piece of work starts from a Jira ticket. Putting the ticket key in all three places links the work to Jira automatically... `main` is protected: all changes go through a pull request with 1 approval, and force pushes are",
+          "quote": "Every piece of work starts from a Jira ticket. Putting the ticket key in all three places links the work to Jira automatically... `main` is protected: all changes go through a **pull request with 1 approval**, and force pushes are",
           "approved": false
         }
       ]
