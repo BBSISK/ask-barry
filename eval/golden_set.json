@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-10-13",
+  "updated": "2026-10-15",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -392,14 +392,15 @@
       "type": "answerable",
       "question": "What browser testing has Barry done?",
       "expected": [
-        "BBSISK/README.md"
+        "BBSISK/README.md",
+        "inmytime-showcase/README.md"
       ],
       "evidence": [
         "Playwright",
         "browser test suites",
         "browser tests"
       ],
-      "history": "13 Oct 2026 (ASK-61): The showcase README no longer describes its tests; the profile README still does ('automated API and browser test suites', Playwright)."
+      "history": "13 Oct 2026 (ASK-61): The showcase README no longer describes its tests; the profile README still does ('automated API and browser test suites', Playwright). 15 Oct 2026 (ASK-65): inmytime-showcase/README.md back in expected: the restored README describes Playwright again and now ranks first."
     },
     {
       "id": "brief-01",
@@ -583,10 +584,12 @@
       "type": "answerable",
       "question": "Does Barry plan his own projects in sprints?",
       "expected": [
-        "BBSISK/manufacturing-to-software.md"
+        "BBSISK/manufacturing-to-software.md",
+        "CS385_Mobile_App/README.md"
       ],
       "evidence": [
-        "Solo two-week sprints"
+        "Solo two-week sprints",
+        "1-week sprints"
       ],
       "checks": {
         "must_include": [
@@ -598,7 +601,7 @@
           "Scrum team member"
         ]
       },
-      "history": "Added 8 Oct 2026 alongside the trap-10 rewrite: solo two-week sprints in Jira on Ask Barry since October 2026, documented in BBSISK/manufacturing-to-software.md. The answer must mention Jira and must not inflate this into team or long-standing Agile experience."
+      "history": "Added 8 Oct 2026 alongside the trap-10 rewrite: solo two-week sprints in Jira on Ask Barry since October 2026, documented in BBSISK/manufacturing-to-software.md. The answer must mention Jira and must not inflate this into team or long-standing Agile experience. 15 Oct 2026 (ASK-65): CS385_Mobile_App/README.md added: the CS385 team project runs 1-week Scrum sprints in Jira and now outranks the solo-sprint doc. Both are correct answers."
     },
     {
       "id": "trap-11",

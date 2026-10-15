@@ -177,3 +177,55 @@ def test_summary_reports_both_levels():
     s = summarise(rows)
     assert s["recall@1"] == 0.5 and s["section_recall@1"] == 0.0
     assert s["section_recall@3"] == 0.5 and s["section_mrr"] == pytest.approx(1 / 6)
+
+
+# --- ASK-65: a two-level nightly gate, so a docs edit warns instead of stopping the capability build -------------
+
+def _rows(n_hit, n_miss, elsewhere=None):
+    rows = [{"id": f"h{i}", "type": "answerable", "section_rank": 1, "elsewhere": None} for i in range(n_hit)]
+    rows += [{"id": f"m{i}", "type": "answerable", "section_rank": None, "elsewhere": elsewhere,
+              "elsewhere_source": "NEW/README.md" if elsewhere else None} for i in range(n_miss)]
+    return rows
+
+
+def _results(rows):
+    hits = sum(1 for r in rows if r["section_rank"])
+    return {"azure-hybrid-noname": (rows, {"section_recall@8": hits / len(rows)})}
+
+
+def test_a_few_misses_from_doc_drift_warn_with_the_likely_fix_and_pass():
+    from scripts.evaluate_retrieval import gate
+    lines = []
+    assert gate(_results(_rows(37, 4, elsewhere=2)), 0.85, 0.95, out=lines.append) is None
+    assert any(line.startswith("::warning title=Retrieval drift::") and "0.90 < 0.95" in line for line in lines)
+    assert any("m0 answered by NEW/README.md (rank 2)" in line for line in lines)
+
+
+def test_a_collapse_still_fails_the_run():
+    from scripts.evaluate_retrieval import gate
+    message = gate(_results(_rows(20, 21)), 0.85, 0.95, out=lambda *_: None)
+    assert message.startswith("Retrieval quality check FAILED") and "0.49 < 0.85" in message
+
+
+def test_questions_whose_evidence_left_the_docs_are_not_scored():
+    from scripts.evaluate_retrieval import below_threshold
+    rows = _rows(9, 1)
+    assert below_threshold(_results(rows), 0.95) != []
+    assert below_threshold(_results(rows), 0.95, exclude=["m0"]) == []
+
+
+def test_elsewhere_rank_points_at_a_new_file_that_answers():
+    from scripts.evaluate_retrieval import first_elsewhere_rank
+
+    class R:
+        def __init__(self, rank, repo, text):
+            self.rank, self.chunk = rank, {"repo": repo, "path": "README.md", "text": text}
+    results = [R(1, "CS385_Mobile_App", "Jira (Scrum, 1-week sprints)"), R(2, "BBSISK", "solo sprints")]
+    assert first_elsewhere_rank(results, {"BBSISK/README.md"}, ["1-week sprints"]) == 1
+    assert first_elsewhere_rank(results, {"CS385_Mobile_App/README.md"}, ["1-week sprints"]) is None
+
+
+def test_nightly_gate_fails_only_on_collapse_and_warns_on_drift():
+    from pathlib import Path
+    text = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "refresh-index.yml").read_text()
+    assert "--min-section-recall 0.85 --warn-section-recall 0.95" in text

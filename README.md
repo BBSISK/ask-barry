@@ -453,6 +453,27 @@ The evaluation also checks citation completeness. The judge sees the retrieved s
 
 **Lessons.** A job that works for a small corpus can fail when it grows, so test the batch sizes and limits it will meet, not just the ones it meets today. Safety checks that stop without changing anything turned three failures into three harmless ones. A step that publishes should work from the latest state, not the state from when the job started.
 
+### Follow-up: 13-15 October 2026
+
+Three more failed runs. As before, the live site kept its last good build each time.
+
+| Run | Symptom | Root cause | Fix |
+|---|---|---|---|
+| 13 Oct | The capability build crashed with `UnboundLocalError` | My ASK-58 change indented the build call into the `--seed-evidence` loop, so a run without seeds (every nightly run) never built anything. Tests covered the builder, not the command the workflow runs | Dedented, and the command itself is now tested with and without seeds (ASK-64) |
+| 13 Oct | Retrieval check failed: section recall 0.83 | The In My Time showcase README was rewritten, so four golden questions pointed at text that no longer existed | Golden set updated to the new README (ASK-61) |
+| 15 Oct | Retrieval check failed again | Two new repos (a team coursework app and a planner) and the restored In My Time README now answered three questions from files the golden set didn't list | Those files added; the gate changed (below) (ASK-65) |
+
+**Root cause behind the last two.** The check was tuned for a fixed set of documents: fail below 0.95 section recall, which with 41 questions means three misses. But the documents are my own READMEs, which I edit and add to every week. Every edit could fail the run and hold back the capability page, even though nothing was broken.
+
+**The fix: two levels instead of one (ASK-65).**
+
+- **Below 0.85** means something systemic, such as an empty index, broken embeddings or the wrong retriever. The run fails and GitHub emails me.
+- **Between 0.85 and 0.95** is almost always the docs drifting under the test set. The run carries on, and a warning on the run page names each missed question.
+- **Each warning includes the likely fix:** where the answer was found instead ("answered by CS385_Mobile_App/README.md, rank 1"), so updating the test set takes minutes.
+- **Questions whose evidence has left the docs** are listed and not scored.
+
+**Lesson.** A quality gate needs to tell "the system broke" apart from "the world changed". One threshold for both turns every docs edit into an incident.
+
 ## Capability ladder and evidence cards (ASK-42)
 
 [/capability](https://ask-barry.onrender.com/capability) shows how far each skill goes in my public projects, in five tiers: **Used · Built · In production · Tested / evaluated · Proven over time**. Every filled tier links to the section that proves it, with a quote. Professional skills are shown as **evidence cards**: short documented examples, not ratings. Skills and cards without evidence are shown as gaps on purpose.
