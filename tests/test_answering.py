@@ -221,3 +221,33 @@ def test_prompt_guards_against_roadmap_confusion_and_rambling():
     assert "Present planned work as planned" in system
     assert "never cancels evidence" in system
     assert "at most 4 sentences" in system
+
+
+# --- ASK-69: other citation styles are checked and renumbered too --------------------------------------------
+
+@pytest.mark.parametrize("written,expected", [
+    ("Docker Compose (source 1), and Gunicorn (source 6).", "Docker Compose [1], and Gunicorn [6]."),
+    ("As sources 2 and 4 show.", "As [2][4] show."),
+    ("Both [1, 3].", "Both [1][3]."),
+    ("(Sources 1, 2)", "[1][2]"),
+    ("Open source 3D tools [2].", "Open source 3D tools [2]."),          # not a citation: left alone
+])
+def test_other_citation_styles_become_markers(written, expected):
+    from app.answering import normalise_markers
+    assert normalise_markers(written) == expected
+
+
+def test_source_words_are_renumbered_with_the_list():
+    """The live bug: the model wrote "(source 6)", the list was renumbered 1-4, and the text still said 6."""
+    raw = json.dumps({"supported": True, "citations": [1, 2, 4, 6],
+                      "answer": "Compose (source 1), CI (source 2), toolbox (source 4), architecture (source 6)."})
+    ok, text, cited = parse_model_output(raw, 8)
+    from app.answering import renumber_citations
+    text, mapping = renumber_citations(text, cited)
+    assert text == "Compose [1], CI [2], toolbox [3], architecture [4]."
+    assert mapping == [(1, 1), (2, 2), (4, 3), (6, 4)]
+
+
+def test_a_source_number_past_the_retrieved_list_is_dropped():
+    raw = json.dumps({"supported": True, "citations": [1], "answer": "Yes (source 1), also (source 12)."})
+    assert parse_model_output(raw, 8)[1] == "Yes [1], also."

@@ -88,6 +88,28 @@ def build_messages(question, results):
     return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}]
 
 
+_NUMS = r"(\d+(?:\s*(?:,|and|&)\s*\d+)*)\b"
+_SOURCE_WORDS = re.compile(rf"\(\s*sources?\s+{_NUMS}\s*\)|\bsources?\s+{_NUMS}", re.IGNORECASE)
+_BRACKET_LIST = re.compile(r"\[(\d+(?:\s*,\s*\d+)+)\]")
+
+
+def normalise_markers(text):
+    """Rewrite other citation styles as [n] markers, so they are checked and renumbered like the rest.
+
+    The prompt asks for [n], but the model sometimes writes "(source 6)" or "[1, 2]". Those slipped past the
+    renumbering, so the reader saw a source number that didn't match the list (ASK-69).
+    """
+    def brackets(nums):
+        return "".join(f"[{n}]" for n in re.findall(r"\d+", nums))
+    text = _BRACKET_LIST.sub(lambda m: brackets(m.group(1)), text)
+    return _SOURCE_WORDS.sub(lambda m: brackets(m.group(1) or m.group(2)), text)
+
+
+def _tidy(text):
+    """Close the gap a dropped marker leaves before punctuation ("also ." -> "also.")."""
+    return re.sub(r"[ \t]+([.,;:])", r"\1", text)
+
+
 def parse_model_output(raw, n_sources):
     """Parse and sanity-check the model's JSON. Returns (supported, answer_text, citation_numbers)."""
     try:
@@ -109,8 +131,9 @@ def parse_model_output(raw, n_sources):
             cited.append(n)
     if not supported or not answer or not cited:        # no citation, no claim
         return False, NO_EVIDENCE, []
+    answer = normalise_markers(answer)
     answer = re.sub(r"\[(\d+)\]", lambda m: m.group(0) if 1 <= int(m.group(1)) <= n_sources else "", answer)
-    return True, answer, cited
+    return True, _tidy(answer), cited
 
 
 def renumber_citations(text, cited):
@@ -120,7 +143,7 @@ def renumber_citations(text, cited):
     """
     mapping = {orig: i for i, orig in enumerate(cited, start=1)}
     text = re.sub(r"\[(\d+)\]", lambda m: f"[{mapping[int(m.group(1))]}]" if int(m.group(1)) in mapping else "", text)
-    return text, list(mapping.items())
+    return _tidy(text), list(mapping.items())
 
 
 class Answerer:
