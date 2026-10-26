@@ -57,7 +57,7 @@ The job-ad page doesn't store or log the pasted ad either (it may be someone els
 
 ## Evaluation
 
-The golden set has 49 questions (one added with the career page on 28 September 2026, one trap swapped for a new one in Stage 10 when its skill became documented, and one added on 8 October 2026 for newly documented project planning; the results below predate these changes). 41 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
+The golden set has 51 questions (one added with the career page on 28 September 2026, one trap swapped for a new one in Stage 10 when its skill became documented, one added on 8 October 2026 for newly documented project planning, one trap turned answerable on 13 October 2026 when React practice became documented, and one added on 24 October 2026 for a deployed serverless API; the results below predate these changes). 43 are answerable, each with the file and evidence phrase that answer it. 8 are **trap** questions about skills the documentation doesn't evidence: the assistant passes these by refusing, or by giving a grounded "no".
 
 **Retrieval** (section level: the retrieved section must contain the answer; re-checked 27 September 2026 after this repo's own docs were indexed): hybrid search with a name-free embedding finds the answer in the top 8 for 100% of questions, and in first place for 82%. The nightly refresh re-runs this check and fails if recall drops below 95%.
 
@@ -94,7 +94,7 @@ The golden set has 49 questions (one added with the career page on 28 September 
 - **Run-to-run variation.** Even at temperature 0, results vary by a few questions between runs.
 - **Judge checked, not proven.** The faithfulness judge is the same model family as the answering model. Stage 9a measured it against 55 hand-labelled claims and a judge of a different kind (TypeSafe Jev): they reached the same verdict on all but one claim. That is a small set, so the deterministic checks and published answers still carry the headline numbers.
 - **Wrong-project attribution is under-classified by the judge.** A claim that pins a real fact on the wrong project was scored as "true but uncited" or as an unmatched quote, not as invented. It still counts as a failure, but the failure reasons need a human read.
-- **Small test set, English only.** With under 50 questions, one question moves a percentage by 2–3 points.
+- **Small test set, English only.** With about 50 questions, one question moves a percentage by about 2 points.
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.
 - **Platform filter.** Azure OpenAI's content safety may refuse a job ad containing text that looks like instructions to an AI. The agent then produces no evidence map, and says so.
