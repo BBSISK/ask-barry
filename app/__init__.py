@@ -35,6 +35,10 @@ def create_app(config_name=None, answerer=None, jobstore=None, transcriber=None,
             "(Render dashboard, or your local .env). It is never committed."
         )
 
+    # ASK-68: the hosted MCP server at /mcp. Mounted inside ProxyFix, so it sees the real client IP too.
+    from .mcp_http import McpMount, build_server
+    app.wsgi_app = McpMount(app.wsgi_app, build_server(app))
+
     if app.config.get("BEHIND_PROXY"):
         # Render terminates HTTPS and forwards the client IP in X-Forwarded-For.
         from werkzeug.middleware.proxy_fix import ProxyFix

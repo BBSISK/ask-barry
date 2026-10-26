@@ -21,7 +21,7 @@ A portfolio assistant that answers questions about my software projects using **
 - Retrieval comparison scored at section level
 - Grounded answering with citations, rate limiting and a web UI
 - Answer-quality evaluation with an evidence-checking LLM judge, cross-checked against a second judge of a different kind (TypeSafe Jev) and my own labels
-- An MCP server, so AI assistants can query it as a tool
+- An MCP server, so AI assistants can query it as a tool: hosted at [`/mcp`](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68) for anyone to add by URL, or run locally
 - Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
 - A [capability ladder](#capability-ladder-and-evidence-cards-ask-42) rebuilt every night from quotes that code checks, with evidence cards I approve and a gap-closing plan with a track record
 - [Change control](#how-changes-are-made) from Jira story to branch, pull request, CI and deploy, with the rules enforced by tests
@@ -46,7 +46,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
 | Sprint 1 | Two-week Scrum sprint planned and tracked in Jira (project ASK): capability ladder and evidence cards, gap-closing plans, computed top tier and project kinds, stable nightly tiers, change control, security checks | Done: [ladder](#capability-ladder-and-evidence-cards-ask-42), [change control](#how-changes-are-made), [security](#security-checks-before-anything-ships-ask-59) |
-| Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to | Planned |
+| Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to | Built: [`/mcp`](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68) (ASK-68), on MCP SDK 2.x (ASK-66) |
 
 ## Architecture
 
@@ -220,6 +220,32 @@ Since Sprint 1 (October 2026), every change follows the same controlled path fro
 6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code. It commits on top of the latest `main`, and if a pull request is merged while the refresh runs, it rebases its one data commit and tries again; it never force-pushes.
 
 **The rules are tested, not just written down.** Tests fail the build if a workflow gains a stored key, if the publish job loses its separation, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`, or if CI stops checking the Terraform.
+
+## Connect Ask Barry to your AI assistant (hosted MCP, ASK-68)
+
+Add this URL to any AI assistant that supports remote MCP servers. Nothing to install, and no login (the data is public):
+
+```
+https://ask-barry.onrender.com/mcp
+```
+
+- **Claude (web or desktop):** Settings, Connectors, Add custom connector. Paste the URL and leave authentication empty.
+- **Claude Code:** `claude mcp add --transport http ask-barry https://ask-barry.onrender.com/mcp`
+- **ChatGPT:** with developer mode on, add a connector with the URL and no authentication.
+
+Three read-only tools:
+
+| Tool | What it returns |
+|---|---|
+| `ask_barry` | A short answer from my public docs with cited sources, or `supported: false` when the docs don't show it |
+| `get_capability` | The [capability ladder](#capability-ladder-and-evidence-cards-ask-42): tier per skill, with linked, checked quotes, gaps and plans |
+| `match_job_ad` | The [evidence map](#job-ad-evidence-agent-stage-8) for pasted job-ad text, requirement by requirement, plus a share link. No scores or fit verdicts |
+
+How it's built:
+- **Streamable HTTP, stateless, JSON responses** (MCP Python SDK 2.x). Each call is one complete request and response, so it runs inside the existing Flask app on one small instance. `/mcp` is routed to the SDK's ASGI app through `a2wsgi`; every other path goes to Flask as before.
+- **No second copy of the rules.** Each tool calls the app's own JSON API in-process with the caller's IP, so it gets the website's validation, size caps, rate limits (shared with the website), privacy rules (questions and job ads aren't logged or stored) and AI disclosure.
+- **Bounded:** request bodies over 64 KB are refused, questions are capped at 300 characters and job ads at 8,000, and the job-ad agent keeps its own hourly limit and its one-run-at-a-time rule. If an evidence map takes longer than about two minutes, the tool returns a link to collect it instead of waiting.
+- **Tested through the SDK client over real HTTP** (`tests/test_mcp_http.py`): the tools and their read-only annotations, structured results, a rate limit hit on the website showing up as an MCP error, the size cap, and the website routes still working behind the mount.
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
 

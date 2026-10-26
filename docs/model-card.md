@@ -19,7 +19,7 @@ Ask Barry is an AI assistant that answers questions about Barry Sisk's software 
 2. **For each question**, hybrid search (keyword + vector, merged with Reciprocal Rank Fusion) retrieves the 8 most relevant sections.
 3. The model writes a short answer from those sections only, citing them by number.
 4. Code checks the citations before anything is shown, and the page displays the answer with links to the exact sections.
-5. The same answers are available to AI assistants through a read-only MCP tool, `ask_barry`. It calls the live app, so the same rules and rate limits apply.
+5. The same answers are available to AI assistants through read-only MCP tools (`ask_barry`, `get_capability`, `match_job_ad`), hosted at `/mcp` (ASK-68) or run locally. They go through the app's own API, so the same rules, rate limits, privacy rules and AI disclosure apply.
 6. A job-ad evidence agent (Stage 8) uses that tool to map a pasted job advertisement to documented evidence, one requirement at a time. It is an evidence map, not an assessment: every "evidenced" row must cite a link the tool returned, and the output has no scores, rankings or fit judgements. It runs from the command line and on the website (`/evidence`), where it works as a background job and shows each question it asks.
 
 The architecture diagram is in the [README](../README.md#architecture).
@@ -98,6 +98,7 @@ The golden set has 51 questions (one added with the career page on 28 September 
 - **Up to a day behind.** The index refreshes nightly, so a same-day README change may not be reflected yet.
 - **The agent can merge or skip a requirement.** It plans its own list, so a requirement is occasionally folded into another row; anything over the row limit is listed as "Not checked" rather than dropped silently.
 - **Platform filter.** Azure OpenAI's content safety may refuse a job ad containing text that looks like instructions to an AI. The agent then produces no evidence map, and says so.
+- **MCP clients share the website's limits.** Calls through `/mcp` count against the same per-visitor and daily limits as the website, so a busy assistant can hit them. The hosted server has no login, so it can't tell one assistant user from another behind a shared IP address.
 - **Cold starts.** The free hosting tier sleeps when idle, so the first question can take about 30 seconds.
 
 ## Responsible AI and the EU AI Act
