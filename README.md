@@ -226,7 +226,7 @@ Since Sprint 1 (October 2026), every change follows the same controlled path fro
 `ask_barry_mcp.py` is a small [Model Context Protocol](https://modelcontextprotocol.io) server with one read-only tool, `ask_barry`. It lets Claude Desktop, Claude Code, Cursor or VS Code ask about my projects and get the same cited answers as the website.
 - **A thin client:** it calls the live `/api/ask` endpoint, so it needs no Azure keys and inherits the live app's honesty rules and rate limits.
 - **Structured output:** the answer, a `supported` flag and the cited sources (repo, file, section, link), so the assistant can keep the citations.
-- **Built on the official MCP Python SDK** (stdio transport). Unit tests plus an in-memory client test cover the tool listing, schemas, results and errors.
+- **Built on the official MCP Python SDK 2.x** (stdio transport; moved from 1.x in ASK-66). Unit tests plus an in-memory client test cover the tool listing, schemas, results and errors, and a further test launches the server as a real process through the agent's own MCP tool, the way the live job-ad agent does.
 
 ```bash
 pip install mcp                                              # or: pip install -r requirements-dev.txt
