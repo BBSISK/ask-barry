@@ -1,9 +1,11 @@
 """Read capability.json for the page, the API and the MCP tool (ASK-42).
 
-The nightly workflow builds the file and commits it to the repo. The live app reads it from CAPABILITY_SOURCE,
-a local path or an https URL (in production the raw GitHub URL of the file on main), so a nightly rebuild shows
-up without a redeploy. The result is cached for a few minutes. A broken or invalid file never replaces the last
-good copy, and a missing file means "not generated yet", never an error page.
+The nightly workflow builds the file and commits it to the capability-data branch (ASK-62). The live app reads it
+from CAPABILITY_SOURCE, a local path or an https URL (in production the raw GitHub URL of the file on that branch),
+so a nightly rebuild shows up without a redeploy. The result is cached for a few minutes. A broken or invalid file
+never replaces the last good copy. If the URL can't be read before there is any good copy (say, just after a
+restart while GitHub is down), the snapshot shipped with the app is used, dated by its own generated_at. A missing
+file means "not generated yet", never an error page.
 """
 import json
 import logging
@@ -57,5 +59,18 @@ class CapabilityStore:
                 log.warning("capability: %s is invalid (%s); keeping the last good copy",
                             self.source, "; ".join(problems(data)[:3]))
                 data = self._data
+        if data is None and self.source != DEFAULT_SOURCE:
+            data = self._snapshot()
         self._data, self._loaded = data, self.clock()
         return data
+
+    def _snapshot(self):
+        """The copy shipped with the app (main's data/capability.json), if it is valid."""
+        try:
+            data = self.fetch(DEFAULT_SOURCE)
+        except Exception:                             # a bad snapshot is no worse than none
+            return None
+        if data is not None and not problems(data):
+            log.warning("capability: using the snapshot shipped with the app until %s can be read", self.source)
+            return data
+        return None

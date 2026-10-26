@@ -38,9 +38,10 @@ services:
         sync: false
       - key: AZURE_SEARCH_INDEX
         value: ask-barry-chunks
-      # ASK-42: the capability page reads the nightly-built file from main, so it updates without a redeploy.
+      # ASK-42: the capability page reads the nightly-built file, so it updates without a redeploy.
+      # ASK-62: from the capability-data branch, which only the nightly publish job writes (main needs a PR).
       - key: CAPABILITY_SOURCE
-        value: https://raw.githubusercontent.com/BBSISK/ask-barry/main/data/capability.json
+        value: https://raw.githubusercontent.com/BBSISK/ask-barry/capability-data/data/capability.json
       - key: RATE_LIMIT_PER_MINUTE
         value: "6"
       - key: RATE_LIMIT_PER_DAY

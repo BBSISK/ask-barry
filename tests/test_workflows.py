@@ -105,15 +105,27 @@ def test_the_publish_check_runs_with_the_standard_library_only(tmp_path):
     assert same_content(a, b) and not same_content(a, {**old, "skills": []})
 
 
-def test_publish_survives_a_merge_during_the_refresh():
-    """ASK-54: a PR merged while the refresh ran left the publish job on an old main; its push was rejected."""
+def test_nightly_data_never_goes_to_main():
+    """ASK-62: the publish job writes only the capability-data branch, so main can require pull requests.
+    (It replaced ASK-54's rebase-onto-main loop: with no data commits on main, a merge can't race the publish.)"""
     import yaml
-    publish = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))["jobs"]["publish-capability"]
-    checkout = publish["steps"][0]
-    assert checkout["uses"].startswith("actions/checkout") and checkout["with"]["ref"] == "main"
-    commit = publish["steps"][-1]["run"]
-    assert "git pull --rebase origin main" in commit and "for attempt in 1 2 3" in commit
-    assert "--force" not in commit                      # never overwrite someone else's work on main
+    text = WORKFLOW.read_text(encoding="utf-8")
+    publish = yaml.safe_load(text)["jobs"]["publish-capability"]
+    run = "\n".join(step.get("run", "") for step in publish["steps"])
+    assert "git push origin capability-data" in run
+    assert run.count("git push") == 1 and "main" not in run and "--force" not in run
+    assert all(step.get("with", {}).get("ref") in (None, "capability-data") for step in publish["steps"])
+    # the builder reads the last published build from the same branch, falling back to main's snapshot
+    assert "git show FETCH_HEAD:data/capability.json > build/previous.json" in text
+    assert "--previous build/previous.json" in text
+
+
+def test_the_live_app_reads_the_data_branch():
+    import yaml
+    env = {e["key"]: e.get("value") for e in
+           yaml.safe_load((WORKFLOW.parents[2] / "render.yaml").read_text(encoding="utf-8"))["services"][0]["envVars"]}
+    assert env["CAPABILITY_SOURCE"] == ("https://raw.githubusercontent.com/BBSISK/ask-barry/capability-data/"
+                                        "data/capability.json")
 
 
 CI = WORKFLOW.parent / "ci.yml"
