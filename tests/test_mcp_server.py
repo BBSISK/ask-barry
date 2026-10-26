@@ -76,10 +76,10 @@ def test_default_url_and_env_override(monkeypatch):
 # --- over the real MCP protocol (in-memory client <-> server) --------------------
 
 def run_client(fn):
-    from mcp.shared.memory import create_connected_server_and_client_session
+    from mcp import Client                     # ASK-66: SDK 2.x connects in-process when given the server object
 
     async def main():
-        async with create_connected_server_and_client_session(server.mcp._mcp_server) as client:
+        async with Client(server.mcp) as client:
             return await fn(client)
     return anyio.run(main)
 
@@ -87,27 +87,27 @@ def run_client(fn):
 def test_tool_is_listed_read_only_with_schemas():
     tools = run_client(lambda c: c.list_tools()).tools
     assert [t.name for t in tools] == ["ask_barry", "get_capability"]
-    assert all(t.annotations.readOnlyHint is True for t in tools)
+    assert all(t.annotations.read_only_hint is True for t in tools)
     tool = tools[0]
-    assert tool.annotations.readOnlyHint is True and tool.annotations.destructiveHint is False
-    assert tool.inputSchema["required"] == ["question"]
-    assert tool.inputSchema["properties"]["question"]["maxLength"] == 300
-    assert {"answer", "supported", "sources"} <= set(tool.outputSchema["properties"])
+    assert tool.annotations.read_only_hint is True and tool.annotations.destructive_hint is False
+    assert tool.input_schema["required"] == ["question"]
+    assert tool.input_schema["properties"]["question"]["maxLength"] == 300
+    assert {"answer", "supported", "sources"} <= set(tool.output_schema["properties"])
 
 
 def test_tool_call_returns_structured_answer(monkeypatch):
     monkeypatch.setattr(server, "post_json", fake_poster())
     result = run_client(lambda c: c.call_tool("ask_barry", {"question": "Has Barry used Docker?"}))
-    assert result.isError is False
-    assert result.structuredContent["supported"] is True
-    assert result.structuredContent["sources"][0]["repo"] == "BBSISK"
+    assert result.is_error is False
+    assert result.structured_content["supported"] is True
+    assert result.structured_content["sources"][0]["repo"] == "BBSISK"
     assert "Barry used Docker" in result.content[0].text
 
 
 def test_tool_call_reports_rate_limit_as_tool_error(monkeypatch):
     monkeypatch.setattr(server, "post_json", fake_poster(status=429, body={"error": "slow down"}))
     result = run_client(lambda c: c.call_tool("ask_barry", {"question": "q"}))
-    assert result.isError is True and "Rate limited" in result.content[0].text
+    assert result.is_error is True and "Rate limited" in result.content[0].text
 
 
 def test_check_mode_prints_json(capsys, monkeypatch):
@@ -162,6 +162,6 @@ def test_capability_unknown_skill_lists_the_skills():
 def test_get_capability_over_the_protocol(monkeypatch):
     monkeypatch.setattr(server, "get_json", fake_getter())
     result = run_client(lambda c: c.call_tool("get_capability", {}))
-    assert result.isError is False
-    assert result.structuredContent["skills"][0]["tier_label"] == "In production"
-    assert "not a self-rating" in result.structuredContent["note"]
+    assert result.is_error is False
+    assert result.structured_content["skills"][0]["tier_label"] == "In production"
+    assert "not a self-rating" in result.structured_content["note"]
