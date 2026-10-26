@@ -4,7 +4,9 @@ A portfolio assistant that answers questions about my software projects using **
 
 **Live:** https://ask-barry.onrender.com
 
-## Current status: Sprint 1 complete (RAG live in production and evaluated, job-ad agent live, capability ladder rebuilt nightly from checked evidence, every change controlled from Jira story to deploy, security checks before merge)
+## Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at `/mcp`, `main` protected by GitHub rules
+
+Sprint 1 delivered the base: RAG live in production and evaluated, the job-ad agent, a capability ladder rebuilt nightly from checked evidence, change control from Jira story to deploy, and security checks before merge. Sprint 2 so far: any AI assistant can add Ask Barry by URL ([hosted MCP](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68), checked in Claude and ChatGPT), and the nightly data moved to its own branch so every change to `main` needs a pull request and passing checks ([change control](#how-changes-are-made)).
 
 **Retrieval-augmented generation is live in production:**
 - Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation.
@@ -46,7 +48,7 @@ A portfolio assistant that answers questions about my software projects using **
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
 | Sprint 1 | Two-week Scrum sprint planned and tracked in Jira (project ASK): capability ladder and evidence cards, gap-closing plans, computed top tier and project kinds, stable nightly tiers, change control, security checks | Done: [ladder](#capability-ladder-and-evidence-cards-ask-42), [change control](#how-changes-are-made), [security](#security-checks-before-anything-ships-ask-59) |
-| Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to | Built: [`/mcp`](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68) (ASK-68), on MCP SDK 2.x (ASK-66) |
+| Sprint 2 | Ask Barry as a hosted MCP server anyone's AI assistant can connect to; `main` locked to pull requests with passing checks | In progress (ends 8 Nov). Done: [`/mcp`](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68) (ASK-68) on MCP SDK 2.x (ASK-66), citation numbering fix (ASK-69), nightly data on its own branch (ASK-62) |
 
 ## Architecture
 
@@ -63,6 +65,7 @@ flowchart LR
     G --> V{"Valid citation?"}
     V -- yes --> A["Answer + links to<br/>exact sections"]
     V -- no --> N["I can't find evidence of that"]
+    M["AI assistant<br/>(MCP at /mcp)"] --> Q
 ```
 
 How it works, what it's for (and not for), evaluation results, known limitations and the EU AI Act assessment are in the **[model card](docs/model-card.md)**.
@@ -141,6 +144,7 @@ flask --app wsgi run                                       # web UI at http://12
 - **Honesty rules enforced in code, not just the prompt:**
   - An answer must cite at least one of the sources it was given, or it is replaced with *"I can't find evidence of that in Barry's public GitHub documentation."*
   - Citations to sources that weren't provided are dropped.
+  - Citations written in another style, such as "(source 6)" or "[1, 2]", are converted to `[n]` before that check, so the numbers in the answer always match the source list. A live test found one that slipped through and pointed at the wrong section (ASK-69).
   - Unparseable model output becomes an error, never raw text.
 - **Web API:** `POST /api/ask {"question": "..."}` returns the answer, `supported`, and the cited sources (repo, file, section, GitHub link pinned to a commit).
 - **Public-endpoint safeguards:**
@@ -213,13 +217,13 @@ CI runs the full pytest suite on every push. It includes tests that call the Fla
 Since Sprint 1 (October 2026), every change follows the same controlled path from a Jira story to production:
 
 1. **One story per change.** Each change starts as a Jira story (project key ASK). The branch, the commits and the pull request carry the story key, for example `ASK-42-capability`, so any line of code traces back to why it changed.
-2. **A branch and a pull request.** I don't push code changes to `main` directly: each story gets its own branch and a pull request into `main`. The only direct commits are the nightly data rebuilds in point 6.
+2. **A branch and a pull request, enforced by GitHub.** Each story gets its own branch and a pull request into `main`. Since 26 Oct 2026 (ASK-62) a ruleset on `main` makes this a rule rather than a habit: a pull request is required, the CI checks must pass before merging, force pushes and deletion are blocked, and nobody is on the bypass list, including me.
 3. **Checks before merge.** GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).
 4. **Checks before deploy.** Render deploys a commit on `main` only after CI passes (`autoDeployTrigger: checksPass`), so a failing change never reaches the live site.
 5. **Infrastructure changes are planned first.** Azure changes go through Terraform: `terraform plan` is read before every `apply`. The original Azure resources are marked `prevent_destroy`, and the state file never enters the repo.
-6. **Automated changes are controlled too.** The nightly job that publishes `data/capability.json` commits only when the content changed, with a dated commit message. It is the only job allowed to write to the repo, and it runs no app code. It commits on top of the latest `main`, and if a pull request is merged while the refresh runs, it rebases its one data commit and tries again; it never force-pushes.
+6. **Automated changes are controlled too.** The nightly job that publishes `capability.json` commits only when the content changed, with a dated commit message, and only to the `capability-data` branch, never to `main` (ASK-62). It is the only job allowed to write to the repo, and it runs no app code. Keeping data off `main` is what made the ruleset in point 2 possible: GitHub's built-in Actions bot can't be put on a bypass list, so while it pushed to `main`, `main` couldn't require pull requests.
 
-**The rules are tested, not just written down.** Tests fail the build if a workflow gains a stored key, if the publish job loses its separation, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`, or if CI stops checking the Terraform.
+**The rules are tested, not just written down.** Tests fail the build if a workflow gains a stored key, if the publish job loses its separation or could push to `main`, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`, or if CI stops checking the Terraform.
 
 ## Connect Ask Barry to your AI assistant (hosted MCP, ASK-68)
 
@@ -245,6 +249,7 @@ How it's built:
 - **Streamable HTTP, stateless, JSON responses** (MCP Python SDK 2.x). Each call is one complete request and response, so it runs inside the existing Flask app on one small instance. `/mcp` is routed to the SDK's ASGI app through `a2wsgi`; every other path goes to Flask as before.
 - **No second copy of the rules.** Each tool calls the app's own JSON API in-process with the caller's IP, so it gets the website's validation, size caps, rate limits (shared with the website), privacy rules (questions and job ads aren't logged or stored) and AI disclosure.
 - **Bounded:** request bodies over 64 KB are refused, questions are capped at 300 characters and job ads at 8,000, and the job-ad agent keeps its own hourly limit and its one-run-at-a-time rule. If an evidence map takes longer than about two minutes, the tool returns a link to collect it instead of waiting.
+- **Checked live** on 26 Oct 2026 as a Claude custom connector and in ChatGPT. Assistants write their own reply around the tool's answer, and may add detail from other lookups; only the cited links come from Ask Barry.
 - **Tested through the SDK client over real HTTP** (`tests/test_mcp_http.py`): the tools and their read-only annotations, structured results, a rate limit hit on the website showing up as an MCP error, the size cap, and the website routes still working behind the mount.
 
 ## Use Ask Barry from an AI assistant (MCP, Stage 7)
@@ -471,7 +476,7 @@ The evaluation also checks citation completeness. The judge sees the retrieved s
 |---|---|---|---|
 | #31, 11 Oct | The fetch stopped after `inmytime-showcase`, with no error message | A new public repo had no commits yet, so GitHub's API had no branch to return for it | Empty repos are skipped with a note; a GitHub rate limit still stops the fetch, so a partial corpus can't slip through |
 | #32, 12 Oct | The sync stopped with `429 RateLimitReached` | New repos took the corpus from 155 to 269 sections. Embedding 128 sections in back-to-back batches of 64 went over the embedding deployment's per-minute limit | The sync waits the time Azure asks for (up to 7 times per request) and sends batches of 16 |
-| Manual run after the fix | Everything built, then publishing `capability.json` was rejected (`fetch first`) | A pull request was merged while the run waited out the rate limit, so the publish job's copy of `main` was out of date | The publish job starts from the latest `main`; if `main` moves again, it rebases its one data commit and retries. It never force-pushes |
+| Manual run after the fix | Everything built, then publishing `capability.json` was rejected (`fetch first`) | A pull request was merged while the run waited out the rate limit, so the publish job's copy of `main` was out of date | The publish job starts from the latest `main`; if `main` moves again, it rebases its one data commit and retries. It never force-pushes. (Since ASK-62 the data goes to its own branch, so this race can't happen) |
 
 **How the root causes were found.** GitHub emailed each failed run, and the step logs named the failing step and the error. Run #31 had no error message, so the clue was where the log stopped: repos are fetched in alphabetical order, which pointed to the next repo, created that day and still empty.
 
@@ -505,7 +510,7 @@ Three more failed runs. As before, the live site kept its last good build each t
 [/capability](https://ask-barry.onrender.com/capability) shows how far each skill goes in my public projects, in five tiers: **Used · Built · In production · Tested / evaluated · Proven over time**. Every filled tier links to the section that proves it, with a quote. Professional skills are shown as **evidence cards**: short documented examples, not ratings. Skills and cards without evidence are shown as gaps on purpose.
 
 - **How a tier is decided:** each skill's searches run through the production retriever. For every section found, the model answers one narrow question, "the highest tier this section shows", and must quote the proof. Code checks that the quote is really in the section, or that answer counts as 0. The question is asked up to three times per section and the middle answer wins, because two builds from the same index once disagreed by two tiers on one skill: a single borderline answer was deciding it. If an answer's quote isn't in the section, that answer is asked again rather than counted as 0, so a copying slip can't pull a tier down overnight (ASK-60); a tier still never counts without a checked quote, and the build log shows each rejected quote. The rejected quotes showed the judge was mostly right and the check too literal: it now ignores link addresses and accepts the section's own words with a sentence left out, but never a run of fewer than four words stitched on, so it still can't be fooled into a claim the section doesn't make. A skill's tier is the highest checked tier; there are no scores or averages. My own profile README and career summary never fill a tier, because a self-description isn't evidence of use. Nor does a section whose heading marks it as a plan, such as "Architecture (planned)".
-- **Nightly, not per visit:** the refresh workflow builds `data/capability.json` after the index sync and a separate job commits it only when the content changed. The live app reads that file from `main`, so the page updates without a redeploy and git history records how the ladder changed. Visitors trigger no model calls.
+- **Nightly, not per visit:** the refresh workflow builds `capability.json` after the index sync, and a separate job commits it to the `capability-data` branch only when the content changed (ASK-62). The live app reads the file from that branch, so the page updates without a redeploy and the branch history records how the ladder changed. If GitHub can't be reached just after a restart, the app shows the snapshot in `data/` on `main`, with its own date, until it can. Visitors trigger no model calls.
 - **The top tier is computed, not judged (ASK-57):** "Proven over time" needs Tested / evaluated evidence in at least two of my real application projects with the skill evidenced for 12+ months, or confirmation from someone else (an employer, a lecturer, a certification, a merged contribution to another person's project). The AI judge only ever awards tiers 1 to 4. Without this, most skills sat on the top step one month into my HDip, which said more about the scale than about me. No skill has reached it yet, by design.
 - **Evidence doesn't drop because search ranks shift (ASK-58):** each skill is judged on its top 16 search results plus every section that counted in the last build, found again by searching for its quote. When new repos were published, older strong sections fell out of the top results and three skills dropped a tier overnight; now a section only stops counting if it changes or disappears. `python -m scripts.build_capability --explain <skill>` lists every section judged, its tier, and whether search found it or it was carried forward.
 - **Not every repo counts the same:** each repo has a kind in `profile/profile.yaml`. Practice repos (coding challenges) and coursework stop at Built, because they show I write the code, not that it's been delivered and tested in a real system. A repo that isn't listed is treated as practice, so a new one can't over-claim by accident.

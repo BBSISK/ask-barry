@@ -68,6 +68,17 @@ jobs:
       # ASK-42: rebuild the capability ladder and evidence cards from the fresh index (about 150 small model
       # calls). It runs after the sync and quality check, so if it fails the run fails visibly but the index
       # refresh has already happened.
+      # ASK-62: the last published build lives on the capability-data branch (main keeps only the snapshot from
+      # the day the data moved there). Approved card wording, carried evidence and plan dates come from it.
+      - name: Get the last published build from the capability-data branch
+        run: |
+          mkdir -p build
+          if git fetch --depth=1 origin capability-data && git show FETCH_HEAD:data/capability.json > build/previous.json; then
+            echo "Previous build: capability-data branch"
+          else
+            cp data/capability.json build/previous.json
+            echo "No capability-data branch yet: using the snapshot on main"
+          fi
       - name: Sign in again before building the capability ladder
         uses: azure/login@v3
         with:
@@ -82,7 +93,7 @@ jobs:
           AZURE_OPENAI_CHAT_DEPLOYMENT: gpt-4.1-mini
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # read-only: first-commit dates of public files
-        run: python -m scripts.build_capability --out build/capability.json --suggestions build/capability_suggestions.json
+        run: python -m scripts.build_capability --out build/capability.json --suggestions build/capability_suggestions.json --previous build/previous.json
       - name: Keep the build for the publish job
         uses: actions/upload-artifact@v7
         with:
@@ -90,9 +101,10 @@ jobs:
           path: build/
           retention-days: 7
 
-  # A separate job with the only write permission in this workflow: it commits data/capability.json (and the
-  # suggestions for review) when the content changed. The live app reads that file from main, so the page
-  # updates without a redeploy, and git history is the record of how the ladder changed.
+  # A separate job with the only write permission in this workflow. It commits data/capability.json (and the
+  # suggestions for review) to the capability-data branch when the content changed, never to main (ASK-62), so
+  # main can require a pull request and passing checks for every change. The live app reads the file from that
+  # branch, so the page updates without a redeploy, and the branch history records how the ladder changed.
   publish-capability:
     name: Publish capability.json
     needs: refresh
@@ -101,15 +113,18 @@ jobs:
     permissions:
       contents: write
     steps:
-      # ASK-54: the latest main, not the commit the run started from. A merge during a long refresh
-      # otherwise leaves this job on an old main, and its push is rejected.
       - uses: actions/checkout@v7
-        with:
-          ref: main
       - uses: actions/download-artifact@v8
         with:
           name: capability
           path: build/
+      - name: Switch to the capability-data branch (created on the first run)
+        run: |
+          if git fetch --depth=1 origin capability-data; then
+            git checkout -B capability-data FETCH_HEAD
+          else
+            git switch --orphan capability-data
+          fi
       - name: Commit if the content changed (the build time alone doesn't count)
         run: |
           changed=$(python - <<'PY'
@@ -133,11 +148,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/capability.json data/capability_suggestions.json
           git commit -m "ASK-42 nightly capability rebuild ($changed)"
-          # ASK-54: if main moved since checkout, replay this one data commit on top and try again.
-          for attempt in 1 2 3; do
-            if git push; then exit 0; fi
-            echo "main moved during the refresh; rebasing the data commit (attempt $attempt)"
-            git pull --rebase origin main
-          done
-          echo "Could not publish after 3 attempts." >&2
-          exit 1
+          # Only this job writes the branch, and the workflow's concurrency group runs one refresh at a time.
+          git push origin capability-data

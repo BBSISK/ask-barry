@@ -374,6 +374,21 @@ def test_store_keeps_the_last_good_copy_when_the_file_breaks():
     assert store.get() == cap                                                # error -> last good
 
 
+
+def test_store_falls_back_to_the_shipped_snapshot_when_the_branch_cant_be_read_at_start():
+    """ASK-62: just after a restart there is no last good copy, so a GitHub outage would blank the page."""
+    from app.capability.store import DEFAULT_SOURCE
+    cap, _ = build()
+    remote = "https://raw.githubusercontent.com/BBSISK/ask-barry/capability-data/data/capability.json"
+
+    def fetch(source):
+        if source == remote:
+            raise OSError("down")
+        assert source == DEFAULT_SOURCE
+        return cap
+    assert CapabilityStore(source=remote, fetch=fetch).get() == cap
+    assert CapabilityStore(source=remote, fetch=lambda s: None if s == remote else {"broken": 1}).get() is None
+
 def test_match_job_uses_whole_words():
     cap, _ = build()
     assert view.matching_skills(cap, "Java and Spring Boot") == ["java"]
