@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-10-15",
+  "updated": "2026-10-24",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -482,12 +482,36 @@
       "type": "answerable",
       "question": "Does Barry have AWS experience?",
       "expected": [
-        "ask-barry/README.md"
+        "ask-barry/README.md",
+        "dice-roll-api/README.md"
       ],
       "evidence": [
-        "Amazon Bedrock"
+        "Amazon Bedrock",
+        "AWS Lambda"
       ],
-      "history": "Was trap-02 until Stage 10 documented real AWS work: Bedrock models evaluated through a least-privilege IAM role (3 Oct 2026). Replaced by trap-10."
+      "history": "Was trap-02 until Stage 10 documented real AWS work: Bedrock models evaluated through a least-privilege IAM role (3 Oct 2026). Replaced by trap-10. 24 Oct 2026: dice-roll-api/README.md added (Lambda + API Gateway + SAM deployed to eu-west-1); either file is a correct answer."
+    },
+    {
+      "id": "aws-02",
+      "type": "answerable",
+      "question": "Has Barry deployed a serverless API?",
+      "expected": [
+        "dice-roll-api/README.md"
+      ],
+      "evidence": [
+        "AWS SAM",
+        "Amazon API Gateway"
+      ],
+      "checks": {
+        "must_include": [
+          "Lambda"
+        ],
+        "must_not_include": [
+          "production serverless",
+          "serverless in production"
+        ]
+      },
+      "history": "Added 24 Oct 2026: the public dice-roll-api repo documents a Lambda + API Gateway API deployed with SAM/CloudFormation. It followed an AWS Free Tier tutorial, so a grounded answer says a learning project, not production serverless experience."
     },
     {
       "id": "trap-03",
