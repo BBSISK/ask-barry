@@ -10,3 +10,4 @@ agent-framework-openai>=1.14,<2   # its OpenAI / Azure OpenAI chat client
 qrcode>=7.4,<9                    # Stage 8f: share QR codes (SVG output, pure Python)
 PyYAML>=6.0,<7                    # ASK-42: profile pack (skills, tiers, cards) as YAML
 jsonschema>=4.20,<5               # ASK-42: validates the profile pack and capability.json (already pulled in by mcp)
+a2wsgi>=1.10,<2                   # ASK-68: runs the MCP server's ASGI app at /mcp inside the Flask (WSGI) app
