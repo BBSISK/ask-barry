@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40         # the capability build (ASK-42) asks the model a few hundred questions
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -103,7 +103,7 @@ jobs:
     steps:
       # ASK-54: the latest main, not the commit the run started from. A merge during a long refresh
       # otherwise leaves this job on an old main, and its push is rejected.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: main
       - uses: actions/download-artifact@v8
