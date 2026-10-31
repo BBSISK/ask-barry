@@ -258,14 +258,28 @@ def fallback_report(tool_log, reason):
     return report
 
 
+def _leaf_errors(err):
+    """An error, or every error inside an exception group (async task groups wrap what they raise)."""
+    if isinstance(err, BaseExceptionGroup):
+        for inner in err.exceptions:
+            yield from _leaf_errors(inner)
+    else:
+        yield err
+
+
 def content_filter_reason(err):
-    """If err is the provider's content-safety refusal (e.g. Azure Prompt Shields), a short reason; else None."""
-    text = str(err)
-    if "content_filter" not in text and not type(err).__name__.endswith("ContentFilterException"):
-        return None
-    if "jailbreak" in text:
-        return "the ad contains text that looks like a prompt-injection attempt"
-    return "the ad triggered the content safety filter"
+    """If err is the provider's content-safety refusal (e.g. Azure Prompt Shields), a short reason; else None.
+
+    Recognises Agent Framework's ContentFilterException and the raw openai error (code "content_filter";
+    its message only says "content management policy"), also when wrapped in an exception group (ASK-70)."""
+    for leaf in _leaf_errors(err):
+        text = f"{leaf} {getattr(leaf, 'body', '') or ''}"
+        if (getattr(leaf, "code", None) == "content_filter" or "content_filter" in text
+                or "content management policy" in text or type(leaf).__name__.endswith("ContentFilterException")):
+            if "jailbreak" in text:
+                return "the ad contains text that looks like a prompt-injection attempt"
+            return "the ad triggered the content safety filter"
+    return None
 
 
 def blocked_report(reason):

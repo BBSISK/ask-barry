@@ -32,8 +32,9 @@ class FakeLLM:
         self.replies = [plan, classify]
         self.seen = []
 
-    async def __call__(self, messages):
+    async def __call__(self, messages, max_tokens=None):
         self.seen.append(messages)
+        self.max_tokens = getattr(self, "max_tokens", []) + [max_tokens]
         reply = self.replies[len(self.seen) - 1]
         if isinstance(reply, Exception):
             raise reply
@@ -200,7 +201,7 @@ def test_tool_result_text_reads_mcp_results():
 
 
 def test_graph_shape_has_one_tool_path_and_the_review_pause():
-    async def llm(m):
+    async def llm(m, max_tokens=None):
         return ""
 
     async def tool(q):
@@ -215,8 +216,9 @@ def test_graph_shape_has_one_tool_path_and_the_review_pause():
 
 
 def test_ask_barry_mcp_reaches_the_real_server_over_stdio(monkeypatch):
-    """The real MCP server as a subprocess. Offline (no Azure settings), local mode raises a ToolError,
-    which must come back as an unsupported, error-carrying lookup rather than crash the run."""
+    """The real MCP server as a subprocess, over stdio. The server loads .env itself, so on a machine with
+    Azure set up it answers for real; in CI (no .env) local mode raises a ToolError, which must come back
+    as an unsupported, error-carrying lookup rather than crash the run. Either way the stdio path works."""
     from app.job_agent import ToolLog
     for key in ("AZURE_OPENAI_ENDPOINT", "AZURE_SEARCH_ENDPOINT"):
         monkeypatch.delenv(key, raising=False)
@@ -226,7 +228,10 @@ def test_ask_barry_mcp_reaches_the_real_server_over_stdio(monkeypatch):
             return await ask("Has Barry used Terraform?")
 
     call = ToolLog().record("q", asyncio.run(asyncio.wait_for(main(), timeout=60)))
-    assert not call.supported and call.error
+    if call.supported:                                    # configured machine: a real, cited answer
+        assert call.urls and call.urls[0].startswith("https://github.com/BBSISK/")
+    else:                                                 # CI: the error is recorded, not raised
+        assert call.error
 
 
 def test_evaluation_runs_the_langgraph_system_next_to_the_agent():
@@ -260,3 +265,34 @@ def test_cli_review_needs_langgraph():
     from scripts.job_agent import main
     with pytest.raises(SystemExit):
         main(["ad.txt", "--review"])
+
+
+def azure_content_filter_error():
+    """What openai raises when Azure's filter refuses the prompt (the message never says 'content_filter')."""
+    import httpx
+    import openai
+    request = httpx.Request("POST", "https://example.openai.azure.com/openai/v1/chat/completions")
+    body = {"code": "content_filter", "message": "The response was filtered due to the prompt triggering Azure "
+            "OpenAI's content management policy.", "innererror": {"content_filter_result": {"jailbreak": {"filtered": True, "detected": True}}}}
+    return openai.BadRequestError("Error code: 400 - The response was filtered due to the prompt triggering Azure "
+                                  "OpenAI's content management policy.", response=httpx.Response(400, request=request), body=body)
+
+
+def test_real_azure_filter_error_is_recognised_even_inside_an_exception_group():
+    from app.job_agent import content_filter_reason
+    err = azure_content_filter_error()
+    assert "prompt-injection" in content_filter_reason(err)
+    assert "prompt-injection" in content_filter_reason(BaseExceptionGroup("task group", [ExceptionGroup("inner", [err])]))
+    assert content_filter_reason(ExceptionGroup("x", [RuntimeError("boom")])) is None
+
+
+def test_live_style_filter_refusal_blocks_instead_of_crashing():
+    tool = FakeTool({})
+    report, _ = run(llm=FakeLLM(azure_content_filter_error(), ""), tool=tool)
+    assert report.blocked and tool.questions == []
+
+
+def test_classifier_gets_room_for_twelve_rows():
+    llm = FakeLLM(plan_json("Python"), classify_json([]))
+    run(llm=llm, tool=FakeTool({}))
+    assert llm.max_tokens == [lg.PLAN_MAX_TOKENS, lg.CLASSIFY_MAX_TOKENS] and lg.CLASSIFY_MAX_TOKENS >= 6000
