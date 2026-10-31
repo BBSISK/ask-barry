@@ -51,7 +51,7 @@
         {"name": "GitHub Actions / CI/CD", "aliases": ["github actions", "ci/cd", "continuous integration"], "expected": "evidenced"},
         {"name": "Python", "aliases": ["python"], "expected": "evidenced"},
         {"name": "Kubernetes", "aliases": ["kubernetes", "aks", "eks", "k8s"], "expected": "not_documented"},
-        {"name": "AWS", "aliases": ["aws"], "expected": "evidenced", "history": "31 Oct 2026 (ASK-70): was not_documented when this set was written (28 Sep); now documented by dice-roll-api (Lambda + API Gateway, deployed with SAM), SECOM Pipeline on AWS and the Bedrock comparison in this repo. Found when both agents 'failed' on it in the first LangGraph comparison run."},
+        {"name": "AWS", "aliases": ["aws"], "expected": "not_documented", "history": "31 Oct 2026 (ASK-70): kept not_documented. This ad asks for an AWS certification, not AWS use; AWS use is documented (dice-roll-api, SECOM Pipeline, Bedrock) but no certification is. Briefly relabelled 'evidenced' with ad-01 by mistake, and reverted before the final run."},
         {"name": "Jenkins", "aliases": ["jenkins"], "expected": "not_documented"},
         {"name": "Prometheus / Grafana", "aliases": ["prometheus", "grafana"], "expected": "not_documented"}
       ]
@@ -69,7 +69,7 @@
         {"name": "Localisation", "aliases": ["translation", "translating", "translations", "localisation", "localization", "internationalisation", "i18n", "german", "irish"], "expected": "evidenced"},
         {"name": "React", "aliases": ["react"], "expected": "evidenced", "history": "31 Oct 2026 (ASK-70): was not_documented when this set was written (28 Sep); now documented by the public react-challenges repo (React + TypeScript practice with tests). Found when both agents 'failed' on it in the first LangGraph comparison run."},
         {"name": "TypeScript", "aliases": ["typescript"], "expected": "evidenced", "history": "31 Oct 2026 (ASK-70): was not_documented when this set was written (28 Sep); now documented by the public react-challenges repo (React + TypeScript practice with tests). Found when both agents 'failed' on it in the first LangGraph comparison run."},
-        {"name": "Node.js", "aliases": ["node.js", "node"], "expected": "evidenced", "history": "31 Oct 2026 (ASK-70): was not_documented when this set was written (28 Sep); now documented by dice-roll-api's Lambda handler runs on Node.js 24 (from an AWS tutorial). Found when both agents 'failed' on it in the first LangGraph comparison run."},
+        {"name": "Node.js", "aliases": ["node.js", "node"], "expected": "evidenced", "history": "31 Oct 2026 (ASK-70): was not_documented when this set was written (28 Sep); now documented by dice-roll-api, whose Lambda handler runs on Node.js 24 (from an AWS tutorial). Found when both agents 'failed' on it in the first LangGraph comparison run."},
         {"name": "GraphQL", "aliases": ["graphql"], "expected": "not_documented"},
         {"name": "Angular", "aliases": ["angular"], "expected": "not_documented"}
       ]
