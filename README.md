@@ -44,6 +44,7 @@ Sprint 1 delivered the base: RAG live in production and evaluated, the job-ad ag
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
 | 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | Done: CLI, evaluation ([results](#job-ad-evidence-agent-stage-8)) and web page (`/evidence`) |
+| ASK-70 | The same agent rebuilt in LangGraph, compared on the same evaluation | In progress: [built and tested](#same-agent-two-frameworks-langgraph-ask-70); evaluation still to run |
 | 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
@@ -395,6 +396,36 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 **Share on the spot (Stage 8f):** when a map is ready, the page shows a QR code to scan from the screen, plus Share / WhatsApp / Email / Copy link buttons. The shared link carries the map itself, compressed and signed with the server's secret (HMAC-SHA256), so it works for weeks with no database and any edited link is rejected. The QR code uses a short `/s/<id>` link (a dense QR on a phone screen won't scan) that redirects to the signed one for a day.
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
+
+## Same agent, two frameworks: LangGraph (ASK-70)
+
+**Status:** built and tested offline; the evaluation against the Agent Framework version is still to run, so there are no results here yet.
+
+The job-ad agent above is also built in **LangGraph** (`app/job_agent_langgraph.py`), with the same `ask_barry` MCP tool, the same `verify()` guardrails and the same report, so the two frameworks can be compared on the same evaluation.
+
+The design difference is who decides the steps. In the Agent Framework version the model runs a tool loop and chooses when to call `ask_barry`; middleware enforces the allow-list and the budget. In the LangGraph version the workflow is an explicit graph and the model never chooses a tool:
+
+```mermaid
+flowchart LR
+    plan["plan<br/>(model: requirements + questions)"] -->|"Send: one branch per requirement"| check["check<br/>(ask_barry over MCP)"]
+    check --> budget{"budget<br/>(join)"}
+    budget -->|"unsupported + budget left:<br/>alternative wording"| check
+    budget --> classify["classify<br/>(model: sees only the tool answers)"]
+    classify --> verify["verify<br/>(same code guardrails)"]
+    plan -. "--review: interrupt()" .-> review["⏸ person approves<br/>or trims the list"] -.-> check
+```
+
+- **Parallel lookups:** `Send` starts one `check` branch per requirement, and they run at the same time (at most 4, to stay under the Azure OpenAI rate limit).
+- **Structural guardrails:** only `plan` and `budget` lead to `check`, and `budget` sends a second wording only while the 16-call budget allows, so the allow-list and the budget are properties of the graph rather than of middleware. The classifier sees the tool answers, never the job ad, so an instruction hidden in an ad has no route to the classification step.
+- **Human in the loop:** `--review` adds an `interrupt()` after planning. The run pauses (its state kept by the checkpointer) until a person approves the requirement list or drops items, and no tool is called before that.
+- **Tests:** 23, with a scripted fake model and tool: parallel checks, the budget, injection, fallbacks, the content-filter block, the review pause, and a real `ask_barry` MCP server process over stdio.
+
+```bash
+python -m scripts.job_agent job_ad.txt --framework langgraph --review
+python -m scripts.evaluate_agent --systems agent agent-langgraph --save
+```
+
+LangGraph is a development dependency only; the live `/evidence` page stays on Agent Framework unless the comparison gives a reason to change.
 
 ## Two judges compared (Stage 9a)
 

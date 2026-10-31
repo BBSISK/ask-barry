@@ -4,9 +4,12 @@ Usage (with the AZURE_* settings in .env):
     python -m scripts.evaluate_agent                    # agent + single-shot baseline, prints a report
     python -m scripts.evaluate_agent --save             # also writes docs/eval/<date>-agent.md
     python -m scripts.evaluate_agent --ids ad-07-injection-direct --systems agent
+    python -m scripts.evaluate_agent --systems agent agent-langgraph --save    # ASK-70 framework comparison
 
 Systems compared on eval/job_ads.json (10 ads, 67 labelled requirements):
   agent        the Stage 8 agent: plans, calls ask_barry (MCP) per requirement, verified report
+  agent-langgraph  ASK-70: the same agent as an explicit LangGraph graph (plan, parallel ask_barry
+               lookups, rephrase within budget, classify), same tool and the same verify() guardrails
   single-shot  baseline without an agent: one hybrid search over the whole ad, one model call,
                same instructions and the same citation guardrail
 
@@ -33,7 +36,7 @@ from app.job_agent import (
     render_markdown, user_message, verify,
 )
 
-SYSTEMS = ("agent", "single-shot")
+SYSTEMS = ("agent", "agent-langgraph", "single-shot")
 
 
 def load_ads(path="eval/job_ads.json"):
@@ -116,7 +119,7 @@ def render(summaries, details, when=None):
     when = when or date.today().isoformat()
     lines = ["# Job-ad evidence agent: evaluation", "",
              f"Date: {when} · eval/job_ads.json · same Azure OpenAI model (gpt-4.1-mini) and the same citation "
-             "guardrail for both systems", "",
+             "guardrail for every system", "",
              "| System | Coverage | Status accuracy | **False evidence** | Missed evidence | Injection pass | "
              "Fit judgements in output | Listed on profile only | Guardrail actions | Fallbacks | Blocked by filter | "
              "Avg tool calls | Median time |",
@@ -187,8 +190,12 @@ def run_single_shot(job_ad, retriever, provider):
 AD_TIMEOUT = 330     # seconds; a hung ad is recorded as a fallback and the run moves on
 
 
-async def run_all(ads, systems, run, azure_chat_client, answerer_from_env, provider_from_env):
-    """All ads in ONE event loop (a new loop per ad left HTTP clients closing on a dead loop)."""
+async def run_all(ads, systems, run, azure_chat_client, answerer_from_env, provider_from_env, runners=None):
+    """All ads in ONE event loop (a new loop per ad left HTTP clients closing on a dead loop).
+
+    run is the Agent Framework agent; runners can add other agent implementations by system name
+    (ASK-70: {"agent-langgraph": app.job_agent_langgraph.run})."""
+    runners = {"agent": run, **(runners or {})}
     details = {}
     for system in systems:
         print(f"\n=== {system} ===", flush=True)
@@ -198,9 +205,9 @@ async def run_all(ads, systems, run, azure_chat_client, answerer_from_env, provi
             retriever, provider = answerer_from_env(client=client).retriever, provider_from_env("azure-openai", client)
         for i, ad in enumerate(ads, 1):
             print(f"[{i:>2}/{len(ads)}] {ad['id']:<26} ", end="", flush=True)
-            if system == "agent":
+            if system in runners:
                 try:
-                    report, stats = await asyncio.wait_for(run(ad["text"]), AD_TIMEOUT)
+                    report, stats = await asyncio.wait_for(runners[system](ad["text"]), AD_TIMEOUT)
                 except TimeoutError:
                     report, stats = fallback_report(ToolLog(), "timed out"), {"seconds": AD_TIMEOUT, "tool_calls": 0}
             else:
@@ -231,13 +238,18 @@ def main(argv=None):
     from app.answering import answerer_from_env, azure_chat_client, azure_configured
     from app.job_agent_runtime import run
     from app.providers import provider_from_env
+    runners = {}
+    if "agent-langgraph" in args.systems:
+        from app.job_agent_langgraph import run as run_langgraph
+        runners["agent-langgraph"] = run_langgraph
     if not azure_configured():
         sys.exit("Azure settings missing in .env (run python -m scripts.check_azure)")
 
     ads = load_ads(args.ads)
     if args.ids:
         ads = [a for a in ads if a["id"] in set(args.ids)]
-    details = asyncio.run(run_all(ads, args.systems, run, azure_chat_client, answerer_from_env, provider_from_env))
+    details = asyncio.run(run_all(ads, args.systems, run, azure_chat_client, answerer_from_env, provider_from_env,
+                                  runners=runners))
     summaries = {name: summarise(res) for name, res in details.items()}
     report_md = render(summaries, details)
     print("\n" + report_md)

@@ -5,6 +5,8 @@ Usage (with the AZURE_* settings in .env):
     pbpaste | python -m scripts.job_agent -                    # macOS: job ad from the clipboard
     python -m scripts.job_agent job_ad.txt --save              # also writes reports/<date>-<name>.md and .json
     python -m scripts.job_agent ads/ --save                    # every .txt in ads/, one after another
+    python -m scripts.job_agent job_ad.txt --framework langgraph            # ASK-70: the LangGraph version
+    python -m scripts.job_agent job_ad.txt --framework langgraph --review   # approve the requirements first
 
 In folder mode each report is named after its file (ads/accenture.txt -> reports/<date>-accenture.md),
 so the reports line up with the companies. The .json holds the full verified report (for one-pagers).
@@ -67,12 +69,26 @@ async def run_many(items, run, render_markdown, save=False, trace=False):
     return done
 
 
+def ask_reviewer(payload, read=input):
+    """--review: show the planned requirements and ask which to drop (Enter keeps them all)."""
+    print(f"\nPlanned requirements for {payload.get('role_title') or 'this ad'}:")
+    for i, req in enumerate(payload["requirements"], 1):
+        print(f"  {i:>2}. [{req['kind']}] {req['requirement']}  ->  {req['question']}")
+    return read("Enter to check them all, or the numbers to drop (e.g. 3,5): ")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Map job ads to evidence in Barry's public docs")
     parser.add_argument("job_ad", help="a job ad .txt file, a folder of them, or - to read from stdin")
     parser.add_argument("--save", action="store_true", help="write each report to reports/ (.md and .json)")
     parser.add_argument("--trace", action="store_true", help="also print every tool call and result")
+    parser.add_argument("--framework", choices=("agent-framework", "langgraph"), default="agent-framework",
+                        help="which implementation of the agent to run (ASK-70)")
+    parser.add_argument("--review", action="store_true",
+                        help="LangGraph only: pause to approve or trim the requirement list before any lookups")
     args = parser.parse_args(argv)
+    if args.review and args.framework != "langgraph":
+        parser.error("--review needs --framework langgraph")
 
     try:
         from dotenv import load_dotenv
@@ -81,7 +97,13 @@ def main(argv=None):
         pass
     from app.answering import azure_configured
     from app.job_agent import render_markdown
-    from app.job_agent_runtime import run
+    if args.framework == "langgraph":
+        from functools import partial
+
+        from app.job_agent_langgraph import run as run_langgraph
+        run = partial(run_langgraph, review=ask_reviewer if args.review else None)
+    else:
+        from app.job_agent_runtime import run
     if not azure_configured():
         sys.exit("Azure settings missing in .env (run python -m scripts.check_azure)")
 
