@@ -42,6 +42,9 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_QUESTION_CHARS = 300        # the ask_barry tool's own input limit
 MAX_CONCURRENCY = 4             # parallel ask_barry lookups; keeps Azure OpenAI under its rate limit
 MODEL_CALL_TIMEOUT = 60
+PLAN_MAX_TOKENS = 2000
+# 12 rows with commit-pinned GitHub links is ~3,000 tokens; 2,000 cut the JSON off mid-row in the first live run
+CLASSIFY_MAX_TOKENS = 6000
 RUN_TIMEOUT = 270               # same hard stop per job ad as the Agent Framework version
 
 _RULES = """Rules:
@@ -77,7 +80,8 @@ Classify each requirement:
 - "related_only": supported answers show only related work (say what, e.g. "Docker is documented;
   container orchestration is not"). Never infer the requirement itself from related work.
 - "not_documented": nothing in the answers shows it. This means not documented, not "lacks the skill".
-"evidence": at most two sentences restating what the answers say, naming the project(s). No words about
+"evidence": at most two short sentences (under 40 words) restating what the answers say, naming the
+project(s). No words about
 amount or quality ("extensive", "solid", "strong", "multiple") and no inferences ("consistent with",
 "demonstrating") unless an answer says it. "sources": the source URLs from those answers. Leave both empty
 for "not_documented".
@@ -181,7 +185,7 @@ def classify_message(state):
 # ---- the graph -----------------------------------------------------------------------------------
 
 def build_graph(llm, tool, review=False, on_call=None, checkpointer=None):
-    """llm: async (messages) -> str (JSON text). tool: async (question) -> str (ask_barry's JSON result).
+    """llm: async (messages, max_tokens=...) -> str (JSON text). tool: async (question) -> str (ask_barry's JSON).
 
     review=True adds the human-in-the-loop pause before any tool is called (needs the checkpointer,
     which is where the paused run is kept). on_call(ToolCall) is called after each lookup.
@@ -192,7 +196,7 @@ def build_graph(llm, tool, review=False, on_call=None, checkpointer=None):
 
     async def plan(state: AgentState) -> dict:
         raw = await llm([{"role": "system", "content": PLAN_INSTRUCTIONS},
-                         {"role": "user", "content": state["message"]}])
+                         {"role": "user", "content": state["message"]}], max_tokens=PLAN_MAX_TOKENS)
         try:
             title, reqs = parse_plan(raw)
         except (ValueError, json.JSONDecodeError) as err:
@@ -245,7 +249,7 @@ def build_graph(llm, tool, review=False, on_call=None, checkpointer=None):
         if not state.get("requirements"):
             return {"raw_report": ""}
         raw = await llm([{"role": "system", "content": CLASSIFY_INSTRUCTIONS},
-                         {"role": "user", "content": classify_message(state)}])
+                         {"role": "user", "content": classify_message(state)}], max_tokens=CLASSIFY_MAX_TOKENS)
         return {"raw_report": raw}
 
     def verify_node(state: AgentState) -> dict:
@@ -284,13 +288,16 @@ def build_graph(llm, tool, review=False, on_call=None, checkpointer=None):
 
 def azure_llm(async_client, deployment, counter=None):
     """Azure OpenAI (v1 endpoint, Entra ID) as an async messages -> JSON-text function."""
-    async def complete(messages):
+    async def complete(messages, max_tokens=PLAN_MAX_TOKENS):
         if counter is not None:
             counter["llm_calls"] += 1
         response = await async_client.chat.completions.create(
-            model=deployment, messages=messages, temperature=0, max_tokens=2000,
+            model=deployment, messages=messages, temperature=0, max_tokens=max_tokens,
             response_format={"type": "json_object"})
-        return response.choices[0].message.content or ""
+        choice = response.choices[0]
+        if choice.finish_reason == "length" and counter is not None:
+            counter["cut_off"] = counter.get("cut_off", 0) + 1     # shows up in stats, then parse falls back
+        return choice.message.content or ""
     return complete
 
 
@@ -367,5 +374,6 @@ async def run(job_ad, llm=None, tool=None, on_call=None, review=None):
             report, final = blocked_report(reason), {}
     log = _tool_log(final.get("lookups") or [])
     stats = {"seconds": round(time.time() - start, 1), "tool_calls": len(log.calls),
-             "llm_calls": counter["llm_calls"], "tool_log": [c.__dict__ for c in log.calls]}
+             "llm_calls": counter["llm_calls"], "replies_cut_off": counter.get("cut_off", 0),
+             "tool_log": [c.__dict__ for c in log.calls]}
     return report, stats

@@ -44,7 +44,7 @@ Sprint 1 delivered the base: RAG live in production and evaluated, the job-ad ag
 | 7d | Answer quality compared across model providers | Done: [results](#compare-model-providers-stage-7d) |
 | 7e | Infrastructure as code for this project's Azure resources | Done: [infra/](infra/) |
 | 8 | Job-ad evidence agent (Microsoft Agent Framework + the MCP tool), evaluated like retrieval | Done: CLI, evaluation ([results](#job-ad-evidence-agent-stage-8)) and web page (`/evidence`) |
-| ASK-70 | The same agent rebuilt in LangGraph, compared on the same evaluation | In progress: [built and tested](#same-agent-two-frameworks-langgraph-ask-70); evaluation still to run |
+| ASK-70 | The same agent rebuilt in LangGraph, compared on the same evaluation | Done: [results](#same-agent-two-frameworks-langgraph-ask-70) |
 | 9a | A second, different judge (TypeSafe Jev) measured against hand-labelled claims | Done: [results](#two-judges-compared-stage-9a) |
 | 10a | AWS account set up safely: IAM user with MFA, least-privilege role, temporary credentials | Done |
 | 10b | Amazon Bedrock models (Claude Haiku 4.5, Amazon Nova 2 Lite) in the provider comparison | Done: [results](#azure-and-aws-bedrock-compared-stage-10) |
@@ -399,7 +399,7 @@ For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipe
 
 ## Same agent, two frameworks: LangGraph (ASK-70)
 
-**Status:** built and tested offline; the evaluation against the Agent Framework version is still to run, so there are no results here yet.
+**Status:** done. Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, [full report](docs/eval/2026-10-31-agent.md)).
 
 The job-ad agent above is also built in **LangGraph** (`app/job_agent_langgraph.py`), with the same `ask_barry` MCP tool, the same `verify()` guardrails and the same report, so the two frameworks can be compared on the same evaluation.
 
@@ -425,7 +425,29 @@ python -m scripts.job_agent job_ad.txt --framework langgraph --review
 python -m scripts.evaluate_agent --systems agent agent-langgraph --save
 ```
 
-LangGraph is a development dependency only; the live `/evidence` page stays on Agent Framework unless the comparison gives a reason to change.
+### Results (31 October 2026)
+
+Same model (gpt-4.1-mini), same tool, same guardrails, same 10 ads and labels, one run each:
+
+| Framework | Coverage | Status accuracy | False evidence | Injection tests | Fallbacks | Avg tool calls | Median time |
+|---|---|---|---|---|---|---|---|
+| Microsoft Agent Framework (live) | 98% | 98% | 1 | 2/2 | 0 | 7.1 | 15 s |
+| LangGraph | 98% | 98% | 1 | 2/2 | 0 | 9.8 | 20 s |
+
+Each false evidence has a different cause, found by reading the rows rather than the totals:
+
+- **Agent Framework, a mapping-library requirement:** not the agent's fault. The `ask_barry` tool itself answered yes, because this README calls the agent's report an *evidence map*, and it cited a real section, so the citation check let it through. A word collision in the answering step, now its own bug (ASK-71). LangGraph got the same yes in an earlier run that day.
+- **LangGraph, "AWS certification":** the classifier's own over-claim. The ad asks for a certification; the tool answers show AWS *use*, which should have been "related only".
+
+What I take from it:
+
+- **Same accuracy, different costs.** The graph checks every planned requirement and retries unsupported ones with a second wording, so it makes about 40% more tool calls and takes about 5 s longer per ad, even though its lookups run in parallel. Agent Framework's model chooses its own calls and makes fewer.
+- **Neither design stops a requirement being dropped at planning.** Agent Framework folded the RAG requirement into another row (as it did in September); LangGraph's planner left out a nice-to-have database once. The graph only guarantees that whatever is planned gets checked.
+- **The guardrails are only as good as the tool.** Both agents trusted a cited but wrong answer from `ask_barry`. The fix belongs in the answering step, not in either agent.
+- **Building the comparison found real bugs:** Azure's raw content-filter error wasn't recognised as a refusal (now handled for both agents), a reply limit too small for 12 rows cut the LangGraph classifier off mid-JSON, and six evaluation labels had gone stale as new repos documented AWS, React, TypeScript and Node.js. One of my relabels was itself wrong (an ad asking for an AWS *certification*) and was reverted before the final run; the label file records each change.
+- **Caveats:** one run each, and single runs vary by a requirement or two (the mapping row flipped between runs). Ten ads is a small set.
+
+**Decision:** the live `/evidence` page stays on Agent Framework: same accuracy, fewer calls and faster. The LangGraph version stays for the review mode (`--review`), where a person approves the requirement list before anything is looked up. LangGraph is a development dependency only.
 
 ## Two judges compared (Stage 9a)
 
