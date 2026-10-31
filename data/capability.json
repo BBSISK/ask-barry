@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-10-31T09:45:46Z",
+  "generated_at": "2026-10-31T22:02:14Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -15,6 +15,7 @@
       "SECOM_Pipeline",
       "agentmath_showcase",
       "ask-barry",
+      "cs210-playlist-lambda",
       "dice-roll-api",
       "housing-pipeline-ireland",
       "inmytime-showcase",
@@ -89,7 +90,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com, served by gunicorn. CI runs the full pytest suite on every push. It includes tests that call the Flask routes through Flask's test client.",
+          "quote": "Ask Barry is a Flask app running in production on Render... CI runs the full pytest suite on every push. It includes tests that call the Flask routes... so a broken route blocks the deploy.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -121,14 +122,14 @@
         },
         {
           "tier": 1,
-          "repo": "agentmath_showcase",
+          "repo": "my30words_showcase",
           "path": "README.md",
-          "heading": "🕵️ AgentMath > Tech stack",
-          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#tech-stack",
-          "project": "AgentMath",
+          "heading": "✍️ Brief > Tech stack",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
+          "project": "Brief",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask |",
+          "quote": "| Backend | Python, Flask, scheduled jobs |",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -147,14 +148,14 @@
         },
         {
           "tier": 1,
-          "repo": "my30words_showcase",
+          "repo": "agentmath_showcase",
           "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
+          "heading": "🕵️ AgentMath > Tech stack",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#tech-stack",
+          "project": "AgentMath",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |",
+          "quote": "| Backend | Python, Flask |",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -211,11 +212,13 @@
         "1": [
           "Ask Barry",
           "SECOM Pipeline",
+          "cs210-playlist-lambda",
           "dice-roll-api"
         ],
         "2": [
           "Ask Barry",
           "SECOM Pipeline",
+          "cs210-playlist-lambda",
           "dice-roll-api"
         ],
         "3": [
@@ -223,37 +226,10 @@
           "SECOM Pipeline"
         ],
         "4": [
-          "Ask Barry",
           "SECOM Pipeline"
         ]
       },
       "evidence": [
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
         {
           "tier": 4,
           "repo": "SECOM_Pipeline",
@@ -272,7 +248,7 @@
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Azure and AWS Bedrock compared (Stage 10)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#azure-and-aws-bedrock-compared-stage-10",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#azure-and-aws-bedrock-compared-stage-10",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -295,19 +271,6 @@
         },
         {
           "tier": 3,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/bootstrap.md",
-          "heading": "Bootstrap: remote Terraform state > First-time setup (once per AWS account)",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/bootstrap.md#first-time-setup-once-per-aws-account",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The script applies the bootstrap stack with temporary local state to create the bucket, writes `infra/backend.hcl` for your account, then moves the bootstrap state into the bucket.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Index into Azure AI Search and compare retrievers (Stage 4)",
@@ -315,7 +278,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid ... Three query modes over the same index: keyword (Azure BM25), vector (nearest neighbours), and hybrid (both, merged with Reciprocal Rank",
+          "quote": "create index, embed, upload ... Azure keyword / vector / hybrid ... Tests: all offline, with fake Azure clients, so CI needs no keys. ... Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level:",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "After the deploy, `/ready` must say `ready`; then delete `AZURE_OPENAI_API_KEY` and `AZURE_SEARCH_API_KEY` from Render. The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -328,14 +304,39 @@
           "project": "dice-roll-api",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "AWS Lambda runs the handler... No server to manage. Amazon API Gateway gives the function a public HTTPS endpoint... SAM turns it into an AWS CloudFormation stack...",
+          "quote": "AWS Lambda runs the handler in `lambda/index.mjs` (ES module) only when a request arrives. No server to manage. - Amazon API Gateway gives the function a public HTTPS endpoint and routes `GET /roll` to it. - AWS SAM (Serverless Application",
           "kind": "practice",
           "first_committed": "2026-10-24"
+        },
+        {
+          "tier": 2,
+          "repo": "cs210-playlist-lambda",
+          "path": "README.md",
+          "heading": "CS210 Playlist API: a doubly linked list on AWS Lambda > Architecture",
+          "url": "https://github.com/BBSISK/cs210-playlist-lambda/blob/28d387ef10a0866dbb2bb7c4f73c4c0b0f960c03/README.md#architecture",
+          "project": "cs210-playlist-lambda",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "client ──HTTP──▶ API Gateway (REST, throttled) ──▶ Lambda (Java 21, arm64) ... DynamoDB (on-demand, TTL) ... Infrastructure as code: `template.yaml` (AWS SAM) defines the table, API, function and permissions.",
+          "kind": "practice",
+          "first_committed": "2026-10-31"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 5: Azure AI Search (Free tier)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ba39a931b28da61684b20536d601f69359e6abb0/docs/azure-setup.md#step-5-azure-ai-search-free-tier",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Portal → **+ Create a resource** → **Azure AI Search** →",
+          "kind": "application",
+          "first_committed": "2026-09-27"
         }
       ],
       "depth": {
         "projects_at_top": [
-          "Ask Barry",
           "SECOM Pipeline"
         ],
         "months": 1,
@@ -354,7 +355,7 @@
     {
       "id": "infrastructure-as-code",
       "name": "Infrastructure as code",
-      "tier": 3,
+      "tier": 4,
       "first_evidence": "2026-09",
       "projects_by_tier": {
         "1": [
@@ -371,11 +372,14 @@
           "Ask Barry",
           "Housing Pipeline Ireland",
           "SECOM Pipeline"
+        ],
+        "4": [
+          "Ask Barry"
         ]
       },
       "evidence": [
         {
-          "tier": 3,
+          "tier": 4,
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Infrastructure as code (Stage 7e)",
@@ -383,7 +387,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init terraform plan ... terraform apply ... changes nothing in Azure",
+          "quote": "Checked in CI: every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -396,7 +400,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Checked in CI: every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.",
+          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init terraform plan ... terraform apply ... changes nothing in Azure",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -480,7 +484,9 @@
         }
       ],
       "depth": {
-        "projects_at_top": [],
+        "projects_at_top": [
+          "Ask Barry"
+        ],
         "months": 1,
         "third_party": false,
         "reached": false
@@ -528,7 +534,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Every pull request runs CI (GitHub Actions), and main only accepts a merge when all three required checks pass... On every merge to main, the publish workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
+          "quote": "- **Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... - **On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -687,7 +693,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`producer-image`: builds the producer container and runs it on a small fake dataset, checking every record against the contract. On every merge to `main`, the `publish` workflow pushes the producer image to ECR",
+          "quote": "**On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds anything critical.",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -700,7 +706,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Container: `producer/Dockerfile`.",
+          "quote": "Code: `secom/producer.py` (standard library only). Container: `producer/Dockerfile`.",
           "kind": "application",
           "first_committed": "2026-10-12"
         },
@@ -861,6 +867,19 @@
         {
           "tier": 4,
           "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Two judges compared (Stage 9a)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
           "path": "docs/model-card.md",
           "heading": "Ask Barry: model card > Evaluation",
           "url": "https://github.com/BBSISK/ask-barry/blob/a0141f7e25affe97687d4c91e9a3505cbba96a7a/docs/model-card.md#evaluation",
@@ -881,19 +900,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Pipeline: question → Azure AI Search hybrid retrieval → gpt-4.1-mini → citation check → answer with links.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Architecture",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#architecture",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Nightly GitHub Action ... Embed new or changed sections ... Azure AI Search index ... Hybrid retrieval ... gpt-4.1-mini ... Answer + links to exact sections",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -958,12 +964,38 @@
           "tier": 4,
           "repo": "ask-barry",
           "path": "README.md",
+          "heading": "Ask Barry > Same agent, two frameworks: LangGraph (ASK-70)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#same-agent-two-frameworks-langgraph-ask-70",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, full report)",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
           "heading": "Ask Barry > Use Ask Barry from an AI assistant (MCP, Stage 7)",
           "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#use-ask-barry-from-an-ai-assistant-mcp-stage-7",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Unit tests plus an in-memory client test cover the tool listing, schemas, results and errors, and a further test launches the server as a real process through the agent's own MCP tool",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Same agent, two frameworks: LangGraph (ASK-70)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#same-agent-two-frameworks-langgraph-ask-70",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Tests: 23, with a scripted fake model and tool: parallel checks, the budget, injection, fallbacks, the content-filter block, the review pause, and a real `ask_barry` MCP server process over stdio.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -989,7 +1021,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 mcp_server.py --self-test",
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1016,32 +1048,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "hosted MCP server live at /mcp, main protected by GitHub rules",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Connect Ask Barry to your AI assistant (hosted MCP, ASK-68)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Add this URL to any AI assistant that supports remote MCP servers. Nothing to install, and no login (the data is public): https://ask-barry.onrender.com/mcp",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Job-ad evidence agent (Stage 8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#job-ad-evidence-agent-stage-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The framework limits tool calls (16), loop iterations and run time. If the agent doesn't finish, the report falls back to the tool answers as returned.",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -1147,7 +1153,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored: ... Regression checks ... Traps ... The citation test and regression checks are deterministic.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "docs/model-card.md",
+          "heading": "Ask Barry: model card > Evaluation",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/docs/model-card.md#evaluation",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "**Judges checked against hand labels** (1 October 2026, 55 claims: 40 from real answers, 15 with one detail deliberately changed): against my blind labels the gpt-4.1-mini judge scored 89% and TypeSafe Jev 87%, each with 1 false support.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1156,11 +1175,11 @@
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Two judges compared (Stage 9a)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#two-judges-compared-stage-9a",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
+          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1173,20 +1192,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Regression checks failed | 0 | ... Each fix came with a unit test.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/model-card.md",
-          "heading": "Ask Barry: model card > Evaluation",
-          "url": "https://github.com/BBSISK/ask-barry/blob/a0141f7e25affe97687d4c91e9a3505cbba96a7a/docs/model-card.md#evaluation",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%.",
+          "quote": "Regression checks failed | 0 | Passing every check | 44 of 45 | Early versions failed correct answers because of formatting ... Each fix came with a unit test.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1199,7 +1205,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset)",
+          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset): ... `lint-and-test` | `ruff check` and `ruff format --check` (style and",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
@@ -1243,25 +1249,12 @@
           "Wall Inspector"
         ],
         "3": [
-          "Wall Inspector"
+          "In My Time"
         ]
       },
       "evidence": [
         {
           "tier": 3,
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-human-in-the-loop-provenance-model",
-          "project": "Wall Inspector",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "existing production records in PostgreSQL are preserved.",
-          "kind": "application",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 2,
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Technical highlights > Architecture and engineering",
@@ -1269,7 +1262,20 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API), each with its own schema module and no cross-module foreign keys",
+          "quote": "Dual database layer. SQLite in development and PostgreSQL in production through a small adapter that translates placeholders and wraps connections, with connection pooling, so the same SQL runs in both.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 2,
+          "repo": "wall_inspector",
+          "path": "README.md",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-human-in-the-loop-provenance-model",
+          "project": "Wall Inspector",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "New columns (`grading_status`, `graded_by_user_*`, `graded_at`, `provenance`, `confidence_score`) are added by a non-destructive auto-migration on start-up, so existing production records in PostgreSQL are preserved.",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1418,7 +1424,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential...",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1440,7 +1446,7 @@
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security > Security checks before anything ships (ASK-59)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#security-checks-before-anything-ships-ask-59",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#security-checks-before-anything-ships-ask-59",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -1453,7 +1459,7 @@
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#security",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#security",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -1470,7 +1476,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`)",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1545,7 +1551,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).",
+          "quote": "Since 26 Oct 2026 (ASK-62) a ruleset on `main` makes this a rule rather than a habit: a pull request is required, the CI checks must pass before merging, force pushes and deletion are blocked",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1567,7 +1573,7 @@
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security > Security checks before anything ships (ASK-59)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#security-checks-before-anything-ships-ask-59",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#security-checks-before-anything-ships-ask-59",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -1774,7 +1780,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | ... | **Total** | **2** | **150** |",
+          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1895,12 +1901,12 @@
           "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > How the live stream is simulated",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#how-the-live-stream-is-simulated",
+          "heading": "SECOM Semiconductor Pipeline > Architecture",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, ... Batches that keep failing go to an SQS dead-letter queue so they",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1913,7 +1919,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it ... Batches that keep failing go to an SQS dead-letter queue",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1934,12 +1940,25 @@
           "tier": 1,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > How the live stream is simulated",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#how-the-live-stream-is-simulated",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#secom-semiconductor-pipeline",
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "A replay producer publishes its runs in order, at a configurable rate, as if they were arriving off the line. Everything downstream treats it as a real feed.",
+          "quote": "A streaming data pipeline on AWS that watches a semiconductor fab's sensor data for a process drifting toward failure, using statistical process control (SPC).",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1981,19 +2000,6 @@
           "quote": "The replay producer sends its runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
           "kind": "application",
           "first_committed": "2026-10-12"
-        },
-        {
-          "tier": 1,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Architecture",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
-          "kind": "application",
-          "first_committed": "2026-10-11"
         }
       ],
       "depth": {
