@@ -223,6 +223,13 @@ def test_prompt_guards_against_roadmap_confusion_and_rambling():
     assert "at most 4 sentences" in system
 
 
+def test_prompt_says_a_shared_word_is_not_evidence():
+    """ASK-71: the README's "evidence map" was read as map software and cited as maps-SDK evidence."""
+    system = build_messages("q", [result(1)])[0]["content"]
+    assert "A shared word is not evidence" in system
+    assert 'set "supported" to false' in system
+
+
 # --- ASK-69: other citation styles are checked and renumbered too --------------------------------------------
 
 @pytest.mark.parametrize("written,expected", [
@@ -251,3 +258,67 @@ def test_source_words_are_renumbered_with_the_list():
 def test_a_source_number_past_the_retrieved_list_is_dropped():
     raw = json.dumps({"supported": True, "citations": [1], "answer": "Yes (source 1), also (source 12)."})
     assert parse_model_output(raw, 8)[1] == "Yes [1], also."
+
+
+# --- planned sections (ASK-71) -----------------------------------------------
+
+class SequenceProvider:
+    """Returns the replies in order and records every message list it was sent."""
+
+    model = "fake"
+
+    def __init__(self, *replies):
+        self.replies = [json.dumps(r) for r in replies]
+        self.calls = []
+
+    def generate(self, messages, max_tokens=400):
+        self.calls.append(messages)
+        return self.replies[len(self.calls) - 1]
+
+
+def planned_and_done():
+    planned = {"repo": "housing", "path": "README.md", "heading": "Housing > Architecture (planned)",
+               "text": "3. Enrich: geocoding service; coordinate conversion", "url": "https://x/a"}
+    done = {"repo": "housing", "path": "docs/profile.md", "heading": "Profile > Quality issues",
+            "text": "Fix (done): coordinates requested from the service", "url": "https://x/b"}
+    return [SearchResult(planned, 1.0, 1), SearchResult(done, 0.5, 2)]
+
+
+def ask_with(*replies):
+    provider = SequenceProvider(*replies)
+    return Answerer(FakeRetriever(planned_and_done()), provider=provider).ask("Has Barry used a geocoding SDK?"), provider
+
+
+def test_planned_section_presented_as_done_is_retried_with_the_reason():
+    answer, provider = ask_with(
+        {"supported": True, "answer": "Barry used geocoding [1].", "citations": [1]},
+        {"supported": True, "answer": "Geocoding is planned in the housing project [1].", "citations": [1]})
+    assert len(provider.calls) == 2
+    assert "[1]" in provider.calls[1][-1]["content"] and "planned" in provider.calls[1][-1]["content"]
+    assert answer.supported and "planned" in answer.answer
+
+
+def test_second_miss_on_a_planned_section_becomes_no_evidence():
+    answer, provider = ask_with(
+        {"supported": True, "answer": "Barry used geocoding [1].", "citations": [1]},
+        {"supported": True, "answer": "Barry has used geocoding [1][2].", "citations": [1, 2]})
+    assert len(provider.calls) == 2
+    assert not answer.supported and answer.answer == NO_EVIDENCE and answer.sources == []
+
+
+def test_retry_may_decline():
+    answer, _ = ask_with(
+        {"supported": True, "answer": "Barry used geocoding [1].", "citations": [1]},
+        {"supported": False, "answer": "", "citations": []})
+    assert not answer.supported and answer.answer == NO_EVIDENCE
+
+
+def test_answer_that_says_planned_needs_no_retry():
+    answer, provider = ask_with({"supported": True, "answer": "Geocoding is planned, not yet built [1].", "citations": [1]})
+    assert len(provider.calls) == 1 and answer.supported
+
+
+def test_answer_citing_only_done_sections_needs_no_retry():
+    answer, provider = ask_with({"supported": True, "answer": "Barry requested coordinates from the service [2].",
+                                 "citations": [2]})
+    assert len(provider.calls) == 1 and answer.supported

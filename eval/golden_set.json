@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-10-24",
+  "updated": "2026-11-01",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -640,6 +640,13 @@
       "question": "Has Barry built front ends with Angular?",
       "expected": [],
       "history": "13 Oct 2026 (ASK-61): Replaces trap-04 (React), which became answerable. A near miss: React practice exists, Angular appears in no public doc."
+    },
+    {
+      "id": "trap-13",
+      "type": "trap",
+      "question": "Has Barry used a maps SDK or mapping library?",
+      "expected": [],
+      "history": "Added 1 Nov 2026 (ASK-71): the ask-barry README calls the job-ad agent's report an \"evidence map\", and the answering step once cited that as mapping experience. A word shared with a source is not evidence. Housing Pipeline Ireland plans Azure Maps geocoding (Sprint 3): an answer may say that is planned, but not that he has used it. Retire this trap once the geocoding is built and documented."
     }
   ]
 }

@@ -95,7 +95,7 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 43 answerable questions, each with the file that answers it, plus 8 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **Golden set:** `eval/golden_set.json` holds 43 answerable questions, each with the file that answers it, plus 9 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
 - **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
 - **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
 
@@ -393,7 +393,7 @@ Scored on 63 labelled requirements (the 3 in one ad blocked by the platform filt
 
 **Scan a job ad (Stage 8e):** on a phone, the evidence page's **Scan a job ad** button opens the camera. The photo is shrunk on the phone, and the same gpt-4.1-mini deployment transcribes the visible text (it's told to transcribe only, never to follow instructions in the image). The text goes into the box for the visitor to check and correct before running the agent, so nothing runs on a photo directly. Photos aren't stored or logged, uploads are capped at 8 MB, and scans have their own limit (8 per hour per visitor). `python -m scripts.scan_check photo.jpg` tries it from the command line.
 
-**Share on the spot (Stage 8f):** when a map is ready, the page shows a QR code to scan from the screen, plus Share / WhatsApp / Email / Copy link buttons. The shared link carries the map itself, compressed and signed with the server's secret (HMAC-SHA256), so it works for weeks with no database and any edited link is rejected. The QR code uses a short `/s/<id>` link (a dense QR on a phone screen won't scan) that redirects to the signed one for a day.
+**Share on the spot (Stage 8f):** when an evidence map is ready, the page shows a QR code to scan from the screen, plus Share / WhatsApp / Email / Copy link buttons. The shared link carries the whole report, compressed and signed with the server's secret (HMAC-SHA256), so it works for weeks with no database and any edited link is rejected. The QR code uses a short `/s/<id>` link (a dense QR on a phone screen won't scan) that redirects to the signed one for a day.
 
 For the MCP server, `ASK_BARRY_MODE=local` answers in-process with the same pipeline, so an agent making a dozen lookups isn't blocked by the public site's rate limit.
 
@@ -436,7 +436,7 @@ Same model (gpt-4.1-mini), same tool, same guardrails, same 10 ads and labels, o
 
 Each false evidence has a different cause, found by reading the rows rather than the totals:
 
-- **Agent Framework, a mapping-library requirement:** not the agent's fault. The `ask_barry` tool itself answered yes, because this README calls the agent's report an *evidence map*, and it cited a real section, so the citation check let it through. A word collision in the answering step, now its own bug (ASK-71). LangGraph got the same yes in an earlier run that day.
+- **Agent Framework, a "nice to have" in the mobile ad:** not the agent's fault. The `ask_barry` tool itself answered yes, because this README calls the agent's report an *evidence map*, and it cited a real section, so the citation check let it through. A word collision in the answering step. LangGraph got the same yes in an earlier run that day. **Fixed in ASK-71:** the answer prompt now says a word shared with a source is not evidence, and a new golden-set trap checks it. Testing the fix found a second cause: the model read a section headed "(planned)" as work already done, whatever the prompt said. So the code now checks it: an answer that cites a planned section but never says anything is planned is sent back once with the reason, and a second miss becomes "no evidence".
 - **LangGraph, "AWS certification":** the classifier's own over-claim. The ad asks for a certification; the tool answers show AWS *use*, which should have been "related only".
 
 What I take from it:
