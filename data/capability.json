@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-11-02T11:21:33Z",
+  "generated_at": "2026-11-03T10:59:55Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -23,7 +23,8 @@
       "my30words_showcase",
       "react-challenges",
       "taxi-mum-dad",
-      "wall_inspector"
+      "wall_inspector",
+      "where-am-i"
     ]
   },
   "tiers": [
@@ -68,7 +69,8 @@
           "Housing Pipeline Ireland",
           "In My Time",
           "PlanForMe",
-          "taxi-mum-dad"
+          "taxi-mum-dad",
+          "where-am-i"
         ],
         "2": [
           "Ask Barry",
@@ -119,7 +121,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API)",
+          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API), each with its own schema module and no cross-module foreign keys",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -132,7 +134,7 @@
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Flask app factory on Render (Frankfurt) ── gunicorn - Backend: Flask app factory, Flask-SQLAlchemy models (family, parent, kid, task, trip, passenger, promise, ledger entry, event), server-side fare calculation",
+          "quote": "Flask app factory on Render (Frankfurt) ── gunicorn - **Backend:** Flask app factory, Flask-SQLAlchemy models (family, parent, kid, task, trip, passenger, promise, ledger entry, event), server-side fare calculation",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -158,7 +160,7 @@
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Python 3.12 · Flask 3 · Flask-SQLAlchemy / SQLAlchemy 2 · PostgreSQL (Neon) · psycopg 3 · gunicorn · Render",
+          "quote": "Python 3.12 · Flask 3 · Flask-SQLAlchemy / SQLAlchemy 2",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -177,16 +179,16 @@
         },
         {
           "tier": 1,
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
+          "repo": "where-am-i",
+          "path": "pipeline/README.md",
+          "heading": "Data pipeline (offline) > Tests",
+          "url": "https://github.com/BBSISK/where-am-i/blob/50c5594aafcacff5432f7d1114d29d0b5be9bec5/pipeline/README.md#tests",
+          "project": "where-am-i",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Backend | Python, Flask, scheduled jobs",
-          "kind": "application",
-          "first_committed": "2026-09-25"
+          "quote": "cd pipeline && python -m pytest -q",
+          "kind": "practice",
+          "first_committed": "2026-11-02"
         }
       ],
       "depth": {
@@ -231,8 +233,7 @@
           "SECOM Pipeline"
         ],
         "4": [
-          "Ask Barry",
-          "SECOM Pipeline"
+          "Ask Barry"
         ]
       },
       "evidence": [
@@ -245,7 +246,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS... BedrockProvider that calls the Bedrock Converse API through boto3... python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedrock-nova --save",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS... python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedrock-nova --save",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -271,7 +272,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tests: all offline, with fake Azure clients, so CI needs no keys. Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level: ... Azure hybrid 0.80 0.94 1.00 0.86",
+          "quote": "Tests: all offline, with fake Azure clients, so CI needs no keys.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -284,22 +285,9 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. After the deploy, `/ready` must say `ready`",
+          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
           "kind": "application",
           "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Security",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Ruff's Bandit (`S`) rules, pip-audit, a Trivy config scan of the Terraform and Dockerfile, Hadolint, and a Trivy image scan all run inside the required CI checks, so a finding blocks the merge.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
         },
         {
           "tier": 3,
@@ -311,6 +299,19 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Terraform state for both stacks: versioned, encrypted, private, native locking | Bootstrap | Built",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 3,
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Security",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session.",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -336,15 +337,14 @@
           "project": "dice-roll-api",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "AWS Lambda runs the handler in `lambda/index.mjs` (ES module) only when a request arrives. No server to manage. - Amazon API Gateway gives the function a public HTTPS endpoint and routes `GET /roll` to it. - AWS SAM (Serverless Application",
+          "quote": "AWS Lambda runs the handler... Amazon API Gateway gives the function a public HTTPS endpoint... SAM turns it into an AWS CloudFormation stack...",
           "kind": "practice",
           "first_committed": "2026-10-24"
         }
       ],
       "depth": {
         "projects_at_top": [
-          "Ask Barry",
-          "SECOM Pipeline"
+          "Ask Barry"
         ],
         "months": 2,
         "third_party": false,
@@ -396,7 +396,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Safe by design: every resource has `prevent_destroy`. The first plan found two portal settings the code was missing... After adding them, the plan was 5 to import, 0 to add, 0 to change, 0 to destroy, and `apply` imported all",
+          "quote": "Checked in CI: every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -461,7 +461,7 @@
           "project": "aws-ec2-web-server",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`terraform apply`: **7 added, 0 changed, 0 destroyed**. The instance was created in 17 s. ... `terraform destroy`: all 7 resources removed, leaving nothing running or billing.",
+          "quote": "`terraform apply`: **7 added, 0 changed, 0 destroyed**. The instance was created in 17 s.",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -518,7 +518,8 @@
         "1": [
           "Ask Barry",
           "LeetCode in Java",
-          "SECOM Pipeline"
+          "SECOM Pipeline",
+          "where-am-i"
         ],
         "2": [
           "Ask Barry",
@@ -549,19 +550,6 @@
         },
         {
           "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Deployment",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#deployment",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`). CI runs the full pytest suite on every push. It includes tests that call the Flask routes ... so a broken route blocks the deploy.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Security",
@@ -575,16 +563,16 @@
         },
         {
           "tier": 4,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Shift-left security gate (SECOM-19) > Supply chain",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#supply-chain",
-          "project": "SECOM Pipeline",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Deployment",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#deployment",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Trivy and Hadolint are downloaded as release binaries and checked against a SHA-256 written in `ci.yml`. If the download doesn't match, the job stops before running it.",
+          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`). CI runs the full pytest suite on every push.",
           "kind": "application",
-          "first_committed": "2026-10-11"
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 4,
@@ -595,9 +583,22 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset):",
+          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset)",
           "kind": "application",
           "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
+          "repo": "where-am-i",
+          "path": "pipeline/README.md",
+          "heading": "Data pipeline (offline) > Tests",
+          "url": "https://github.com/BBSISK/where-am-i/blob/50c5594aafcacff5432f7d1114d29d0b5be9bec5/pipeline/README.md#tests",
+          "project": "where-am-i",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "cd pipeline && python -m pytest -q",
+          "kind": "practice",
+          "first_committed": "2026-11-02"
         },
         {
           "tier": 1,
@@ -614,6 +615,19 @@
         },
         {
           "tier": 1,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Shift-left security gate (SECOM-19) > Supply chain",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#supply-chain",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "- Trivy and Hadolint are downloaded as release binaries and checked against a SHA-256 written in `ci.yml`. If the download doesn't match, the job stops before running it.",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
           "repo": "leetcode-java",
           "path": "README.md",
           "heading": "leetcode-java > Running the tests",
@@ -623,19 +637,6 @@
           "verified_by": "self",
           "quote": "mvn test",
           "kind": "practice",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/pull_request_template.md",
-          "heading": "Checklist",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/pull_request_template.md#checklist",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "- [ ] Tests added or updated, and they pass locally (`python -m pytest -q`)",
-          "kind": "application",
           "first_committed": "2026-10-11"
         }
       ],
@@ -694,7 +695,7 @@
           "first_committed": "2026-10-12"
         },
         {
-          "tier": 3,
+          "tier": 4,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Testing and CI",
@@ -702,7 +703,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds anything critical.",
+          "quote": "`producer-image`: builds the producer container and runs it on a small fake dataset, checking every record against the contract. On every merge to `main`, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -901,7 +902,7 @@
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 3,
+          "tier": 1,
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Two judges compared (Stage 9a)",
@@ -909,7 +910,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model.",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -966,7 +967,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, full report)",
+          "quote": "**Status:** done. Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, [full report](docs/eval/2026-10-31-agent.md)).",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1090,44 +1091,28 @@
           "Ask Barry",
           "Housing Pipeline Ireland",
           "LeetCode in Java",
-          "SECOM Pipeline",
           "Wall Inspector",
-          "taxi-mum-dad"
+          "taxi-mum-dad",
+          "where-am-i"
         ],
         "2": [
           "Ask Barry",
           "Housing Pipeline Ireland",
-          "SECOM Pipeline",
           "Wall Inspector",
           "taxi-mum-dad"
         ],
         "3": [
           "Ask Barry",
           "Housing Pipeline Ireland",
-          "SECOM Pipeline",
           "Wall Inspector"
         ],
         "4": [
           "Ask Barry",
           "Housing Pipeline Ireland",
-          "SECOM Pipeline",
           "Wall Inspector"
         ]
       },
       "evidence": [
-        {
-          "tier": 4,
-          "repo": "housing-pipeline-ireland",
-          "path": "README.md",
-          "heading": "Housing Pipeline Ireland > Run the tests",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/6e9e1fe07c4266efc29405b6511be6bd7aba6adb/README.md#run-the-tests",
-          "project": "Housing Pipeline Ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "python -m pytest -q",
-          "kind": "application",
-          "first_committed": "2026-10-08"
-        },
         {
           "tier": 4,
           "repo": "ask-barry",
@@ -1150,7 +1135,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests",
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1166,6 +1151,19 @@
           "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
           "kind": "application",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "housing-pipeline-ireland",
+          "path": "README.md",
+          "heading": "Housing Pipeline Ireland > Run the tests",
+          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/6e9e1fe07c4266efc29405b6511be6bd7aba6adb/README.md#run-the-tests",
+          "project": "Housing Pipeline Ireland",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "python -m pytest -q",
+          "kind": "application",
+          "first_committed": "2026-10-08"
         },
         {
           "tier": 4,
@@ -1189,7 +1187,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Regression checks failed | 0 | ... Each fix came with a unit test.",
+          "quote": "Regression checks failed | 0 | Passing every check | 44 of 45 | Each fix came with a unit test.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1202,7 +1200,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_judges --save # both judges vs the labels; --from-results re-scores without API calls",
+          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`. The 0.5 threshold was picked on",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1224,7 +1222,6 @@
         "projects_at_top": [
           "Ask Barry",
           "Housing Pipeline Ireland",
-          "SECOM Pipeline",
           "Wall Inspector"
         ],
         "months": 2,
@@ -1339,7 +1336,7 @@
           "project": "CS385_Mobile_App",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Entity | Key fields |",
+          "quote": "| Entity | Key fields | | ---------------- | --------------------------------------------------------------------------------------------------------------------------- | | **User** | id, email (Maynooth), displayName, course, role (`student` / `admin`) | | **Item** | id, ownerId, title, description, category, condition, pickupLocation, photos[], status (`available` → `reserved` →",
           "kind": "practice",
           "first_committed": "2026-10-13"
         },
@@ -1365,7 +1362,7 @@
           "project": "PlanForMe",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`models.py` | Item, Course, Goal, Milestone, Constraint, ChatLog",
+          "quote": "`planner.db` out of Drive sync",
           "kind": "practice",
           "first_committed": "2026-10-14"
         }
@@ -1429,19 +1426,6 @@
         },
         {
           "tier": 4,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Shift-left security gate (SECOM-19)",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#shift-left-security-gate-secom-19",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Security checks run on **every pull request**, inside the three CI checks that the `protect-main` ruleset already requires. A finding blocks the merge, so problems are fixed before anything reaches `main` or AWS, not found afterwards.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 4,
           "repo": "ask-barry",
           "path": "docs/azure-setup.md",
           "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
@@ -1452,6 +1436,19 @@
           "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
           "kind": "application",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Shift-left security gate (SECOM-19)",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#shift-left-security-gate-secom-19",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Security checks run on **every pull request**, inside the three CI checks that the `protect-main` ruleset already requires. A finding blocks the merge, so problems are fixed before anything reaches `main` or AWS, not found afterwards.",
+          "kind": "application",
+          "first_committed": "2026-10-11"
         },
         {
           "tier": 4,
@@ -1493,19 +1490,6 @@
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 3,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Keyless from the first commit > How the GitHub OIDC exchange works",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#how-the-github-oidc-exchange-works",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "A workflow job with `permissions: id-token: write` asks GitHub for a signed OIDC token... AWS returns credentials that expire after one hour.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
           "tier": 1,
           "repo": "ask-barry",
           "path": "docs/azure-setup.md",
@@ -1515,6 +1499,19 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 1,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/ca09d2ec90427f5eb3fc19d873ed72e53449ce1b/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Turn keys off (`local_auth_enabled = false` on both resources in `infra/main.tf`) once nothing uses them, then rotate the old keys so any copy left anywhere is useless.",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -1576,22 +1573,9 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Since 26 Oct 2026 (ASK-62) a ruleset on `main` makes this a rule rather than a habit: a pull request is required, the CI checks must pass before merging, force pushes and deletion are blocked, and nobody is on the",
+          "quote": "GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).",
           "kind": "application",
           "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/workflow.md",
-          "heading": "Way of working > Branches and pull requests",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/workflow.md#branches-and-pull-requests",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "`main` is protected: changes arrive only through a pull request, and the required CI checks must pass before merge. Nobody pushes to `main` directly.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
         },
         {
           "tier": 4,
@@ -1615,7 +1599,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tests fail the build if a workflow gains a stored key, if the publish job loses its separation or could push to `main`, if the GitHub identity would trust any branch other than `main`, if a Terraform resource loses `prevent_destroy`,",
+          "quote": "Tests fail the build if a workflow gains a stored key, if the publish job loses its separation or could push to `main`, if the GitHub identity would trust any branch other than `main`",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1667,7 +1651,20 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "- **Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... - **Proven, not assumed:** a test pull request with a deliberately failing test was blocked from merging ([screenshot](docs/evidence/secom-13-merge-blocked.png)), then",
+          "quote": "**Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... a test pull request with a deliberately failing test was blocked from merging",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 3,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/workflow.md",
+          "heading": "Way of working > Branches and pull requests",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/workflow.md#branches-and-pull-requests",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "`main` is protected: changes arrive only through a pull request, and the required CI checks must pass before merge. Nobody pushes to `main` directly.",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
@@ -1746,6 +1743,19 @@
         },
         {
           "tier": 2,
+          "repo": "leetcode-java",
+          "path": "README.md",
+          "heading": "leetcode-java > How I work",
+          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#how-i-work",
+          "project": "LeetCode in Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I write every solution myself. I use Claude as a coach: it picks the next problem, gives a hint if I'm stuck, and reviews my code after it passes.",
+          "kind": "practice",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 2,
           "repo": "CS627_Advanced_OOP_Java",
           "path": "CS627B_Lab3_Encapsulation/README.md",
           "heading": "",
@@ -1774,25 +1784,12 @@
           "tier": 1,
           "repo": "leetcode-java",
           "path": "README.md",
-          "heading": "leetcode-java > How I work",
-          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#how-i-work",
-          "project": "LeetCode in Java",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "I write every solution myself.",
-          "kind": "practice",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "leetcode-java",
-          "path": "README.md",
           "heading": "leetcode-java > Solved",
           "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#solved",
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | Arrays & Hashing | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) |",
+          "quote": "| Solution | Time | Space | |---|---|---|---|---|---| | 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | Arrays & Hashing | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1805,7 +1802,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
+          "quote": "| Pattern | Solved | Total | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1859,7 +1856,7 @@
           "project": "React challenges",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tests come first. Each challenge comes with a Vitest + React Testing Library test file, and I work until it passes. GitHub Actions runs the type-checker and the full test suite on every push.",
+          "quote": "Tests come first. Each challenge comes with a Vitest + React Testing Library test file, and I work until it passes.",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1957,7 +1954,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
+          "quote": "The stream is a simulated replay of real fab data. SECOM is a fixed, historical dataset, so a replay producer (`secom/producer.py`, in its own container) sends its 1,567 runs one at a time, in their original order, at a set",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -2009,7 +2006,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the [record contract]",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects in PostgreSQL,",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
