@@ -53,6 +53,14 @@
     .t-ink { fill:var(--muted); } .t-gap { stroke:#c5221f; stroke-width:2.5; stroke-linecap:round; }
     .t-line { stroke:var(--line); stroke-width:6; stroke-linecap:round; } .t-doc { fill:var(--card); stroke:var(--line); stroke-width:2; }
     .t-arrow { stroke:var(--accent); stroke-width:2; fill:none; } .t-check { stroke:var(--on-accent); stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    /* ASK-74: the evidence curve, as a wide tile above the other two */
+    .tile.wide { grid-column:1 / -1; flex-direction:row; align-items:stretch; }
+    .tile.wide svg { width:55%; flex:none; border-bottom:0; border-right:1px solid var(--line); }
+    .tile.wide .body { display:flex; flex-direction:column; justify-content:center; }
+    .c-lead { fill:none; stroke:var(--accent); stroke-width:4; stroke-linecap:round; }
+    .c-rest { fill:none; stroke:var(--line); stroke-width:3; stroke-dasharray:2 6; stroke-linecap:round; }
+    .c-gap { fill:var(--card); stroke:var(--muted); stroke-width:2; stroke-dasharray:3 2; }
+    @media (max-width: 34rem) { .tile.wide { flex-direction:column; } .tile.wide svg { width:100%; border-right:0; border-bottom:1px solid var(--line); } }
     h2.ask { font-size:1.05rem; margin:0 0 .5rem; }
     @media (prefers-reduced-motion: reduce) { .tile { transition:none; } .tile:hover { transform:none; } }
     @media (max-width: 34rem) { .tiles { grid-template-columns:1fr; } }
@@ -65,6 +73,17 @@
   <p class="lede">An <strong>AI assistant</strong> for questions about Barry Sisk's software projects. Answers come <strong>only</strong> from the documentation in his public GitHub repositories, with links to the sources. If the documentation doesn't support something, it says so.</p>
 
   <nav class="tiles" aria-label="Explore Barry's evidence">
+    <a class="tile wide" href="/curve" aria-label="Evidence curve: where Barry is on the AI engineer's path, every dot linked to proof">
+      <svg viewBox="0 0 320 130" role="img" aria-hidden="true" focusable="false">
+        <path class="c-rest" d="M138 22 C144 8 152 8 158 24 C175 75 180 112 200 112 C224 112 236 64 254 44 C264 34 274 30 288 29"/>
+        <path class="c-lead" d="M30 112 C70 112 116 64 138 22"/>
+        <path class="c-lead" d="M200 112 C224 112 236 64 254 44 C264 34 274 30 288 29"/>
+        <circle class="t-on" cx="62" cy="106" r="6"/><circle class="t-mid" cx="88" cy="90" r="6"/><circle class="t-on" cx="106" cy="72" r="6"/>
+        <circle class="t-on" cx="120" cy="54" r="6"/><circle class="c-gap" cx="132" cy="34" r="6"/>
+        <circle class="t-on" cx="224" cy="96" r="6"/><circle class="t-on" cx="236" cy="74" r="6"/><circle class="t-on" cx="250" cy="52" r="6"/><circle class="t-on" cx="272" cy="34" r="6"/>
+      </svg>
+      <div class="body"><strong>The evidence curve</strong><span>The path from engineering foundations to production AI, drawn from checked evidence. Every dot links to proof; empty dots are honest gaps.</span><span class="go">See where I am &rarr;</span></div>
+    </a>
     <a class="tile" href="/capability" aria-label="Capability ladder: how far each skill goes, with evidence and gaps">
       <svg viewBox="0 0 320 120" role="img" aria-hidden="true" focusable="false">
         <rect class="t-ink" x="20" y="18" width="60" height="8" rx="4"/><rect class="t-on" x="96" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="146" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="196" y="14" width="44" height="16" rx="4"/><rect class="t-on" x="246" y="14" width="44" height="16" rx="4"/>

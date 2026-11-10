@@ -123,6 +123,28 @@ def capability_page():
     return render_template("capability.html", **context)
 
 
+def get_curve():
+    """The profile pack's curve.yaml (ASK-74), loaded once. None if the pack has no curve or it doesn't load."""
+    if "curve" not in current_app.extensions:
+        from .capability.pack import PackError, load_pack
+        try:
+            current_app.extensions["curve"] = load_pack().curve
+        except PackError:
+            log.exception("curve: the profile pack didn't load")
+            current_app.extensions["curve"] = None
+    return current_app.extensions["curve"]
+
+
+@bp.get("/curve")
+def curve_page():
+    """The evidence curve (ASK-74): the capability ladder drawn as two climbs, every dot linked to its proof."""
+    from .capability import view
+    data = current_app.extensions["capability"].get()
+    curve = view.curve_view(data, get_curve())
+    return render_template("curve.html", app_name=current_app.config["APP_NAME"], cap=data, curve=curve,
+                           as_of=view.day_text(curve["as_of"]) if curve else "")
+
+
 @bp.get("/api/capability")
 def capability_api():
     """The same capability.json the page uses (read-only). ?skill=<id or name> returns one skill."""

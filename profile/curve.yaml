@@ -1,0 +1,18 @@
+# The evidence curve (ASK-74): which skills sit on which climb of the /curve page, bottom to top.
+# Optional. Every skill id must be in skills.yaml, once. Each dot's tier, quote and link come from the nightly
+# capability.json, never from this file, so the picture can't claim more than the evidence shows.
+title: "Life of an AI engineer. Every dot links to proof."
+intro: >-
+  Rebuilt every night from quotes that code checks against my public project docs.
+  Nothing here is a self-rating, and an empty dot is a gap I haven't evidenced yet.
+climbs:
+  - name: Engineering foundations
+    note: My Higher Diploma, plus my own projects.
+    skills: [python-flask, databases-sql, java, front-end-frameworks, cloud, ci-cd, containers,
+             infrastructure-as-code, data-streaming, kubernetes]
+  - name: AI engineering
+    note: Built, live and evaluated at the same time.
+    skills: [rag-llm, agents-mcp, testing-evaluation, security-identity, change-control]
+dip: AI tools without evals
+bridge: Evaluated, not vibes
+credit: Curve idea inspired by the "Life of an AI Engineer" chart by Raju Dandigam.

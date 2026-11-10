@@ -26,6 +26,7 @@ Sprint 1 delivered the base: RAG live in production and evaluated, the job-ad ag
 - An MCP server, so AI assistants can query it as a tool: hosted at [`/mcp`](#connect-ask-barry-to-your-ai-assistant-hosted-mcp-ask-68) for anyone to add by URL, or run locally
 - Nightly index refresh, and a [model card](docs/model-card.md) with limits and an EU AI Act assessment
 - A [capability ladder](#capability-ladder-and-evidence-cards-ask-42) rebuilt every night from quotes that code checks, with evidence cards I approve and a gap-closing plan with a track record
+- An [evidence curve](#the-evidence-curve-ask-74) on the home page: the same ladder drawn as the path from engineering foundations to production AI, every dot linked to its proof
 - [Change control](#how-changes-are-made) from Jira story to branch, pull request, CI and deploy, with the rules enforced by tests
 - [Security checks](#security-checks-before-anything-ships-ask-59) on every pull request: dependencies, code, secrets in the git history and Terraform policy
 
@@ -571,6 +572,15 @@ Three more failed runs. As before, the live site kept its last good build each t
 - **Cards need my approval:** the builder drafts examples into `data/capability_suggestions.json`; one goes live only once its id is in `profile/cards.yaml`. After that it keeps the wording I approved: each night the builder only re-checks that its quote is still in the source, and drops it if not, so a redraft can't change or remove it.
 - **Built for anyone's evidence:** everything about me lives in the `profile/` pack (skills, tier wording and criteria, cards), checked against JSON Schemas. A test builds and shows a made-up profile for a different profession with no code change.
 - **Checked:** hand-labelled expected tiers (`python -m scripts.evaluate_capability`, pass mark 80% plus no over-claimed gap skills), a stability check that fails unless two builds give every skill the same tier, and a `get_capability` MCP tool that serves the same JSON.
+
+## The evidence curve (ASK-74)
+
+[/curve](https://ask-barry.onrender.com/curve) draws the capability ladder as a path: a first climb through engineering foundations, a dip labelled "AI tools without evals", and a second climb through AI engineering. It is my own redrawing of the "Life of an AI Engineer" chart by Raju Dandigam, with one change that matters: every dot comes from the nightly capability build.
+
+- **Nothing on it is drawn by hand.** Each dot's tier, project names, quote and commit-pinned GitHub link come from `capability.json`. The profile pack's `profile/curve.yaml` only says which skills sit on which climb, in what order, and the wording around them. It uses the real skill names, and a skill that isn't on the ladder can't be placed.
+- **Gaps stay visible.** A skill with no evidence is an empty dashed dot, and its card says it isn't evidenced, which is not the same as lacking it. An open gap-closing plan is shown beside it.
+- **Every dot is a link** to its evidence card on the same page, so it works without JavaScript, by keyboard, in dark mode and on a phone, where the picture becomes an overview and the cards carry the detail.
+- **Checked:** tests refuse a curve that names an unknown skill or the same skill twice, check every dot's tier, quote and link against the data, and check that an empty dot carries no quote or link.
 
 ## Security
 

@@ -1,6 +1,6 @@
 """Load and validate a profile pack: the folder that says whose capability this is (ASK-42, ASK-43).
 
-A pack is four YAML files (profile, tiers, skills, cards), plus an optional plans.yaml (ASK-50). Each is checked against a JSON Schema, then
+A pack is four YAML files (profile, tiers, skills, cards), plus an optional plans.yaml (ASK-50) and curve.yaml (ASK-74). Each is checked against a JSON Schema, then
 against a few rules a schema can't express (unique ids, tiers 1..N in order, project kinds that exist). Errors name the file and the
 field, so someone setting up their own pack can fix it without reading code.
 """
@@ -29,6 +29,7 @@ class Pack:
     cards: list
     path: Path = field(default=None)
     plans: list = field(default_factory=list)
+    curve: dict = field(default=None)
 
     @property
     def profile_id(self):
@@ -134,7 +135,7 @@ def load_pack(folder=DEFAULT_PACK):
     _unique(data["skills"]["skills"], "skill", folder / "skills.yaml")
     _unique(data["cards"]["cards"], "card", folder / "cards.yaml")
     return Pack(profile=data["profile"], tiers=tiers, skills=data["skills"]["skills"],
-                cards=data["cards"]["cards"], path=folder, plans=_plans(folder, data))
+                cards=data["cards"]["cards"], path=folder, plans=_plans(folder, data), curve=_curve(folder, data))
 
 
 def _check_kinds(folder, profile, tiers):
@@ -173,3 +174,21 @@ def _plans(folder, data):
         if plan["target"] < plan["planned"]:
             raise PackError(f"{path}: plan '{plan['id']}' has a target month before the month it was planned.")
     return plans
+
+
+def _curve(folder, data):
+    """Optional curve.yaml (ASK-74): two climbs of skills from this pack, each skill once."""
+    path = Path(folder) / "curve.yaml"
+    if not path.exists():
+        return None
+    curve = _read(folder, "curve")
+    skills = {s["id"] for s in data["skills"]["skills"]}
+    seen = set()
+    for climb in curve["climbs"]:
+        for sid in climb["skills"]:
+            if sid not in skills:
+                raise PackError(f"{path}: climb '{climb['name']}' names skill '{sid}', which isn't in skills.yaml.")
+            if sid in seen:
+                raise PackError(f"{path}: skill '{sid}' is on the curve twice.")
+            seen.add(sid)
+    return curve
