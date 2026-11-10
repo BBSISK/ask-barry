@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T11:44:14Z",
+  "generated_at": "2026-11-10T08:27:35Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -12,7 +12,7 @@
         {
           "id": "problem-solving:a59c87e1e3",
           "title": "Debugging nightly refresh failures",
-          "summary": "Barry identified root causes of nightly refresh failures using logs and error messages, reproduced failures with unit tests, and verified fixes with manual and automated tests.",
+          "summary": "Barry identified root causes of nightly refresh failures using logs and error emails, reproduced failures with unit tests, and verified fixes with manual and automated tests.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026)",
@@ -24,17 +24,17 @@
           "approved": false
         },
         {
-          "id": "problem-solving:b33ac62196",
-          "title": "Fixed security issues found by gate",
-          "summary": "Barry identified three security issues from the new checks and fixed two by updating package versions and restricting S3 permissions; one issue was accepted without fix.",
-          "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Shift-left security gate (SECOM-19) > What the gate found when it was switched on",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#what-the-gate-found-when-it-was-switched-on",
-          "project": "SECOM Pipeline",
+          "id": "problem-solving:2c5cd5b243",
+          "title": "Fixed empty assistant reply bug",
+          "summary": "Barry identified a bug where an empty assistant reply caused request rejection and fixed it by adding a placeholder message in Agent.ask, ensuring alternating user/assistant turns; he wrote a test that initially failed then passed.",
+          "repo": "agent-quest-java",
+          "path": "README.md",
+          "heading": "Agent Quest (Java) > Build log > Step 5: measuring two models (done)",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/aeb68c0dea19bac5d6a51e248e2558e3f2cff1cd/README.md#step-5-measuring-two-models-done",
+          "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The first run of the new checks against the existing code found three real issues, all fixed in the same pull request: ... Fix: raised `pytest` to `>=9.0.3` and added a `pillow>=13.0.0` floor ... Fix: replaced with the specific S3",
+          "quote": "Bug found by Haiku: an empty assistant reply went into history and Bedrock rejected the next request. Fixed in `Agent.ask` (a placeholder message keeps the user/assistant turns alternating); test `emptyReplyIsNotSentBack` written first, failing, then passing.",
           "approved": false
         },
         {
@@ -48,7 +48,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid that I realised could expose a credential.",
+          "quote": "A new 6-hourly digest job died first with a database error that turned out to be a silent fallback to an empty local database... I traced each layer from the logs, fixed the configuration, made the code fail loudly with",
           "approved": false
         },
         {
@@ -66,6 +66,34 @@
           "approved": false
         },
         {
+          "id": "problem-solving:b33ac62196",
+          "title": "Fixed security issues found by gate",
+          "summary": "The first run of new security checks found three issues; Barry fixed two by updating package versions and restricting S3 permissions, and accepted one issue without fixing it.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Shift-left security gate (SECOM-19) > What the gate found when it was switched on",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#what-the-gate-found-when-it-was-switched-on",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The first run of the new checks against the existing code found three real issues, all fixed in the same pull request: ... Fix: raised `pytest` to `>=9.0.3` and added a `pillow>=13.0.0` floor ... Fix: replaced with the specific S3",
+          "approved": false
+        },
+        {
+          "id": "problem-solving:b6004f4bab",
+          "title": "Debugged nightly refresh failures",
+          "summary": "Barry identified root causes of nightly build failures, corrected code indentation, updated test coverage, and adjusted retrieval checks to accommodate document changes, restoring successful nightly runs.",
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026) > Follow-up: 13-15 October 2026",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#follow-up-13-15-october-2026",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "My ASK-58 change indented the build call into the `--seed-evidence` loop, so a run without seeds (every nightly run) never built anything. Tests covered the builder, not the command the workflow runs",
+          "approved": false
+        },
+        {
           "id": "problem-solving:1860de115d",
           "title": "Fixing nightly refresh failures",
           "summary": "Barry identified thresholds to distinguish systemic failures from expected changes, enabling targeted fixes and reducing false incident reports during nightly refreshes.",
@@ -80,23 +108,9 @@
           "approved": false
         },
         {
-          "id": "problem-solving:b6004f4bab",
-          "title": "Debugged nightly refresh failures",
-          "summary": "Barry identified root causes of nightly build failures, corrected code indentation, updated test coverage, and adjusted retrieval checks to accommodate document changes, restoring successful runs.",
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026) > Follow-up: 13-15 October 2026",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#follow-up-13-15-october-2026",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "My ASK-58 change indented the build call into the `--seed-evidence` loop, so a run without seeds (every nightly run) never built anything. Tests covered the builder, not the command the workflow runs",
-          "approved": false
-        },
-        {
           "id": "problem-solving:5a65144910",
-          "title": "Solving Various Technical Issues",
-          "summary": "Barry identified and fixed multiple issues including silent alert failures due to WhatsApp rules, lost follow-up context, HTTPS certificate issuance problems, language addition process, and a failing scheduled job with misleading errors.",
+          "title": "Fixing silent alert failures",
+          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Problems I solved along the way",
@@ -104,7 +118,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Admin alerts weren't arriving... I added an automatic fallback... I added a short-lived pending-follow-up field... Moving DNS to Cloudflare... I traced each layer from the logs, fixed the configuration, made the code fail loudly... I recorded the lessons in the",
+          "quote": "Admin alerts weren't arriving, yet the messaging API reported every send as successful. The root cause was WhatsApp's 24-hour session rule: free-form messages are only delivered while a conversation is open. I added an automatic fallback to a pre-approved template",
           "approved": false
         },
         {
@@ -123,8 +137,8 @@
         },
         {
           "id": "problem-solving:d01d06712f",
-          "title": "Problem solving and root cause analysis",
-          "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, rebuilt it, measured search regression, compared three fixes, and shipped the simplest one.",
+          "title": "Problem solving and root cause",
+          "summary": "Barry applied Model-Based Problem Solving techniques to trace a scheduling bug to its root cause, compared three fixes based on search regression measurements, and shipped the simplest fix.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -146,22 +160,8 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each false evidence has a different cause, found by reading the rows rather than the totals... Fixed in ASK-71: the answer prompt now says a word shared with a source is not evidence, and a new golden-set trap checks it...",
+          "quote": "Each false evidence has a different cause, found by reading the rows rather than the totals... Fixed in ASK-71: the answer prompt now says a word shared with a source is not evidence... the code now checks it: an answer",
           "approved": false
-        },
-        {
-          "id": "problem-solving:84dbcd1ba7",
-          "title": "Fixing data quality issues",
-          "summary": "Barry identified missing coordinate data and fixed it by requesting geometry projection, ensuring all applications had valid locations. He also addressed unreliable residential unit counts by using description extraction and refined classification of grant types.",
-          "repo": "housing-pipeline-ireland",
-          "path": "docs/data-profile.md",
-          "heading": "Data profile — Sprint 1 (8–22 Oct 2026) > National Planning Applications — South Dublin County Council (HOUSE-9) > Top 5 quality issues",
-          "url": "https://github.com/BBSISK/housing-pipeline-ireland/blob/6e9e1fe07c4266efc29405b6511be6bd7aba6adb/docs/data-profile.md#top-5-quality-issues-1",
-          "project": "Housing Pipeline Ireland",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Fix (done, 10 Oct): the downloader now requests the geometry projected to ITM (EPSG:2157) and uses it when the columns are blank. Re-profiled: 0 of 33,304 applications have no location... Fix: this is exactly the case for LLM extraction (HOUSE-20):",
-          "approved": true
         }
       ]
     },
@@ -189,7 +189,7 @@
         {
           "id": "security-mindset:7848f34d39",
           "title": "Privacy by design in WhatsApp",
-          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding collection of special-category personal data.",
+          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding storage of personal data.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
@@ -203,7 +203,7 @@
         {
           "id": "security-mindset:5a65144910",
           "title": "Fixing silent alert failures",
-          "summary": "Barry identified WhatsApp's 24-hour session rule causing silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
+          "summary": "Barry identified WhatsApp's 24-hour session rule caused silent alert failures and added an automatic fallback to a pre-approved template message with tests for both paths.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Problems I solved along the way",
@@ -215,13 +215,13 @@
           "approved": false
         },
         {
-          "id": "security-mindset:50cc359ea7",
+          "id": "security-mindset:53efc2d563",
           "title": "Privacy by design in app",
-          "summary": "Barry designed the app to minimize data collection, host in the EU, avoid tracking, support user rights, enforce data retention, and provide transparency, following GDPR and Irish Data Protection guidelines.",
+          "summary": "Barry designed the app to minimize data collection, host in the EU, avoid tracking, support user rights, enforce data retention, and provide transparency to comply with GDPR.",
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Privacy by design (GDPR)",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/3fc89824d15d438e1f1388a6480fb706ec277961/README.md#privacy-by-design-gdpr",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/5b102bd70b8782a10a0ae54411251f341bbb98e5/README.md#privacy-by-design-gdpr",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -231,7 +231,7 @@
         {
           "id": "security-mindset:05693a1ea9",
           "title": "Designing for end-of-life privacy",
-          "summary": "Barry designed a system that never assumes a user's death, pausing and sending a check-in only to the custodian, with closing steps starting after family confirmation.",
+          "summary": "Barry designed a system that never assumes user death, pausing and sending a check-in only to the custodian, with closing steps starting after family confirmation.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\" > Designing for the end of life",
@@ -244,7 +244,7 @@
         },
         {
           "id": "security-mindset:f96e1104e0",
-          "title": "Fixing a failing scheduled job",
+          "title": "Fixing scheduled job errors",
           "summary": "Barry traced errors in a scheduled job, fixed configuration and code to fail loudly with clear messages, removed a credential-exposing debug aid, and documented lessons in the issue log.",
           "repo": "inmytime-showcase",
           "path": "README.md",
@@ -273,7 +273,7 @@
         {
           "id": "security-mindset:6ae2842b32",
           "title": "Implementing Least Privilege Access",
-          "summary": "Barry configured identities and roles in code with least privilege, disabled API keys, and used Microsoft Entra ID for authentication, ensuring secrets were environment variables and limiting secret exposure.",
+          "summary": "Barry configured identities and roles with least privilege in code, disabled API keys, and used Microsoft Entra ID for authentication, ensuring the app refused to start without a secret key in production.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Security",
@@ -281,13 +281,13 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Least privilege, as code: the identities and roles live in `infra/identity.tf`, and tests fail if any identity gets a broad role such as Owner or Contributor.",
+          "quote": "No API keys anywhere. API key access is switched off on both Azure resources... Least privilege, as code: the identities and roles live in infra/identity.tf, and tests fail if any identity gets a broad role such as Owner or Contributor.",
           "approved": false
         },
         {
           "id": "security-mindset:64187254f6",
           "title": "Security in SECOM Pipeline",
-          "summary": "Barry implemented short-lived AWS keys, distinct CI roles with limited permissions, and a shift-left security gate in CI that blocked merges on security findings, resulting in identified vulnerabilities being fixed and permissions narrowed.",
+          "summary": "Barry implemented short-lived AWS keys, distinct CI roles with limited permissions, and a security gate in CI that blocked merges on vulnerabilities, resulting in identified and fixed security issues.",
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Security",
@@ -295,7 +295,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "No long-lived AWS keys anywhere. GitHub Actions signs in to AWS with GitHub OIDC... Shift-left security gate on every pull request... The gate found real issues when it was switched on: 26 known vulnerabilities... and an over-broad s3:* permission on",
+          "quote": "No long-lived AWS keys anywhere. GitHub Actions signs in to AWS with GitHub OIDC... Shift-left security gate on every pull request... The gate found real issues when it was switched on: 26 known vulnerabilities... and an over-broad s3:* permission...",
           "approved": false
         },
         {
@@ -311,6 +311,20 @@
           "verified_by": "self",
           "quote": "The first CI run failed with `Not authorized to perform sts:AssumeRoleWithWebIdentity` until the ID form was added.",
           "approved": false
+        },
+        {
+          "id": "security-mindset:91ce972132",
+          "title": "CI AWS Role Verification",
+          "summary": "Barry configured the CI pipeline to verify AWS access using an assumed role without stored keys, ensuring secure AWS interactions during pull requests and main branch pushes.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Checking it",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#checking-it",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The `terraform` job in `.github/workflows/ci.yml` runs on every pull request and every push to `main`. It signs in with the plan role, runs `aws sts get-caller-identity`, then plans the runtime stack.",
+          "approved": false
         }
       ]
     },
@@ -322,7 +336,7 @@
         {
           "id": "data-manipulation:2f00495be8",
           "title": "Automated Data Rebuild Process",
-          "summary": "Barry configured the data pipeline to automatically rebuild data from cached sources when pipeline changes occur, with weekly or manual source refreshes, and incremental fetching for specific data.",
+          "summary": "Barry configured the data pipeline to automatically rebuild data from cached sources when pipeline files change, with incremental fetching for some sources, ensuring up-to-date data with minimal manual intervention.",
           "repo": "where-am-i",
           "path": "pipeline/README.md",
           "heading": "Data pipeline (offline) > When data is rebuilt",
@@ -330,13 +344,13 @@
           "project": "where-am-i",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "pushing them triggers \"Build area data\" automatically; it rebuilds from the cached source downloads (about 1-2 minutes). Source refresh: weekly (Monday 02:17 UTC, everything), or by hand from the Actions tab with `refresh` = `all` or source names... DIB is",
+          "quote": "pushing them triggers \"Build area data\" automatically; it rebuilds from the cached source downloads... DIB is incremental (only new people are fetched).",
           "approved": false
         },
         {
           "id": "data-manipulation:ca4940cd5e",
           "title": "Data flow and processing pipeline",
-          "summary": "Barry implemented a data pipeline where a Lambda processor reads Kinesis stream batches, writes records to S3, validates and stores clean data in PostgreSQL, computes signals, and handles failures with an SQS dead-letter queue.",
+          "summary": "Barry designed a data pipeline where a Lambda processor reads Kinesis stream batches, writes records to S3, validates them, stores clean and rejected data in PostgreSQL, computes signals, and handles failures with an SQS dead-letter queue.",
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Architecture",
@@ -350,7 +364,7 @@
         {
           "id": "data-manipulation:d51920d943",
           "title": "Analyzed sensor data shifts",
-          "summary": "Barry analyzed weekly sensor mean shifts from the whole-period mean in standard deviations to track sensor behavior and process settling before and during the baseline window.",
+          "summary": "Barry analyzed weekly sensor mean shifts from the whole-period mean in standard deviations, identifying sensor settling patterns and fail rate changes over time.",
           "repo": "SECOM_Pipeline",
           "path": "docs/analysis/baseline.md",
           "heading": "SPC Phase I: the baseline window (SECOM-29) > Why this window",
@@ -384,8 +398,8 @@
         },
         {
           "id": "written-communication:c48a1764aa",
-          "title": "Documented automated EC2 setup",
-          "summary": "Documented launching an EC2 instance that auto-installed Apache and displayed instance metadata, proving no manual configuration was needed.",
+          "title": "Automated EC2 Web Server Setup",
+          "summary": "Launched an EC2 instance that installed Apache, retrieved instance metadata, and generated a web page automatically, resulting in a working web server without manual configuration.",
           "repo": "aws-ec2-web-server",
           "path": "README.md",
           "heading": "EC2 web server: manual build → User data → Terraform > 2. Automated build",
@@ -393,7 +407,7 @@
           "project": "aws-ec2-web-server",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Launched a second instance with the same role and security group and [`user-data.sh`](user-data.sh) as **User data**. On first boot it: installs and enables Apache, reads its own instance ID, type and Availability Zone from the **Instance Metadata Service (IMDSv2, token-based)**,",
+          "quote": "On first boot it: installs and enables Apache, reads its own instance ID, type and Availability Zone from the Instance Metadata Service (IMDSv2, token-based), writes a page showing them",
           "approved": false
         }
       ]
@@ -432,17 +446,17 @@
           "approved": true
         },
         {
-          "id": "teaching-mentoring:561a6d144c",
-          "title": "Teaching encapsulation with Java classes",
-          "summary": "Barry Sisk created two classes and a main program to demonstrate encapsulation, using getters and setters to control access and validation of student marks between 0 and 100.",
+          "id": "teaching-mentoring:d3f043e053",
+          "title": "Mentoring via Inheritance Lab",
+          "summary": "Barry implemented a lab demonstrating inheritance and composition in Java, creating classes like Staff, Teacher, Principle, and Course, showing object relationships and layering of inheritance.",
           "repo": "CS627_Advanced_OOP_Java",
-          "path": "CS627B_Lab3_Encapsulation/README.md",
+          "path": "CS627B_Lab4_Inheritance/README.md",
           "heading": "",
-          "url": "https://github.com/BBSISK/CS627_Advanced_OOP_Java/blob/f25135c521f41cd871d9a92619949baa5626cd60/CS627B_Lab3_Encapsulation/README.md",
+          "url": "https://github.com/BBSISK/CS627_Advanced_OOP_Java/blob/7915038f298d11a5dc37b85e79cec60901e89d2b/CS627B_Lab4_Inheritance/README.md",
           "project": "CS627 Java labs",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Creatd 2 classes (one student , one module) - also a Main to execute the classes... Main cannot acceess the Student or Module infomration directly - must use a getter to access info , and a setter change the values...",
+          "quote": "Principle object stores an array of teachers. Create course object with a teacher object. Create a student object with a course object.",
           "approved": false
         }
       ]
@@ -454,7 +468,7 @@
       "candidates": [
         {
           "id": "leadership:e9fd13724a",
-          "title": "Led Engineering and Training",
+          "title": "Led Engineering and Training Teams",
           "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -469,7 +483,7 @@
         {
           "id": "leadership:5299616047",
           "title": "Led 7nm Start-up and CMP Teams",
-          "summary": "Barry managed multiple teams and led the 7nm equipment qualification start-up, applying Lean methods and strategic planning to improve safety, quality, output, and cost in a high-volume manufacturing environment.",
+          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve manufacturing safety, quality, output, and cost.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
@@ -496,7 +510,7 @@
         },
         {
           "id": "leadership:73f7ff9703",
-          "title": "Led Implant Engineering Team",
+          "title": "Led 300mm Implant Team",
           "summary": "Led an 8-engineer team focusing on safety, quality, output, and cost; completed ROI analyses; led multinational team selling obsolete equipment.",
           "repo": "BBSISK",
           "path": "career.md",
@@ -505,12 +519,12 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost.",
+          "quote": "Led a team of 8 engineers responsible for the ion implant (Applied Materials) toolset: safety first, then quality, output and cost. Completed return-on-investment (ROI) analyses for equipment selection and capital projects. Led a multinational team that sold obsolete manufacturing equipment",
           "approved": true
         },
         {
           "id": "leadership:d362007369",
-          "title": "Leading Equipment Qualification",
+          "title": "Leadership in Equipment Qualification",
           "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -525,7 +539,7 @@
         {
           "id": "leadership:d0a57cfcea",
           "title": "Managed OEM Service Contracts",
-          "summary": "Managed service contracts for semiconductor equipment, aligned supplier objectives with Intel's, intervened on performance issues, and measured installation and maintenance quality.",
+          "summary": "Managed service contracts for semiconductor equipment suppliers, aligned their objectives with Intel's, intervened when performance fell short, and measured quality of installation and sustaining work.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
@@ -538,8 +552,8 @@
         },
         {
           "id": "leadership:d01d06712f",
-          "title": "Led Factory-Wide Strategic Planning",
-          "summary": "Led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs for team members, and applied PMP certification in 2019.",
+          "title": "Leadership in Strategic Planning",
+          "summary": "Led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification to software product roadmap and sprint goals.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -548,6 +562,20 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "Programme lead on factory-wide planning for the 7nm production ramp; translated factory objectives into SMART MBOs for every team member; PMP certified (2019)",
+          "approved": false
+        },
+        {
+          "id": "leadership:9edbd02b52",
+          "title": "Led Factory-wide Fault Detection Program",
+          "summary": "Barry led a factory-wide program for real-time fault detection on machine sensor data, managing deployment and adoption across engineering teams, improving yield through variation reduction, and implementing automated incident response.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > Real-time fault detection at factory scale",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#real-time-fault-detection-at-factory-scale",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Responsible for the programme across the whole factory... Part of the programme I ran... Responsible for deployment and adoption across the factory's engineering teams",
           "approved": false
         },
         {
@@ -601,8 +629,8 @@
         },
         {
           "id": "teamwork:d362007369",
-          "title": "Mapping manufacturing teamwork to software",
-          "summary": "Barry applied manufacturing teamwork principles like strict change control and quality systems to software delivery, ensuring every change was reviewed and tested before deployment with health checks on live sites.",
+          "title": "Collaborative Quality and Change Control",
+          "summary": "Barry applied manufacturing teamwork principles to software delivery, ensuring every code change was reviewed, tested, and approved before deployment, with monitoring and rollback plans.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -636,8 +664,8 @@
         },
         {
           "id": "change-control-discipline:b038c7f3bd",
-          "title": "Change Control in Data Schema",
-          "summary": "Barry added new columns via a non-destructive auto-migration on start-up, preserving existing production records in PostgreSQL.",
+          "title": "Non-destructive Auto-migration",
+          "summary": "Barry added new columns to a PostgreSQL database using a non-destructive auto-migration on start-up, preserving existing production records.",
           "repo": "wall_inspector",
           "path": "README.md",
           "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
@@ -664,8 +692,8 @@
         },
         {
           "id": "change-control-discipline:eced1e62f4",
-          "title": "Handling drifting sensors in control limits",
-          "summary": "Barry identified sensors drifting by alarm rates exceeding targets, flagged 25 sensors, and noted drifting sensors require special treatment beyond Phase I control limits.",
+          "title": "Handling sensor drift in control limits",
+          "summary": "Barry identified sensors with alarm rates exceeding targets, flagged 25 as drifting, and noted that drifting sensors require separate treatment in Phase II beyond initial control limits.",
           "repo": "SECOM_Pipeline",
           "path": "docs/analysis/control-limits.md",
           "heading": "SPC Phase I: control limits (SECOM-30) > How well the chosen limits fit",
@@ -679,7 +707,7 @@
         {
           "id": "change-control-discipline:7e7cfb0bb6",
           "title": "AWS Budget Caps Monthly Spend",
-          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns, and destroyed runtime stacks after demos to keep costs low.",
+          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns, keeping alert emails out of the repo.",
           "repo": "SECOM_Pipeline",
           "path": "docs/teardown.md",
           "heading": "Cost controls and teardown > The budget",
@@ -687,7 +715,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget; AWS **forecasts** the month will end over budget",
+          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget AWS **forecasts** the month will end over budget",
           "approved": false
         },
         {
