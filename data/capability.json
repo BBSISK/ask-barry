@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-11-10T08:27:35Z",
+  "generated_at": "2026-11-10T11:22:00Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -96,7 +96,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry is a Flask app running in production on Render... CI runs the full pytest suite on every push. It includes tests that call the Flask routes... so a broken route blocks the deploy.",
+          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com... CI runs the full pytest suite on every push. It includes tests that call the Flask routes... so a broken route blocks the deploy.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -167,19 +167,6 @@
         },
         {
           "tier": 1,
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |",
-          "kind": "application",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Run locally",
@@ -190,6 +177,19 @@
           "quote": "flask --app app run --debug # http://127.0.0.1:5000 (SQLite file taxi.db)",
           "kind": "practice",
           "first_committed": "2026-11-01"
+        },
+        {
+          "tier": 1,
+          "repo": "agentmath_showcase",
+          "path": "README.md",
+          "heading": "🕵️ AgentMath > Tech stack",
+          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#tech-stack",
+          "project": "AgentMath",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "| Backend | Python, Flask |",
+          "kind": "application",
+          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
@@ -218,7 +218,6 @@
         "1": [
           "Ask Barry",
           "SECOM Pipeline",
-          "agent-quest-java",
           "aws-ec2-web-server",
           "dice-roll-api"
         ],
@@ -233,21 +232,20 @@
           "SECOM Pipeline"
         ],
         "4": [
-          "Ask Barry",
-          "SECOM Pipeline"
+          "Ask Barry"
         ]
       },
       "evidence": [
         {
           "tier": 4,
           "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
+          "path": "README.md",
+          "heading": "Ask Barry > Index into Azure AI Search and compare retrievers (Stage 4)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#index-into-azure-ai-search-and-compare-retrievers-stage-4",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
+          "quote": "Tests: all offline, with fake Azure clients, so CI needs no keys.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -263,19 +261,6 @@
           "quote": "After the deploy, `/ready` must say `ready`; then delete `AZURE_OPENAI_API_KEY` and `AZURE_SEARCH_API_KEY` from Render. The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all.",
           "kind": "application",
           "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Security",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Shift-left security gate on every pull request. Ruff's Bandit (`S`) rules, pip-audit, a Trivy config scan of the Terraform and Dockerfile, Hadolint, and a Trivy image scan all run inside the required CI checks",
-          "kind": "application",
-          "first_committed": "2026-10-11"
         },
         {
           "tier": 3,
@@ -305,16 +290,29 @@
         },
         {
           "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Index into Azure AI Search and compare retrievers (Stage 4)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#index-into-azure-ai-search-and-compare-retrievers-stage-4",
-          "project": "Ask Barry",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/bootstrap.md",
+          "heading": "Bootstrap: remote Terraform state > First-time setup (once per AWS account)",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/bootstrap.md#first-time-setup-once-per-aws-account",
+          "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid ... Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level:",
+          "quote": "The script applies the bootstrap stack with temporary local state to create the bucket, writes `infra/backend.hcl` for your account, then moves the bootstrap state into the bucket.",
           "kind": "application",
-          "first_committed": "2026-09-27"
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 3,
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Security",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session.",
+          "kind": "application",
+          "first_committed": "2026-10-11"
         },
         {
           "tier": 2,
@@ -325,7 +323,7 @@
           "project": "dice-roll-api",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "AWS Lambda runs the handler in `lambda/index.mjs` only when a request arrives. No server to manage. Amazon API Gateway gives the function a public HTTPS endpoint and routes GET /roll to it.",
+          "quote": "AWS Lambda runs the handler... No server to manage. Amazon API Gateway gives the function a public HTTPS endpoint... SAM turns it into an AWS CloudFormation stack...",
           "kind": "practice",
           "first_committed": "2026-10-24"
         },
@@ -338,15 +336,14 @@
           "project": "aws-ec2-web-server",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "IAM role `ec2-ssm-role` (AWS managed policy `AmazonSSMManagedInstanceCore`) attached as an instance profile. Installed Apache (`httpd`), started it and enabled it so it comes back after a reboot, then replaced the default page.",
+          "quote": "IAM role `ec2-ssm-role` (AWS managed policy `AmazonSSMManagedInstanceCore`) attached as an instance profile. Installed Apache (`httpd`), started it and enabled it so it comes back after a reboot",
           "kind": "practice",
           "first_committed": "2026-11-01"
         }
       ],
       "depth": {
         "projects_at_top": [
-          "Ask Barry",
-          "SECOM Pipeline"
+          "Ask Barry"
         ],
         "months": 2,
         "third_party": false,
@@ -397,7 +394,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Safe by design: every resource has `prevent_destroy`. The first plan found two portal settings the code was missing... After adding them, the plan was 5 to import, 0 to add, 0 to change, 0 to destroy, and `apply` imported all",
+          "quote": "Checked in CI: every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -410,7 +407,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init ... terraform plan ... terraform apply ...",
+          "quote": "Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in: ... terraform init terraform plan ... terraform apply ... changes nothing in Azure",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -436,7 +433,7 @@
           "project": "aws-ec2-web-server",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The whole stack is defined in Terraform, so one command creates it and one destroys it: ... .github/workflows/terraform.yml | CI: `terraform fmt -check`, `init -backend=false`, `validate` on every push",
+          "quote": "The whole stack is defined in Terraform, so one command creates it and one destroys it:",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -545,7 +542,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "- **Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... - **On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the",
+          "quote": "Every pull request runs CI (GitHub Actions), and main only accepts a merge when all three required checks pass... a test pull request with a deliberately failing test was blocked from merging",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -571,7 +568,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`). CI runs the full pytest suite on every push. It includes tests that call the Flask routes ... so a broken route blocks the deploy.",
+          "quote": "Render generates `SECRET_KEY` itself, and deploys only after GitHub Actions CI passes (`autoDeployTrigger: checksPass`). CI runs the full pytest suite on every push.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -584,7 +581,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset)",
+          "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset):",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -830,12 +827,12 @@
           "tier": 4,
           "repo": "ask-barry",
           "path": "README.md",
-          "heading": "Ask Barry > Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at /mcp, main protected by GitHub rules",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#current-status-sprint-2-26-oct--8-nov-2026-hosted-mcp-server-live-at-mcp-main-protected-by-github-rules",
+          "heading": "Ask Barry > Answer-quality evaluation (Stage 6)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#answer-quality-evaluation-stage-6",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Sprint 1 delivered the base: RAG live in production and evaluated, the job-ad agent, a capability ladder rebuilt nightly from checked evidence, change control from Jira story to deploy, and security checks before merge.",
+          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -866,19 +863,6 @@
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Two judges compared (Stage 9a)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
           "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
@@ -895,12 +879,25 @@
           "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
-          "heading": "Ask Barry > Answer-quality evaluation (Stage 6)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#answer-quality-evaluation-stage-6",
+          "heading": "Ask Barry > Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at /mcp, main protected by GitHub rules",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#current-status-sprint-2-26-oct--8-nov-2026-hosted-mcp-server-live-at-mcp-main-protected-by-github-rules",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each golden-set question is run through the full live pipeline (retrieval, generation and the honesty rules), then scored:",
+          "quote": "Retrieval-augmented generation is live in production: Azure AI Search runs hybrid (keyword + vector) retrieval over my public repo documentation. Azure OpenAI (`gpt-4.1-mini`) writes a short answer that must cite the retrieved sections.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Two judges compared (Stage 9a)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -998,7 +995,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**Status:** done. Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, [full report](docs/eval/2026-10-31-agent.md)).",
+          "quote": "Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, full report)",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1037,7 +1034,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 mcp_server.py --self-test",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1104,8 +1101,7 @@
           "Ask Barry",
           "Housing Pipeline Ireland",
           "Wall Inspector",
-          "taxi-mum-dad",
-          "where-am-i"
+          "taxi-mum-dad"
         ],
         "3": [
           "Ask Barry",
@@ -1180,7 +1176,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "the gpt-4.1-mini judge scored 89% and TypeSafe Jev 87%, each with 1 false support... the LLM judge scored 98% (1 false support) and Jev 100%... Same evaluation on AWS Bedrock... the live gpt-4.1-mini, Claude Haiku 4.5 and Amazon Nova 2",
+          "quote": "**Judges checked against hand labels** (1 October 2026, 55 claims: 40 from real answers, 15 with one detail deliberately changed): ... the LLM judge scored 98% ... My own labelling passes scored 76% and 85%. Details and caveats are in",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Answer-quality evaluation (Stage 6) > Results (27 Sep 2026)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#results-27-sep-2026",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Regression checks failed | 0 | ... Each fix came with a unit test.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1207,19 +1216,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "The nightly refresh re-runs this check and fails if recall drops below 95%.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/model-card.md",
-          "heading": "Ask Barry: model card > Evaluation",
-          "url": "https://github.com/BBSISK/ask-barry/blob/b80d5d3f0b2533a288c83ea6f5c90857a8454f87/docs/model-card.md#evaluation",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "100% of reported statuses correct, 0 undocumented requirements reported as evidenced, 98% of requirements covered, both prompt-injection tests passed, no fit judgements in any output.",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -1451,7 +1447,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential...",
+          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1503,7 +1499,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1557,10 +1553,12 @@
         ],
         "2": [
           "Ask Barry",
+          "Housing Pipeline Ireland",
           "SECOM Pipeline"
         ],
         "3": [
           "Ask Barry",
+          "Housing Pipeline Ireland",
           "SECOM Pipeline"
         ],
         "4": [
@@ -1578,7 +1576,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Since 26 Oct 2026 (ASK-62) a ruleset on `main` makes this a rule rather than a habit: a pull request is required, the CI checks must pass before merging, force pushes and deletion are blocked",
+          "quote": "GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1835,7 +1833,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
+          "quote": "| Pattern | Solved | Total | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         }
@@ -1968,19 +1966,6 @@
         {
           "tier": 2,
           "repo": "SECOM_Pipeline",
-          "path": "docs/replay-producer.md",
-          "heading": "Replay producer",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The replay producer sends its runs one at a time, in their original order, at a set rate, as if they were coming off the line now. Code: `secom/producer.py` (standard library only). Container: `producer/Dockerfile`.",
-          "kind": "application",
-          "first_committed": "2026-10-12"
-        },
-        {
-          "tier": 2,
-          "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Status",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#status",
@@ -2033,13 +2018,26 @@
         {
           "tier": 1,
           "repo": "SECOM_Pipeline",
+          "path": "docs/replay-producer.md",
+          "heading": "Replay producer",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The replay producer sends its runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
+          "kind": "application",
+          "first_committed": "2026-10-12"
+        },
+        {
+          "tier": 1,
+          "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Architecture",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects in PostgreSQL,",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
