@@ -74,6 +74,15 @@ def month_text(value):
         return str(value or "")
 
 
+def day_text(value):
+    """'2026-11-10' -> '10 Nov 2026' (anything else is shown as it is)."""
+    try:
+        year, mon, day = str(value).split("-")
+        return f"{int(day)} {MONTHS[int(mon) - 1]} {year}"
+    except (ValueError, IndexError):
+        return str(value or "")
+
+
 def plan_view(capability):
     """Gap-closing plans for the page (ASK-50): the next unmet plan per skill and card, every plan for the
     record table, and the track record. Empty when the profile has no plans."""
@@ -89,3 +98,77 @@ def plan_view(capability):
         else:
             by_card.setdefault(p["card"], p)
     return {"plans": plans, "by_skill": by_skill, "by_card": by_card, "record": capability.get("plan_record")}
+
+
+# --- the evidence curve (ASK-74) ------------------------------------------------------------------------------
+# A fixed drawing on a 1100 x 640 canvas: a first climb to a peak, a dip, and a second climb. Which skills sit on
+# each climb comes from the profile pack's curve.yaml; every tier, quote and link comes from capability.json.
+CURVE_W, CURVE_H = 1100, 640
+CURVE_PATHS = {
+    "first": "M180 570 C310 570 370 250 440 70",
+    "peak_and_dip": "M440 70 C460 20 490 20 512 80 C570 260 590 575 660 575",
+    "second": "M660 575 C740 575 780 330 840 230 C870 180 900 155 940 150",
+}
+_FIRST = [((180, 570), (310, 570), (370, 250), (440, 70))]
+_SECOND = [((660, 575), (740, 575), (780, 330), (840, 230)), ((840, 230), (870, 180), (900, 155), (940, 150))]
+_FIRST_Y, _SECOND_Y = (535, 103), (440, 175)        # where the lowest and highest dot of each climb sit
+
+
+def _bezier(p, t):
+    u = 1 - t
+    return tuple(u ** 3 * p[0][i] + 3 * u * u * t * p[1][i] + 3 * u * t * t * p[2][i] + t ** 3 * p[3][i]
+                 for i in (0, 1))
+
+
+def _x_at(segments, y):
+    """x on a climb (y falls as it rises) where it reaches height y."""
+    points = [_bezier(seg, k / 200) for seg in segments for k in range(201)]
+    return round(min(points, key=lambda pt: abs(pt[1] - y))[0])
+
+
+def _heights(n, low, high):
+    if n == 1:
+        return [round((low + high) / 2)]
+    return [round(low - k * (low - high) / (n - 1)) for k in range(n)]
+
+
+def _best_evidence(skill):
+    items = skill.get("evidence") or []
+    return max(items, key=lambda e: e["tier"]) if items else None
+
+
+def curve_view(capability, curve):
+    """Everything /curve draws: dot positions, tier classes, and each dot's proof. None without a curve."""
+    if not curve or not capability:
+        return None
+    skills = {s["id"]: s for s in capability["skills"]}
+    labels = {t["level"]: t["label"] for t in capability["tiers"]}
+    plans = {p["skill"]: p for p in capability.get("plans") or [] if p.get("skill") and p.get("status") != "closed"}
+    climbs = []
+    for side, climb in enumerate(curve["climbs"][:2]):
+        ids = [sid for sid in climb["skills"] if sid in skills]
+        segments, (low, high) = (_FIRST, _FIRST_Y) if side == 0 else (_SECOND, _SECOND_Y)
+        nodes = []
+        for sid, y in zip(ids, _heights(len(ids), low, high)):
+            skill, x = skills[sid], _x_at(segments, y)
+            best = _best_evidence(skill)
+            plan = plans.get(sid)
+            projects = (skill.get("projects_by_tier") or {}).get(str(skill["tier"])) or []
+            nodes.append({
+                "id": sid, "name": skill["name"], "tier": skill["tier"],
+                "tier_label": labels.get(skill["tier"], "Not evidenced yet") if skill["tier"] else "Not evidenced yet",
+                "cls": f"t{skill['tier']}" if skill["tier"] else "gap",
+                "x": x, "y": y, "label_x": x - 24 if side == 0 else x + 24, "anchor": "end" if side == 0 else "start",
+                "sub": ", ".join(projects[:2]) if skill["tier"] else "Not evidenced yet",
+                "projects": ", ".join(projects),
+                "quote": best["quote"] if best and skill["tier"] else "",
+                "url": best["url"] if best and skill["tier"] else "",
+                "source": f"{best['repo']} · {best['path']}" + (f" · {best['heading'].split(' > ')[-1]}" if best.get("heading") else "")
+                          if best and skill["tier"] else "",
+                "plan": {"work": plan["work"], "target": month_text(plan["target"])} if plan else None,
+            })
+        climbs.append({"name": climb["name"], "note": climb.get("note", ""), "nodes": nodes})
+    return {"title": curve["title"], "intro": curve.get("intro", ""), "credit": curve.get("credit", ""),
+            "dip": curve["dip"], "bridge": curve["bridge"], "climbs": climbs,
+            "as_of": capability.get("generated_at", "")[:10], "width": CURVE_W, "height": CURVE_H,
+            "paths": CURVE_PATHS, "top_tier": max(labels) if labels else 0}
