@@ -329,7 +329,8 @@ The Azure resources were first created by hand in the portal ([guide](docs/azure
 
 - **Safe by design:** every resource has `prevent_destroy`. The first plan found two portal settings the code was missing (the network rule and the search auth-failure mode). After adding them, the plan was *5 to import, 0 to add, 0 to change, 0 to destroy*, and `apply` imported all five without changing anything in Azure (27 September 2026).
 - **No secrets:** Terraform never reads or outputs keys, and the subscription ID comes from the signed-in Azure CLI, not the repo. State stays out of git. The five imported resources can be rebuilt from the import blocks; the identities and role assignments in `infra/identity.tf` are created by Terraform, so the state file is backed up outside the repo.
-- **Checked in CI:** every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed.
+- **Checked in CI:** every push runs `terraform fmt -check` and `terraform validate`, with no Azure access needed, and Checkov scans `infra/` for policy problems on every pull request.
+- **Tested:** `tests/test_infra.py` runs with the rest of the suite on every push. It fails the build if a resource would be created instead of imported, if any resource loses `prevent_destroy`, if a subscription ID, key or state file gets into the repo, if an identity is given a broader role than least privilege, if API keys are switched back on, or if the GitHub identity would trust any branch other than `main`.
 - **Left out on purpose:** the Foundry project and the budget alert, which were created in the portal. The config comments explain why.
 
 Run it from Azure Cloud Shell, which already has Terraform and the Azure CLI signed in:
