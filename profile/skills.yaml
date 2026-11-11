@@ -96,7 +96,7 @@ skills:
   - id: front-end-frameworks
     name: Front-end frameworks
     description: Building browser front ends with a framework such as React, Angular or Vue.
-    queries: ["React front end"]
+    queries: ["React front end", "React TypeScript dashboard", "interactive data visualisation in the browser"]
     match: [react, angular, vue, front end, frontend, typescript]
 
   - id: data-streaming
