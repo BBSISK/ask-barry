@@ -96,7 +96,7 @@ python -m scripts.evaluate_retrieval          # print the report
 python -m scripts.evaluate_retrieval --save   # also write docs/eval/<date>-bm25.md
 ```
 
-- **Golden set:** `eval/golden_set.json` holds 43 answerable questions, each with the file that answers it, plus 9 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
+- **Golden set:** `eval/golden_set.json` holds 44 answerable questions, each with the file that answers it, plus 10 **trap** questions about skills my public docs don't evidence. The final assistant must decline the traps.
 - **No test leakage:** the evaluation reports under `docs/eval/` are excluded from the search corpus, and this README deliberately doesn't quote any test question. Otherwise the search would be "finding" the test instead of the evidence.
 - **Results:** see the dated reports and the retriever comparison in [`docs/eval/`](docs/eval/).
 
@@ -147,6 +147,7 @@ flask --app wsgi run                                       # web UI at http://12
   - An answer must cite at least one of the sources it was given, or it is replaced with *"I can't find evidence of that in Barry's public GitHub documentation."*
   - Citations to sources that weren't provided are dropped.
   - Citations written in another style, such as "(source 6)" or "[1, 2]", are converted to `[n]` before that check, so the numbers in the answer always match the source list. A live test found one that slipped through and pointed at the wrong section (ASK-69).
+  - A name in the question (two or more capitalised words, such as a project name) must appear in the cited sections or their labels, or the answer is refused. An unindexed project was once answered from another repo's notes that shared one word with its name (ASK-76).
   - Unparseable model output becomes an error, never raw text.
 - **Web API:** `POST /api/ask {"question": "..."}` returns the answer, `supported`, and the cited sources (repo, file, section, GitHub link pinned to a commit).
 - **Public-endpoint safeguards:**
