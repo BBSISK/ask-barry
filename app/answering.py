@@ -177,6 +177,48 @@ def renumber_citations(text, cited):
     return _tidy(text), list(mapping.items())
 
 
+_TOKEN = re.compile(r"[A-Za-z0-9][\w'’.+#-]*")
+_NOT_NAMES = {"what", "which", "how", "does", "has", "is", "can", "did", "do", "who", "where", "when", "why", "are",
+              "was", "have", "barry", "barry's", "barry’s", "i"}
+
+
+def named_terms(question):
+    """Names in the question: runs of two or more capitalised words, e.g. "Wall Inspector", "Degree Drift"
+    (question words and Barry's own name don't count)."""
+    names, run = [], []
+    for token in _TOKEN.findall(question) + ["."]:
+        capital = token[0].isupper() or (token[0].isdigit() and any(c.isupper() for c in token))
+        if capital and token.lower() not in _NOT_NAMES:
+            run.append(re.sub(r"['’]s$", "", token))
+        else:
+            if len(run) >= 2:
+                names.append(" ".join(run))
+            run = []
+    return names
+
+
+def _words_of(text):
+    return set(re.findall(r"[a-z0-9]+", str(text or "").lower()))
+
+
+def unknown_name(question, cited_chunks):
+    """ASK-76: the first name in the question that the cited sources never mention, or None.
+
+    "What is Degree Drift?" was once answered from SECOM's notes on sensor drift: a shared word, passed off as
+    the thing asked about. Every word of a name must appear somewhere in the cited sections or their labels."""
+    seen = set()
+    for c in cited_chunks:
+        seen |= _words_of(" ".join(str(c.get(k, "")) for k in ("repo", "path", "heading", "text")))
+    for name in named_terms(question):
+        if not _words_of(name) <= seen:
+            return name
+    return None
+
+
+def no_such_name(name):
+    return f"I can't find anything called \"{name}\" in Barry's public GitHub documentation."
+
+
 class Answerer:
     """Retrieve, prompt, generate, verify."""
 
@@ -203,6 +245,10 @@ class Answerer:
             supported, text, cited = parse_model_output(self.provider.generate(retry, max_tokens=400), len(results))
             if supported and unflagged_plans(text, cited, results):
                 supported, text, cited = False, NO_EVIDENCE, []
+        if supported:
+            missing = unknown_name(question, [results[n - 1].chunk for n in cited])
+            if missing:                # a name the sources never mention: refuse, never redefine it
+                supported, text, cited = False, no_such_name(missing), []
         text, renumbered = renumber_citations(text, cited)
         sources, cited_texts = [], []
         for original, number in renumbered:

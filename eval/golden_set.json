@@ -1,7 +1,7 @@
 {
   "version": 2,
   "created": "2026-09-27",
-  "updated": "2026-11-01",
+  "updated": "2026-11-11",
   "notes": [
     "answerable: 'expected' lists the files (repo/path) that contain the answer; a hit on any of them counts.",
     "evidence: short phrases from the actual answer text. A retrieved chunk counts at SECTION level only if it is from an expected file AND contains one of these phrases (case-insensitive). File level alone flatters retrievers that find the right README but the wrong section.",
@@ -628,6 +628,27 @@
       "history": "Added 8 Oct 2026 alongside the trap-10 rewrite: solo two-week sprints in Jira on Ask Barry since October 2026, documented in BBSISK/manufacturing-to-software.md. The answer must mention Jira and must not inflate this into team or long-standing Agile experience. 15 Oct 2026 (ASK-65): CS385_Mobile_App/README.md added: the CS385 team project runs 1-week Scrum sprints in Jira and now outranks the solo-sprint doc. Both are correct answers."
     },
     {
+      "id": "degreedrift-01",
+      "type": "answerable",
+      "question": "What is Degree Drift?",
+      "expected": [
+        "degree-drift/README.md"
+      ],
+      "evidence": [
+        "Revenue PAYE",
+        "Central Statistics Office"
+      ],
+      "checks": {
+        "must_include": [
+          "CSO"
+        ],
+        "must_not_include": [
+          "sensor"
+        ]
+      },
+      "history": "Added 11 Nov 2026 (ASK-76): before the degree-drift repo was indexed, this question was answered as supported from SECOM's notes on sensor drift, which never mention Degree Drift. A shared word is not evidence; the answer must come from the Degree Drift README."
+    },
+    {
       "id": "trap-11",
       "type": "trap",
       "question": "Has Barry built a GraphQL API?",
@@ -647,6 +668,13 @@
       "question": "Has Barry used a maps SDK or mapping library?",
       "expected": [],
       "history": "Added 1 Nov 2026 (ASK-71): the ask-barry README calls the job-ad agent's report an \"evidence map\", and the answering step once cited that as mapping experience. A word shared with a source is not evidence. Housing Pipeline Ireland plans Azure Maps geocoding (Sprint 3): an answer may say that is planned, but not that he has used it. Retire this trap once the geocoding is built and documented."
+    },
+    {
+      "id": "trap-14",
+      "type": "trap",
+      "question": "What is Barry's Tide Drift project?",
+      "expected": [],
+      "history": "Added 11 Nov 2026 (ASK-76): an invented project name that shares a word (drift) with real documentation (SECOM's sensor drift, Degree Drift). The assistant must say no such project is documented, not redefine the name from a section that shares the word."
     }
   ]
 }

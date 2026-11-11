@@ -322,3 +322,36 @@ def test_answer_citing_only_done_sections_needs_no_retry():
     answer, provider = ask_with({"supported": True, "answer": "Barry requested coordinates from the service [2].",
                                  "citations": [2]})
     assert len(provider.calls) == 1 and answer.supported
+
+
+# --- ASK-76: a name the sources never mention is refused, not redefined -----------------------------------------
+
+def test_names_are_runs_of_capitalised_words_without_question_words_or_barry():
+    from app.answering import named_terms
+    assert named_terms("What is Barry's Tide Drift project?") == ["Tide Drift"]
+    assert named_terms("Which tools does the Wall Inspector MCP server expose?") == ["Wall Inspector MCP"]
+    assert named_terms("Has Barry used Docker?") == []                       # one word: left to the other rules
+    assert named_terms("Does In My Time store the family stories it collects?") == ["In My Time"]
+
+
+def test_an_unknown_project_name_is_refused_even_when_the_model_answers():
+    """The live bug: "drift" in SECOM's notes was passed off as a project the sources never mention."""
+    secom = result(1, repo="SECOM_Pipeline", text="Sensors drift slowly across the baseline window.")
+    chat = FakeChat({"supported": True, "answer": "Tide Drift is slow sensor drift [1].", "citations": [1]})
+    ans = Answerer(FakeRetriever([secom]), chat, "gpt-4.1-mini").ask("What is Barry's Tide Drift project?")
+    assert ans.supported is False and ans.sources == [] and '"Tide Drift"' in ans.answer
+
+
+def test_a_name_in_the_cited_sources_or_their_labels_still_answers():
+    dd = result(1, repo="degree-drift", text="An interactive dashboard of CSO graduate outcomes.")
+    chat = FakeChat({"supported": True, "answer": "A dashboard of CSO data [1].", "citations": [1]})
+    ans = Answerer(FakeRetriever([dd]), chat, "gpt-4.1-mini").ask("What is Degree Drift?")
+    assert ans.supported is True and ans.sources[0].repo == "degree-drift"     # found via the repo name
+
+
+def test_the_name_must_be_in_a_cited_source_not_just_a_retrieved_one():
+    dd = result(1, repo="degree-drift", text="An interactive dashboard of CSO graduate outcomes.")
+    secom = result(2, repo="SECOM_Pipeline", text="Sensors drift slowly across the baseline window.")
+    chat = FakeChat({"supported": True, "answer": "Slow sensor drift [2].", "citations": [2]})
+    ans = Answerer(FakeRetriever([dd, secom]), chat, "gpt-4.1-mini").ask("What is Degree Drift?")
+    assert ans.supported is False
