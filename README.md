@@ -581,6 +581,7 @@ Three more failed runs. As before, the live site kept its last good build each t
 - **Gaps stay visible.** A skill with no evidence is an empty dashed dot, and its card says it isn't evidenced, which is not the same as lacking it. An open gap-closing plan is shown beside it.
 - **Every dot is a link** to its evidence card on the same page, so it works without JavaScript, by keyboard, in dark mode and on a phone, where the picture becomes an overview and the cards carry the detail.
 - **Checked:** tests refuse a curve that names an unknown skill or the same skill twice, check every dot's tier, quote and link against the data, and check that an empty dot carries no quote or link.
+- **Shareable (ASK-75):** links to `/curve` show a 1200×627 preview of the same drawing, so it works as a LinkedIn Featured item. `python -m scripts.build_curve_image` photographs the `/curve/card` route from the live data into `app/static/curve-og.png` (it needs Playwright, a dev-only tool). LinkedIn caches a preview when the link is added, so after a dot changes tier I rebuild the image and re-add the Featured link.
 
 ## Security
 

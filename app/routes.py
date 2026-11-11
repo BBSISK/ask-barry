@@ -145,6 +145,20 @@ def curve_page():
                            as_of=view.day_text(curve["as_of"]) if curve else "")
 
 
+@bp.get("/curve/card")
+def curve_card():
+    """ASK-75: the evidence curve as a 1200x627 card, for scripts/build_curve_image.py to photograph."""
+    from .capability import view
+    curve = view.curve_view(current_app.extensions["capability"].get(), get_curve())
+    if curve is None:
+        return "The evidence curve isn't available.", 404
+    resp = current_app.make_response(render_template("curve_card.html", curve=curve, as_of=view.day_text(curve["as_of"]),
+                                                      tiers=sorted(current_app.extensions["capability"].get()["tiers"],
+                                                                   key=lambda t: t["level"])))
+    resp.headers["X-Robots-Tag"] = "noindex"
+    return resp
+
+
 @bp.get("/api/capability")
 def capability_api():
     """The same capability.json the page uses (read-only). ?skill=<id or name> returns one skill."""

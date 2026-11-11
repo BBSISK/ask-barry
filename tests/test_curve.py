@@ -132,3 +132,31 @@ def test_home_page_links_to_the_curve_first():
     html = create_app("testing").test_client().get("/").get_data(as_text=True)
     tiles = html.split('class="tiles"', 1)[1].split("</nav>", 1)[0]
     assert tiles.index('href="/curve"') < tiles.index('href="/capability"')
+
+
+# --- ASK-75: the link-preview image ------------------------------------------------------------------------------
+
+def test_curve_page_has_link_preview_tags_for_the_curve_image():
+    html = client().get("/curve").get_data(as_text=True)
+    assert 'property="og:image" content="http://localhost/static/curve-og.png"' in html
+    assert 'content="1200"' in html and 'content="627"' in html and 'name="twitter:card" content="summary_large_image"' in html
+
+
+def test_the_shipped_preview_image_is_1200_by_627():
+    import struct
+    png = (ROOT / "app" / "static" / "curve-og.png").read_bytes()
+    assert png[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", png[16:24]) == (1200, 627)
+
+
+def test_the_card_draws_the_same_dots_and_is_not_indexed():
+    resp = client().get("/curve/card")
+    html = resp.get_data(as_text=True)
+    assert resp.status_code == 200 and resp.headers["X-Robots-Tag"] == "noindex"
+    for climb in load_pack().curve["climbs"]:
+        for sid in climb["skills"]:
+            assert f'href="#skill-{sid}"' in html
+    assert "ask-barry.onrender.com/curve" in html and "Raju Dandigam" in html
+
+
+def test_the_card_is_404_without_data():
+    assert client(cap=None).get("/curve/card").status_code == 404
