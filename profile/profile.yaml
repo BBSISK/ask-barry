@@ -44,6 +44,7 @@ projects:
   agentmath_showcase: {name: AgentMath, kind: application}
   housing-pipeline-ireland: {name: Housing Pipeline Ireland, kind: application}
   SECOM_Pipeline: {name: SECOM Pipeline, kind: application}
+  degree-drift: {name: Degree Drift, kind: application}
   CS627_Advanced_OOP_Java: {name: CS627 Java labs, kind: coursework}
   leetcode-java: {name: LeetCode in Java, kind: practice}
   react-challenges: {name: React challenges, kind: practice}
