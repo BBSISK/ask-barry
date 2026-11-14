@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T11:09:49Z",
+  "generated_at": "2026-11-14T10:37:05Z",
   "cards": [
     {
       "card": "problem-solving",
@@ -12,7 +12,7 @@
         {
           "id": "problem-solving:a59c87e1e3",
           "title": "Debugging nightly refresh failures",
-          "summary": "Barry identified root causes from logs and emails, reproduced failures with unit tests, verified fixes by reproducing merge race and manual refresh, and learned to test batch sizes and implement safety checks.",
+          "summary": "Barry identified root causes of nightly refresh failures using logs and error messages, reproduced failures with unit tests, and verified fixes with manual runs and tests simulating race conditions.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026)",
@@ -26,7 +26,7 @@
         {
           "id": "problem-solving:2c5cd5b243",
           "title": "Fixed empty assistant reply bug",
-          "summary": "Barry identified a bug where an empty assistant reply caused request rejection and fixed it by modifying Agent.ask to use a placeholder message, ensuring alternating user/assistant turns; he wrote a test that initially failed then passed.",
+          "summary": "Barry found a bug where an empty assistant reply was added to history causing Bedrock to reject the next request. He fixed it in Agent.ask by adding a placeholder message and wrote a test that initially failed then passed.",
           "repo": "agent-quest-java",
           "path": "README.md",
           "heading": "Agent Quest (Java) > Build log > Step 5: measuring two models (done)",
@@ -40,7 +40,7 @@
         {
           "id": "problem-solving:f96e1104e0",
           "title": "Fixing a failing scheduled job",
-          "summary": "Barry diagnosed a failing 6-hourly digest job by tracing logs, fixed configuration errors, improved error messages, and removed a credential-exposing debug aid, then documented the lessons.",
+          "summary": "Barry diagnosed a failing 6-hourly digest job caused by a blank setting overriding shared configuration and bad mail server credentials, then fixed the configuration, improved error reporting, and removed a credential exposure risk.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Problems I solved along the way",
@@ -48,12 +48,12 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid that I realised could expose a credential.",
+          "quote": "A new 6-hourly digest job died first with a database error that turned out to be a silent fallback to an empty local database... Once fixed, the email step failed with \"connection closed\", which hid the mail server's real answer",
           "approved": false
         },
         {
           "id": "problem-solving:92d9c07505",
-          "title": "Fixed nightly refresh failures",
+          "title": "Debugged nightly refresh failures",
           "summary": "Barry traced three nightly index refresh failures to root causes, fixed each, and added tests to prevent unnoticed recurrence.",
           "repo": "ask-barry",
           "path": "README.md",
@@ -68,7 +68,7 @@
         {
           "id": "problem-solving:b33ac62196",
           "title": "Fixed security issues found by gate",
-          "summary": "The first run of new security checks found three issues; Barry fixed two by updating package versions and restricting S3 permissions, and accepted one without fix.",
+          "summary": "Barry identified three security issues from the new checks and fixed two by updating package versions and restricting S3 permissions; one issue was accepted without fix.",
           "repo": "SECOM_Pipeline",
           "path": "docs/security.md",
           "heading": "Security design > Shift-left security gate (SECOM-19) > What the gate found when it was switched on",
@@ -96,7 +96,7 @@
         {
           "id": "problem-solving:1860de115d",
           "title": "Fixing nightly refresh failures",
-          "summary": "Barry identified thresholds to distinguish systemic failures from expected changes, enabling quick fixes and reducing false incident alerts during nightly refreshes.",
+          "summary": "Barry identified thresholds to distinguish systemic failures from expected changes, enabling targeted fixes and reducing false incident reports during nightly refreshes.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > Incident review: nightly refresh failures (11-12 October 2026) > Follow-up: 13-15 October 2026",
@@ -104,13 +104,13 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Below 0.85 means something systemic... The run fails and GitHub emails me. Between 0.85 and 0.95 is almost always the docs drifting... The run carries on, and a warning... updating the test set takes minutes.",
+          "quote": "Below 0.85 means something systemic... The run fails and GitHub emails me. Between 0.85 and 0.95 is almost always the docs drifting under the test set... Each warning includes the likely fix... updating the test set takes minutes.",
           "approved": false
         },
         {
           "id": "problem-solving:3bfb002f5c",
-          "title": "Improved solution with commit history",
-          "summary": "Barry wrote every solution himself, used Claude as a coach, and improved solutions from brute force to hash map, showing both versions in commit history.",
+          "title": "Improved solution approach",
+          "summary": "Barry wrote every solution himself, used Claude as a coach for hints and reviews, and improved solutions from brute force to hash map, documenting changes in commit history.",
           "repo": "leetcode-java",
           "path": "README.md",
           "heading": "leetcode-java > How I work",
@@ -146,7 +146,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each false evidence has a different cause, found by reading the rows rather than the totals: ... Fixed in ASK-71: the answer prompt now says a word shared with a source is not evidence, and a new golden-set trap checks",
+          "quote": "Each false evidence has a different cause, found by reading the rows rather than the totals... Fixed in ASK-71: the answer prompt now says a word shared with a source is not evidence, and a new golden-set trap checks it...",
           "approved": false
         }
       ]
@@ -175,7 +175,7 @@
         {
           "id": "security-mindset:7848f34d39",
           "title": "Privacy by design in WhatsApp",
-          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding personal data collection.",
+          "summary": "Barry designed WhatsApp's server to relay answers without storing message text or transcriptions, keeping only minimal metadata and avoiding storage of personal data.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Privacy by design: the \"shallow room\"",
@@ -202,8 +202,8 @@
         },
         {
           "id": "security-mindset:bd99521167",
-          "title": "Privacy by design in app",
-          "summary": "Barry designed the app to minimize data collection, host data in the EU, avoid tracking, support user rights, enforce data retention policies, and provide transparency, following GDPR and Irish guidelines.",
+          "title": "Privacy by design for children's data",
+          "summary": "Barry designed the app to minimize data collection, host data in the EU, avoid tracking, and implement user rights and data retention policies to comply with GDPR and protect children's privacy.",
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Privacy by design (GDPR)",
@@ -212,6 +212,20 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "The app handles children's first names, so it was designed to collect as little as possible and to follow the Irish Data Protection Commission's \"Children's Fundamentals\".",
+          "approved": false
+        },
+        {
+          "id": "security-mindset:f96e1104e0",
+          "title": "Fixing scheduled job errors",
+          "summary": "Barry traced errors in a scheduled job, fixed configuration issues, improved error reporting, removed a credential exposure risk, and documented lessons in the issue log.",
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Problems I solved along the way",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#problems-i-solved-along-the-way",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid that I realised could expose a credential.",
           "approved": false
         },
         {
@@ -226,20 +240,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "The system never assumes a death. If an author goes quiet, it pauses patiently, then sends one gently worded check-in to the custodian, never to the author.",
-          "approved": false
-        },
-        {
-          "id": "security-mindset:f96e1104e0",
-          "title": "Fixing a failing scheduled job",
-          "summary": "Barry diagnosed a failing 6-hourly digest job, fixed configuration errors, improved error reporting, removed a credential exposure risk, and documented the lessons in the issue log.",
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Problems I solved along the way",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#problems-i-solved-along-the-way",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "I traced each layer from the logs, fixed the configuration, made the code fail loudly with a clear message and report which step broke, and removed a debugging aid that I realised could expose a credential.",
           "approved": false
         },
         {
@@ -281,13 +281,13 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "No long-lived AWS keys anywhere. GitHub Actions signs in to AWS with GitHub OIDC... Shift-left security gate on every pull request... The gate found real issues when it was switched on: 26 known vulnerabilities... and an over-broad s3:* permission... Supply",
+          "quote": "No long-lived AWS keys anywhere. GitHub Actions signs in to AWS with GitHub OIDC... Shift-left security gate on every pull request... The gate found real issues when it was switched on: 26 known vulnerabilities... and an over-broad s3:* permission on",
           "approved": false
         },
         {
           "id": "security-mindset:a90abade77",
-          "title": "GitHub OIDC token exchange",
-          "summary": "Barry configured GitHub Actions to request OIDC tokens and use AWS STS AssumeRoleWithWebIdentity, resolving an authorization failure by adding numeric repo IDs to trust policies.",
+          "title": "GitHub OIDC token for AWS role",
+          "summary": "Barry configured GitHub workflows to request OIDC tokens and use AWS STS AssumeRoleWithWebIdentity, resolving an authorization failure by adding numeric repo IDs to trust policies.",
           "repo": "SECOM_Pipeline",
           "path": "docs/security.md",
           "heading": "Security design > Keyless from the first commit > How the GitHub OIDC exchange works",
@@ -299,17 +299,17 @@
           "approved": false
         },
         {
-          "id": "security-mindset:91ce972132",
-          "title": "CI AWS Role Verification",
-          "summary": "Barry configured the CI pipeline to verify AWS access using an assumed role without stored keys, ensuring secure runtime stack planning on pull requests and main branch pushes.",
+          "id": "security-mindset:d13b505993",
+          "title": "Demonstrated security gate blocking",
+          "summary": "Barry created a pull request with a vulnerable base image, which triggered the security gate to fail the image scan and block the merge, proving the gate's effectiveness.",
           "repo": "SECOM_Pipeline",
           "path": "docs/security.md",
-          "heading": "Security design > Checking it",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/security.md#checking-it",
+          "heading": "Security design > Shift-left security gate (SECOM-19) > Proving the gate blocks",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#proving-the-gate-blocks",
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The `terraform` job in `.github/workflows/ci.yml` runs on every pull request and every push to `main`. It signs in with the plan role, runs `aws sts get-caller-identity`, then plans the runtime stack.",
+          "quote": "a demonstration pull request changed the producer's base image to an old Python release with known, fixed vulnerabilities. The `producer-image` check failed on the Trivy image scan and the ruleset blocked the merge.",
           "approved": false
         }
       ]
@@ -320,9 +320,23 @@
       "approved_but_not_found": [],
       "candidates": [
         {
+          "id": "data-manipulation:7f7d328dcd",
+          "title": "Data pipeline for Irish housing data",
+          "summary": "Barry built a data pipeline joining three public Irish sources, landing raw files unchanged with hashes and row counts, documenting quality issues, and creating a dashboard. He identified and corrected a flawed metric.",
+          "repo": "BBSISK",
+          "path": "README.md",
+          "heading": "🛠️ Featured projects",
+          "url": "https://github.com/BBSISK/BBSISK/blob/a55d58cc5d2035cb156b1fee8cf67ee7c18989fc/README.md#-featured-projects",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "A data pipeline that joins three public Irish sources never designed to fit together... every raw file is landed unchanged with a SHA-256 hash and row count, and a data profile documents 15 quality issues, with a dashboard of the",
+          "approved": false
+        },
+        {
           "id": "data-manipulation:2f00495be8",
-          "title": "Automated Data Rebuild Process",
-          "summary": "Barry configured the data pipeline to automatically rebuild data from cached sources when pipeline files changed, with weekly or manual source refreshes, optimizing data fetching to avoid unnecessary downloads.",
+          "title": "Rebuilding Data Pipeline",
+          "summary": "Barry triggered automatic rebuilds of data from cached sources when pipeline changes occurred, and managed source refreshes weekly or manually, using fetch_all.py to control downloads.",
           "repo": "where-am-i",
           "path": "pipeline/README.md",
           "heading": "Data pipeline (offline) > When data is rebuilt",
@@ -334,9 +348,23 @@
           "approved": false
         },
         {
+          "id": "data-manipulation:ca4940cd5e",
+          "title": "Data flow and processing pipeline",
+          "summary": "Barry implemented a data pipeline where a Lambda processor read Kinesis stream batches, wrote records to S3, validated them, stored clean and rejected runs in PostgreSQL, computed SPC signals, and handled failures via SQS.",
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Architecture",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects (with reason codes) in PostgreSQL, and computes SPC health signals. Batches that keep",
+          "approved": false
+        },
+        {
           "id": "data-manipulation:d51920d943",
           "title": "Analyzed sensor data shifts",
-          "summary": "Barry analyzed weekly sensor mean shifts from the whole-period mean in standard deviations to track sensor behavior and detect settling before fail rate stabilization.",
+          "summary": "Barry analyzed weekly sensor mean shifts from the whole-period mean in standard deviations, identifying sensor settling patterns and fail rate changes over time.",
           "repo": "SECOM_Pipeline",
           "path": "docs/analysis/baseline.md",
           "heading": "SPC Phase I: the baseline window (SECOM-29) > Why this window",
@@ -345,34 +373,6 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "For each sensor and week, the shift is how far that week's mean sits from the sensor's whole-period mean, in standard deviations.",
-          "approved": false
-        },
-        {
-          "id": "data-manipulation:ca4940cd5e",
-          "title": "Data flow and processing pipeline",
-          "summary": "Barry implemented a data pipeline where a replay producer sent records to Kinesis, a Lambda processor validated and stored data in S3 and PostgreSQL, handled failures with an SQS dead-letter queue, and exposed results via a dashboard.",
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Architecture",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/README.md#architecture",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects (with reason codes) in PostgreSQL, and computes SPC health signals.",
-          "approved": false
-        },
-        {
-          "id": "data-manipulation:adebdef92f",
-          "title": "Offline Data Pipeline Steps",
-          "summary": "Barry ran multiple scripts to fetch and process geographic and heritage data, then mapped H3 cells to areas and composed content, producing JSON files for public use.",
-          "repo": "where-am-i",
-          "path": "pipeline/README.md",
-          "heading": "Data pipeline (offline) > Steps (run by the \"Build area data\" GitHub workflow)",
-          "url": "https://github.com/BBSISK/where-am-i/blob/2cd0fc4b1ffda23828775f90863e8085e9b8883e/pipeline/README.md#steps-run-by-the-build-area-data-github-workflow",
-          "project": "where-am-i",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "1. `fetch_logainm.py Kildare Dublin`: Logainm townlands and towns per county... 8. `build_areas.py`: maps every H3 res-8 cell to one area (town, else townland), composes sourced teasers (`compose.py`) and \"Tell me more\" threads (`heritage.py`), writes `public/data/areas/{county}.json`.",
           "approved": false
         }
       ]
@@ -385,7 +385,7 @@
         {
           "id": "written-communication:fea8ef5d6b",
           "title": "Written design documents",
-          "summary": "Barry wrote detailed design documents covering data model, API, key distribution, and trade-offs before coding each product.",
+          "summary": "Barry wrote detailed design documents before coding, including data models, API surfaces, and trade-offs, to ensure consistency across products.",
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Technical highlights > Process and documentation",
@@ -393,7 +393,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Each product has a written design document (the StoryCatcher one runs to roughly 3,000 lines) covering the data model, API surface, key distribution, open questions and trade-offs",
+          "quote": "Each product has a written design document (the StoryCatcher one runs to roughly 3,000 lines) covering the data model, API surface, key distribution, open questions and trade-offs, plus a shared-architecture note that keeps sibling products consistent.",
           "approved": false
         },
         {
@@ -434,7 +434,7 @@
         {
           "id": "teaching-mentoring:fa7966fadc",
           "title": "Teaching and supporting maths students",
-          "summary": "Taught Junior Cycle and Leaving Certificate maths, supported small-group resource teaching, and completed a programme to increase Higher Level maths uptake.",
+          "summary": "Taught maths to Junior Cycle and Leaving Certificate students, supported small-group resource teaching, and completed a programme to increase Higher Level maths uptake.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Post-primary maths teacher, Pobalscoil Iosolde, Palmerstown, Dublin (October 2024 – August 2026)",
@@ -446,23 +446,9 @@
           "approved": true
         },
         {
-          "id": "teaching-mentoring:b07336dc00",
-          "title": "Teaching informs software design",
-          "summary": "Barry designed software based on his teaching curriculum and tested it with real students, using classroom feedback to iteratively improve the project over several years.",
-          "repo": "agentmath_showcase",
-          "path": "README.md",
-          "heading": "🕵️ AgentMath > What this project demonstrates",
-          "url": "https://github.com/BBSISK/agentmath_showcase/blob/82a07515adb2d9e5f92f0d7250eae6f81c1c6c59/README.md#what-this-project-demonstrates",
-          "project": "AgentMath",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "designed by someone who teaches the curriculum, and tested with real students... built and improved continuously over several years, based on classroom feedback",
-          "approved": false
-        },
-        {
           "id": "teaching-mentoring:561a6d144c",
           "title": "Teaching encapsulation with Java classes",
-          "summary": "Barry Sisk created two classes and a main program to demonstrate encapsulation, using getters and setters to control access and validation of student marks between 0 and 100.",
+          "summary": "Barry Sisk created two classes and a main program to demonstrate encapsulation, using getters and setters to control access and validation of student and module data.",
           "repo": "CS627_Advanced_OOP_Java",
           "path": "CS627B_Lab3_Encapsulation/README.md",
           "heading": "",
@@ -482,7 +468,7 @@
       "candidates": [
         {
           "id": "leadership:e9fd13724a",
-          "title": "Led Engineering and Training",
+          "title": "Led Engineering and Training Teams",
           "summary": "Led engineering and technician teams, designed structured technical training, and built a pipeline of technicians and engineers.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -497,7 +483,7 @@
         {
           "id": "leadership:5299616047",
           "title": "Led 7nm Start-up and CMP Teams",
-          "summary": "Barry managed multiple teams in a high-volume CMP operation and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and cost.",
+          "summary": "Barry managed multiple teams and led the 7nm equipment qualification programme, applying Lean methods and strategic planning to improve safety, quality, output, and cost in a high-volume manufacturing environment.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > CMP (Chemical Mechanical Polish) Area Manager (7/14nm) and lead, 7nm start-up equipment qualification programme (August 2019 – October 2024)",
@@ -519,7 +505,7 @@
           "project": "Profile",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Outgoing Quality Engineer, and Process Quality Team Lead for a four-shift team of 10 technicians and 5 engineers.",
+          "quote": "Outgoing Quality Engineer, and Process Quality Team Lead for a four-shift team of 10 technicians and 5 engineers. Focused on continuous improvement and 7-step problem solving.",
           "approved": true
         },
         {
@@ -538,7 +524,7 @@
         },
         {
           "id": "leadership:d362007369",
-          "title": "Leadership in Equipment Qualification",
+          "title": "Leading Equipment Qualification",
           "summary": "Barry led the 7nm start-up equipment qualification programme, implementing release validation, acceptance tests, and staging before production to ensure readiness.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
@@ -553,7 +539,7 @@
         {
           "id": "leadership:d0a57cfcea",
           "title": "Managed OEM Service Contracts",
-          "summary": "Managed service contracts for semiconductor equipment, aligned supplier objectives with Intel's, intervened on performance issues, and measured installation and maintenance quality.",
+          "summary": "Managed service contracts for semiconductor equipment suppliers, aligned their objectives with Intel's, intervened when performance fell short, and measured quality of installation and sustaining work.",
           "repo": "BBSISK",
           "path": "career.md",
           "heading": "Career history > Intel Ireland, Leixlip (October 1994 – October 2024) > 200mm/300mm OEM Equipment Service Contract Manager (June 2000 – April 2005)",
@@ -567,7 +553,7 @@
         {
           "id": "leadership:d01d06712f",
           "title": "Leadership in Strategic Planning",
-          "summary": "Led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification to software product roadmap and sprint goals.",
+          "summary": "Barry led factory-wide planning for 7nm production ramp, translated objectives into SMART MBOs, and applied PMP certification. He built planned stages with written goals and measured results in software sprints.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -601,8 +587,8 @@
       "candidates": [
         {
           "id": "teamwork:a04e8657ea",
-          "title": "Team Collaboration in Lab Project",
-          "summary": "Barry and AB brainstormed challenges, coded aligned copies in CLI and VSCode, uploaded matched versions to GitLab, and AB helped troubleshoot errors in BBS code.",
+          "title": "Team Collaboration in Lab2 Project",
+          "summary": "Barry and AB brainstormed challenges, coded aligned copies in CLI and VSCode, uploaded matched versions to Gitlab, and AB helped troubleshoot errors in Barry's code.",
           "repo": "CS627_Advanced_OOP_Java",
           "path": "CS627B_Lab2_AB_BS/Readme.md",
           "heading": "Programming Module Repository > Class Summary",
@@ -626,6 +612,20 @@
           "verified_by": "self",
           "quote": "Led engineering and technician teams; designed structured technical training; built a pipeline of technicians and engineers",
           "approved": false
+        },
+        {
+          "id": "teamwork:d362007369",
+          "title": "Collaborative Quality and Change Control",
+          "summary": "Barry applied manufacturing teamwork principles to software delivery by implementing automated testing, code reviews, staged rollouts, and post-release monitoring, ensuring quality and controlled changes.",
+          "repo": "BBSISK",
+          "path": "manufacturing-to-software.md",
+          "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
+          "url": "https://github.com/BBSISK/BBSISK/blob/5a30d054e6aa12dcbf3790961583b99a352ce5d0/manufacturing-to-software.md#the-mapping",
+          "project": "Profile",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Every change reviewed and tested before merge; deploys only when CI passes, then health checks on the live site",
+          "approved": false
         }
       ]
     },
@@ -637,7 +637,7 @@
         {
           "id": "change-control-discipline:d362007369",
           "title": "Change control in software delivery",
-          "summary": "Barry implemented code review, risk-based approvals, staged rollouts, and post-release monitoring with rollback to ensure every change was reviewed, tested, and deployed only after passing CI and health checks.",
+          "summary": "Barry implemented code review, risk-based approvals, staged rollouts, and post-release monitoring with rollback to ensure every change was reviewed and tested before deployment.",
           "repo": "BBSISK",
           "path": "manufacturing-to-software.md",
           "heading": "From fab to pipeline: manufacturing disciplines mapped to software delivery > The mapping",
@@ -650,7 +650,7 @@
         },
         {
           "id": "change-control-discipline:b038c7f3bd",
-          "title": "Change Control in Data Schema",
+          "title": "Change Control in Wall Inspector",
           "summary": "Barry added new columns via a non-destructive auto-migration on start-up, preserving existing production records in PostgreSQL.",
           "repo": "wall_inspector",
           "path": "README.md",
@@ -665,7 +665,7 @@
         {
           "id": "change-control-discipline:33eaf7408f",
           "title": "Controlled change process",
-          "summary": "Barry implemented a strict change control process using Jira stories, GitHub branches and pull requests, CI checks, and Terraform planning to ensure all changes were traceable, tested, and reviewed before deployment.",
+          "summary": "Barry implemented a strict change control process using Jira stories, GitHub branches and pull requests, CI checks, and Terraform planning to ensure all changes were traceable, tested, and approved before deployment.",
           "repo": "ask-barry",
           "path": "README.md",
           "heading": "Ask Barry > How changes are made",
@@ -677,9 +677,23 @@
           "approved": false
         },
         {
+          "id": "change-control-discipline:eced1e62f4",
+          "title": "Handling drifting sensors in SPC",
+          "summary": "Barry identified sensors with alarm rates exceeding targets, flagged 25 as drifting, and noted that drifting sensors require special treatment beyond standard control limits.",
+          "repo": "SECOM_Pipeline",
+          "path": "docs/analysis/control-limits.md",
+          "heading": "SPC Phase I: control limits (SECOM-30) > How well the chosen limits fit",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/c2172a6e06ae65b16e83569bf34c7ec4312919cb/docs/analysis/control-limits.md#how-well-the-chosen-limits-fit",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "The drifting example, `s129`, shows why that flag matters: it steps down to a new level around 19 Sep, inside the baseline, so for this sensor the \"in-control\" period is not in control and its limits are stretched to cover",
+          "approved": false
+        },
+        {
           "id": "change-control-discipline:7e7cfb0bb6",
           "title": "AWS Budget Caps Monthly Spend",
-          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns. The budget covers the whole account and alert emails are kept out of the repo.",
+          "summary": "Barry set an AWS Budget to cap account spend at $20 monthly, with alerts at 50%, 80%, and 100% usage and forecasted overruns, and destroyed runtime stacks after demos to control costs.",
           "repo": "SECOM_Pipeline",
           "path": "docs/teardown.md",
           "heading": "Cost controls and teardown > The budget",
@@ -687,7 +701,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget; AWS **forecasts** the month will end over budget",
+          "quote": "An AWS Budget (`secom-pipeline-monthly`, in the bootstrap stack) caps the whole account at **$20 a month** and emails the maintainer when: actual spend passes **50%, 80% and 100%** of the budget; AWS **forecasts** the month will end over budget. Destroying",
           "approved": false
         },
         {
