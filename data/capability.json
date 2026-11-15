@@ -5,19 +5,17 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-11-14T10:37:05Z",
+  "generated_at": "2026-11-15T11:06:47Z",
   "sources": {
     "repos": [
       "BBSISK",
       "CS385_Mobile_App",
       "CS627_Advanced_OOP_Java",
-      "PlanForMe",
       "SECOM_Pipeline",
       "agent-quest-java",
       "agentmath_showcase",
       "ask-barry",
       "aws-ec2-web-server",
-      "degree-drift",
       "dice-roll-api",
       "housing-pipeline-ireland",
       "inmytime-showcase",
@@ -98,20 +96,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com... CI runs the full pytest suite on every push. It includes tests that call the Flask routes... so a broken route blocks the deploy.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 3,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Run locally",
-          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#run-locally",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "python -m pytest -v # run the tests flask --app wsgi run # open http://127.0.0.1:5000",
+          "quote": "Ask Barry is a Flask app running in production on Render at ask-barry.onrender.com, served by gunicorn. CI runs the full pytest suite on every push. It includes tests that call the Flask routes through Flask's test client.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -124,7 +109,7 @@
           "project": "In My Time",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API), each with its own schema module and no cross-module foreign keys, so a product can be reasoned about, or split out, on its own.",
+          "quote": "One Flask app with a blueprint pair per product (page routes plus a JSON API), each with its own schema module and no cross-module foreign keys",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -133,7 +118,7 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Architecture",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#architecture",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#architecture",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -159,7 +144,7 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Tech stack",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#tech-stack",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#tech-stack",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -185,13 +170,26 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Run locally",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#run-locally",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#run-locally",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "flask --app app run --debug # http://127.0.0.1:5000 (SQLite file taxi.db)",
           "kind": "practice",
           "first_committed": "2026-11-01"
+        },
+        {
+          "tier": 1,
+          "repo": "my30words_showcase",
+          "path": "README.md",
+          "heading": "✍️ Brief > Tech stack",
+          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
+          "project": "Brief",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "| Backend | Python, Flask, scheduled jobs |",
+          "kind": "application",
+          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
@@ -220,15 +218,15 @@
         "1": [
           "Ask Barry",
           "SECOM Pipeline",
+          "agent-quest-java",
           "aws-ec2-web-server",
-          "cs210-playlist-lambda",
           "dice-roll-api"
         ],
         "2": [
           "Ask Barry",
           "SECOM Pipeline",
+          "agent-quest-java",
           "aws-ec2-web-server",
-          "cs210-playlist-lambda",
           "dice-roll-api"
         ],
         "3": [
@@ -245,38 +243,12 @@
           "tier": 4,
           "repo": "ask-barry",
           "path": "README.md",
-          "heading": "Ask Barry > Azure and AWS Bedrock compared (Stage 10)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#azure-and-aws-bedrock-compared-stage-10",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS... python -m scripts.evaluate_answers --providers azure-openai bedrock-claude bedrock-nova --save",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
           "heading": "Ask Barry > Index into Azure AI Search and compare retrievers (Stage 4)",
           "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#index-into-azure-ai-search-and-compare-retrievers-stage-4",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tests: all offline, with fake Azure clients, so CI needs no keys.",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
+          "quote": "Tests: all offline, with fake Azure clients, so CI needs no keys. Result (27 Sep 2026, 59 chunks, 35 answerable questions), section level: ... Azure hybrid 0.80 0.94 1.00 0.86",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -289,7 +261,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. After the deploy, `/ready` must say `ready`",
+          "quote": "Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → Variables, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -305,6 +277,19 @@
           "quote": "Ruff's Bandit (`S`) rules, pip-audit, a Trivy config scan of the Terraform and Dockerfile, Hadolint, and a Trivy image scan all run inside the required CI checks, so a finding blocks the merge.",
           "kind": "application",
           "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Azure and AWS Bedrock compared (Stage 10)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#azure-and-aws-bedrock-compared-stage-10",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
         },
         {
           "tier": 3,
@@ -341,9 +326,22 @@
           "project": "dice-roll-api",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "AWS Lambda runs the handler in `lambda/index.mjs` (ES module) only when a request arrives. No server to manage. - Amazon API Gateway gives the function a public HTTPS endpoint and routes `GET /roll` to it. - AWS SAM (Serverless Application",
+          "quote": "AWS Lambda runs the handler... only when a request arrives... Amazon API Gateway gives the function a public HTTPS endpoint... SAM turns it into a AWS CloudFormation stack...",
           "kind": "practice",
           "first_committed": "2026-10-24"
+        },
+        {
+          "tier": 2,
+          "repo": "aws-ec2-web-server",
+          "path": "README.md",
+          "heading": "EC2 web server: manual build → User data → Terraform > 1. Manual build",
+          "url": "https://github.com/BBSISK/aws-ec2-web-server/blob/73626df31a85c4e76c3b521fae71a8dda3aa577c/README.md#1-manual-build",
+          "project": "aws-ec2-web-server",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "- Installed Apache (`httpd`), started it and enabled it so it comes back after a reboot, then replaced the default page.",
+          "kind": "practice",
+          "first_committed": "2026-11-01"
         }
       ],
       "depth": {
@@ -549,7 +547,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "- **Every pull request runs CI** (GitHub Actions), and `main` only accepts a merge when all three required checks pass: ... - **On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the",
+          "quote": "Every pull request runs CI (GitHub Actions), and main only accepts a merge when all three required checks pass... On every merge to main, the publish workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -582,19 +580,6 @@
         {
           "tier": 4,
           "repo": "SECOM_Pipeline",
-          "path": "docs/security.md",
-          "heading": "Security design > Shift-left security gate (SECOM-19) > Supply chain",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#supply-chain",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Dependabot proposes SHA updates. Trivy and Hadolint are downloaded as release binaries and checked against a SHA-256 written in `ci.yml`. If the download doesn't match, the job stops before running it.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 4,
-          "repo": "SECOM_Pipeline",
           "path": "docs/workflow.md",
           "heading": "Way of working > Continuous integration",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/workflow.md#continuous-integration",
@@ -602,6 +587,19 @@
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "`.github/workflows/ci.yml` runs on every pull request and every push to `main`. Three jobs must pass before a pull request can merge (they are required checks in the `protect-main` ruleset)",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 3,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/security.md",
+          "heading": "Security design > Shift-left security gate (SECOM-19) > Supply chain",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/3e1d7bffaaa3909871024c00a5f8ee1f13b95cb9/docs/security.md#supply-chain",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Dependabot proposes SHA updates. Trivy and Hadolint are downloaded as release binaries and checked against a SHA-256 written in `ci.yml`. If the download doesn't match, the job stops before running it.",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -700,7 +698,7 @@
           "first_committed": "2026-10-12"
         },
         {
-          "tier": 4,
+          "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "README.md",
           "heading": "SECOM Semiconductor Pipeline > Testing and CI",
@@ -708,9 +706,22 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`producer-image`: builds the producer container and runs it on a small fake dataset, checking every record against the contract. On every merge to `main`, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds",
+          "quote": "**On every merge to `main`**, the `publish` workflow pushes the producer image to ECR and fails if the vulnerability scan finds anything critical.",
           "kind": "application",
           "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 2,
+          "repo": "SECOM_Pipeline",
+          "path": "docs/replay-producer.md",
+          "heading": "Replay producer",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Code: `secom/producer.py` (standard library only). Container: `producer/Dockerfile`.",
+          "kind": "application",
+          "first_committed": "2026-10-12"
         },
         {
           "tier": 1,
@@ -721,7 +732,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "docker compose up --build # Application runs at http://localhost:8000/portal # Container health telemetry at http://localhost:8000/api/health",
+          "quote": "docker compose up --build # Application runs at http://localhost:8000/portal",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -734,22 +745,9 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "subgraph App_Container[\" 423 Docker Container (Dockerfile)\"]",
+          "quote": "subgraph App_Container[\" 93B Docker Container (Dockerfile)\"]",
           "kind": "application",
           "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
-          "repo": "SECOM_Pipeline",
-          "path": "docs/replay-producer.md",
-          "heading": "Replay producer",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "Container: `producer/Dockerfile`.",
-          "kind": "application",
-          "first_committed": "2026-10-12"
         },
         {
           "tier": 1,
@@ -904,22 +902,22 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Pipeline: question → Azure AI Search hybrid retrieval (top 8 sections, the Stage 4 decision) → numbered sources in the prompt → `gpt-4.1-mini` (temperature 0, JSON output) → citation check → answer with links.",
+          "quote": "Pipeline: question → Azure AI Search hybrid retrieval → gpt-4.1-mini → citation check → answer with links.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
         {
-          "tier": 2,
-          "repo": "where-am-i",
-          "path": "SOURCES.md",
-          "heading": "Data sources in use > When sources disagree (conflict rule)",
-          "url": "https://github.com/BBSISK/where-am-i/blob/2cd0fc4b1ffda23828775f90863e8085e9b8883e/SOURCES.md#when-sources-disagree-conflict-rule",
-          "project": "where-am-i",
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Two judges compared (Stage 9a)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
+          "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tested in `pipeline/test_heritage.py` and `pipeline/test_area_data.py`.",
-          "kind": "practice",
-          "first_committed": "2026-11-02"
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
+          "kind": "application",
+          "first_committed": "2026-09-27"
         }
       ],
       "depth": {
@@ -971,32 +969,6 @@
           "tier": 4,
           "repo": "ask-barry",
           "path": "README.md",
-          "heading": "Ask Barry > Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at /mcp, main protected by GitHub rules",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#current-status-sprint-2-26-oct--8-nov-2026-hosted-mcp-server-live-at-mcp-main-protected-by-github-rules",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "hosted MCP server live at /mcp",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
-          "heading": "Ask Barry > Same agent, two frameworks: LangGraph (ASK-70)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#same-agent-two-frameworks-langgraph-ask-70",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "**Status:** done. Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, [full report](docs/eval/2026-10-31-agent.md)).",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "README.md",
           "heading": "Ask Barry > Use Ask Barry from an AI assistant (MCP, Stage 7)",
           "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#use-ask-barry-from-an-ai-assistant-mcp-stage-7",
           "project": "Ask Barry",
@@ -1015,7 +987,20 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**Tested through the SDK client over real HTTP** (`tests/test_mcp_http.py`): the tools and their read-only annotations, structured results, a rate limit hit on the website showing up as an MCP error, the size cap, and the website routes still working behind",
+          "quote": "Tested through the SDK client over real HTTP (`tests/test_mcp_http.py`): the tools and their read-only annotations, structured results, a rate limit hit on the website showing up as an MCP error, the size cap, and the website routes still working behind",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Same agent, two frameworks: LangGraph (ASK-70)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#same-agent-two-frameworks-langgraph-ask-70",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, full report)",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1041,7 +1026,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Agent (plans, one tool call per requirement) | 98% | 100% | 0 | 0 | 2 of 2 | 0 | 33 s (6.8 tool calls)",
+          "quote": "It's scored the way retrieval was: coverage, status accuracy, false evidence (target 0), missed evidence, injection pass rate, guardrail actions, tool calls and time.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1064,6 +1049,19 @@
           "path": "README.md",
           "heading": "Ask Barry > Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at /mcp, main protected by GitHub rules",
           "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#current-status-sprint-2-26-oct--8-nov-2026-hosted-mcp-server-live-at-mcp-main-protected-by-github-rules",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "hosted MCP server live at /mcp, main protected by GitHub rules",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Current status: Sprint 2 (26 Oct – 8 Nov 2026): hosted MCP server live at /mcp, main protected by GitHub rules",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#current-status-sprint-2-26-oct--8-nov-2026-hosted-mcp-server-live-at-mcp-main-protected-by-github-rules",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -1131,7 +1129,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md",
+          "quote": "python -m scripts.evaluate_retrieval # print the report python -m scripts.evaluate_retrieval --save # also write docs/eval/<date>-bm25.md - Golden set: eval/golden_set.json holds 44 answerable questions... The final assistant must decline the traps. - No test leakage: the evaluation reports under docs/eval/ are",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1144,7 +1142,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
+          "quote": "Run the 86 Automated Unit & Agent Tests",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1183,7 +1181,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "the gpt-4.1-mini judge scored 89% and TypeSafe Jev 87%, each with 1 false support... the LLM judge scored 98% (1 false support) and Jev 100%... Same evaluation on AWS Bedrock... each passed 45 of 47 with every trap question passed.",
+          "quote": "**Judges checked against hand labels** (1 October 2026, 55 claims: 40 from real answers, 15 with one detail deliberately changed): ... the LLM judge scored 98% ... My own labelling passes scored 76% and 85%. Details and caveats are in",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1196,7 +1194,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Regression checks failed | 0 | Passing every check | 44 of 45 | Early versions failed correct answers because of formatting ... Each fix came with a unit test.",
+          "quote": "Regression checks failed | 0 | ... Each fix came with a unit test.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1209,7 +1207,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`. The 0.5 threshold was picked on",
+          "quote": "The adjudication was done after seeing the judges' answers, so it can favour them, which is why both views are reported; each change is listed with the source text that settles it in `docs/eval/`.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1259,13 +1257,17 @@
           "In My Time",
           "PlanForMe",
           "Wall Inspector",
+          "agent-quest-java",
           "taxi-mum-dad"
         ],
         "2": [
-          "In My Time"
+          "In My Time",
+          "Wall Inspector",
+          "agent-quest-java"
         ],
         "3": [
-          "In My Time"
+          "In My Time",
+          "Wall Inspector"
         ]
       },
       "evidence": [
@@ -1283,43 +1285,43 @@
           "first_committed": "2026-09-25"
         },
         {
-          "tier": 1,
-          "repo": "taxi-mum-dad",
+          "tier": 3,
+          "repo": "wall_inspector",
           "path": "README.md",
-          "heading": "🚕 Taxi of Mum & Dad > Testing",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#testing",
-          "project": "taxi-mum-dad",
+          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
+          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-human-in-the-loop-provenance-model",
+          "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Both databases: the suite runs against SQLite with foreign keys enforced, and against real PostgreSQL via `TEST_DATABASE_URL`.",
-          "kind": "practice",
-          "first_committed": "2026-11-01"
+          "quote": "existing production records in PostgreSQL are preserved.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
         },
         {
-          "tier": 1,
-          "repo": "taxi-mum-dad",
+          "tier": 2,
+          "repo": "agent-quest-java",
           "path": "README.md",
-          "heading": "🚕 Taxi of Mum & Dad > Deployment",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#deployment",
-          "project": "taxi-mum-dad",
+          "heading": "Agent Quest (Java) > Saving games in a cloud database (Amazon RDS)",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/README.md#saving-games-in-a-cloud-database-amazon-rds",
+          "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Database: Neon project `taxi-mum-dad` (AWS eu-central-1). Tables are created on first boot (`db.create_all()`); there are no migrations yet.",
+          "quote": "Tests without AWS: repository and service tests run against an in-memory H2 database (MySQL mode) built from the same `schema.sql`",
           "kind": "practice",
-          "first_committed": "2026-11-01"
+          "first_committed": "2026-11-09"
         },
         {
-          "tier": 1,
-          "repo": "CS385_Mobile_App",
+          "tier": 2,
+          "repo": "agent-quest-java",
           "path": "README.md",
-          "heading": "CS385 Student Marketplace Oct 2026 > Data model (draft)",
-          "url": "https://github.com/BBSISK/CS385_Mobile_App/blob/c596ba70c3a520434d4efa34810d2ec3f1b0d9a5/README.md#data-model-draft",
-          "project": "CS385_Mobile_App",
+          "heading": "Agent Quest (Java) > Saving games in a cloud database (Amazon RDS)",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/README.md#saving-games-in-a-cloud-database-amazon-rds",
+          "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Entity | Key fields |",
+          "quote": "Checked by hand in MySQL Workbench: negative gold is refused (error 3819), a duplicate game id too (error 1062). A turn is saved in one transaction... a test proves a refused row leaves no half-made game.",
           "kind": "practice",
-          "first_committed": "2026-10-13"
+          "first_committed": "2026-11-09"
         },
         {
           "tier": 1,
@@ -1336,42 +1338,42 @@
         },
         {
           "tier": 1,
+          "repo": "CS385_Mobile_App",
+          "path": "README.md",
+          "heading": "CS385 Student Marketplace Oct 2026 > Data model (draft)",
+          "url": "https://github.com/BBSISK/CS385_Mobile_App/blob/c596ba70c3a520434d4efa34810d2ec3f1b0d9a5/README.md#data-model-draft",
+          "project": "CS385_Mobile_App",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "| Entity | Key fields |",
+          "kind": "practice",
+          "first_committed": "2026-10-13"
+        },
+        {
+          "tier": 1,
           "repo": "taxi-mum-dad",
           "path": "README.md",
-          "heading": "🚕 Taxi of Mum & Dad > Tech stack",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/983fbaa990f2f11258ff514da357672298f63b40/README.md#tech-stack",
+          "heading": "🚕 Taxi of Mum & Dad > Deployment",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#deployment",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Flask-SQLAlchemy / SQLAlchemy 2 · PostgreSQL (Neon) · psycopg 3",
+          "quote": "Database: Neon project `taxi-mum-dad` (AWS eu-central-1). Tables are created on first boot (`db.create_all()`); there are no migrations yet.",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
         {
           "tier": 1,
-          "repo": "PlanForMe",
+          "repo": "taxi-mum-dad",
           "path": "README.md",
-          "heading": "PlanForMe > Layout",
-          "url": "https://github.com/BBSISK/PlanForMe/blob/8ac82839add2189853ef0adff57c2e392a6023d8/README.md#layout",
-          "project": "PlanForMe",
+          "heading": "🚕 Taxi of Mum & Dad > Testing",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#testing",
+          "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`models.py` | Item, Course, Goal, Milestone, Constraint, ChatLog",
+          "quote": "Both databases: the suite runs against SQLite with foreign keys enforced, and against real PostgreSQL via `TEST_DATABASE_URL`.",
           "kind": "practice",
-          "first_committed": "2026-10-14"
-        },
-        {
-          "tier": 1,
-          "repo": "wall_inspector",
-          "path": "README.md",
-          "heading": "🏛️ Global Wall Inspector — AI Masonry Diagnostic & Skills Certification Platform > 🧭 Human-in-the-Loop Provenance Model",
-          "url": "https://github.com/BBSISK/wall_inspector/blob/bcd4662d219abe6ba3be8f8b13b754d7185cb4ac/README.md#-human-in-the-loop-provenance-model",
-          "project": "Wall Inspector",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "New columns (`grading_status`, `graded_by_user_*`, `graded_at`, `provenance`, `confidence_score`) are added by a non-destructive auto-migration on start-up, so existing production records in PostgreSQL are preserved.",
-          "kind": "application",
-          "first_committed": "2026-09-25"
+          "first_committed": "2026-11-01"
         }
       ],
       "depth": {
@@ -1453,7 +1455,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "quote": "The nightly index refresh signs in with GitHub OIDC (ASK-34), so GitHub stores no Azure secret at all. Terraform creates the ask-barry-github app registration with a federated credential...",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1498,6 +1500,19 @@
         },
         {
           "tier": 3,
+          "repo": "ask-barry",
+          "path": "docs/azure-setup.md",
+          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "With Entra ID the app proves who it is and gets a token, and Azure role assignments decide what that identity may do. The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
           "repo": "SECOM_Pipeline",
           "path": "docs/security.md",
           "heading": "Security design > Keyless from the first commit > How the GitHub OIDC exchange works",
@@ -1508,19 +1523,6 @@
           "quote": "A workflow job with `permissions: id-token: write` asks GitHub for a signed OIDC token... AWS returns credentials that expire after one hour.",
           "kind": "application",
           "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 8: Sign in with Entra ID instead of keys (ASK-8)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-8-sign-in-with-entra-id-instead-of-keys-ask-8",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "The code uses `DefaultAzureCredential` (see `app/azure_auth.py`), which picks the right sign-in for where it runs",
-          "kind": "application",
-          "first_committed": "2026-09-27"
         }
       ],
       "depth": {
@@ -1559,10 +1561,12 @@
         ],
         "2": [
           "Ask Barry",
+          "Housing Pipeline Ireland",
           "SECOM Pipeline"
         ],
         "3": [
           "Ask Barry",
+          "Housing Pipeline Ireland",
           "SECOM Pipeline"
         ],
         "4": [
@@ -1671,7 +1675,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "A branch ruleset (`protect-main`) applies to everyone, including the owner. Nobody can push straight to `main`, force-push over its history, or delete it. Every change arrives through a pull request. CI checks required before merge. `lint-and-test`, `terraform` and `producer-image` are",
+          "quote": "A branch ruleset (`protect-main`) applies to everyone, including the owner. Nobody can push straight to `main`, force-push over its history, or delete it. Every change arrives through a pull request. One branch and pull request per Jira story, merged with",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
@@ -1754,12 +1758,12 @@
           "tier": 2,
           "repo": "agent-quest-java",
           "path": "README.md",
-          "heading": "Agent Quest (Java) > Run it",
-          "url": "https://github.com/BBSISK/agent-quest-java/blob/aeb68c0dea19bac5d6a51e248e2558e3f2cff1cd/README.md#run-it",
+          "heading": "Agent Quest (Java)",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/README.md#agent-quest-java",
           "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`mvn -q compile exec:java` # play mvn -q compile exec:java -Dexec.mainClass=quest.Benchmark -Dexec.args=\"3\" # benchmark",
+          "quote": "I wrote the agentic loop myself on the AWS SDK for Java's Converse API, so every step a framework would hide is visible, and tested. 44 JUnit tests, run on every push with no AWS needed",
           "kind": "practice",
           "first_committed": "2026-11-09"
         },
@@ -1767,14 +1771,40 @@
           "tier": 2,
           "repo": "agent-quest-java",
           "path": "README.md",
-          "heading": "Agent Quest (Java)",
-          "url": "https://github.com/BBSISK/agent-quest-java/blob/aeb68c0dea19bac5d6a51e248e2558e3f2cff1cd/README.md#agent-quest-java",
+          "heading": "Agent Quest (Java) > Run it",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/README.md#run-it",
           "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "I wrote the agentic loop myself on the AWS SDK for Java's Converse API, so every step a framework would hide is visible, and tested. 24 JUnit tests; a benchmark that scores two models on the same scripted game.",
+          "quote": "`mvn -q compile exec:java` ... `mvn spring-boot:run` and use the curl calls above.",
           "kind": "practice",
           "first_committed": "2026-11-09"
+        },
+        {
+          "tier": 2,
+          "repo": "leetcode-java",
+          "path": "README.md",
+          "heading": "leetcode-java > How I work",
+          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#how-i-work",
+          "project": "LeetCode in Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "I write every solution myself. I use Claude as a coach: it picks the next problem, gives a hint if I'm stuck, and reviews my code after it passes.",
+          "kind": "practice",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 2,
+          "repo": "leetcode-java",
+          "path": "README.md",
+          "heading": "leetcode-java > Solved",
+          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#solved",
+          "project": "LeetCode in Java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Solution | Time | Space | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) | [ContainsDuplicate.java](src/main/java/neetcode/arrayshashing/ContainsDuplicate.java)",
+          "kind": "practice",
+          "first_committed": "2026-10-11"
         },
         {
           "tier": 2,
@@ -1806,38 +1836,12 @@
           "tier": 1,
           "repo": "leetcode-java",
           "path": "README.md",
-          "heading": "leetcode-java > How I work",
-          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#how-i-work",
-          "project": "LeetCode in Java",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "I write every solution myself.",
-          "kind": "practice",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "leetcode-java",
-          "path": "README.md",
-          "heading": "leetcode-java > Solved",
-          "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#solved",
-          "project": "LeetCode in Java",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "| [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | Arrays & Hashing | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) |",
-          "kind": "practice",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "leetcode-java",
-          "path": "README.md",
           "heading": "leetcode-java > Progress",
           "url": "https://github.com/BBSISK/leetcode-java/blob/f2ba974e60594e4ec13aafb75871cbe0ec16b219/README.md#progress",
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
+          "quote": "| Pattern | Solved | Total | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         }
@@ -1857,38 +1861,20 @@
     {
       "id": "front-end-frameworks",
       "name": "Front-end frameworks",
-      "tier": 3,
-      "first_evidence": "2026-09",
+      "tier": 2,
+      "first_evidence": "2026-10",
       "projects_by_tier": {
         "1": [
           "CS385_Mobile_App",
-          "Degree Drift",
-          "In My Time",
           "React challenges",
+          "agent-quest-java",
           "stove-inversion"
         ],
         "2": [
-          "Degree Drift",
           "React challenges"
-        ],
-        "3": [
-          "Degree Drift"
         ]
       },
       "evidence": [
-        {
-          "tier": 3,
-          "repo": "degree-drift",
-          "path": "README.md",
-          "heading": "🎓 Degree Drift: Where Do Irish University Graduates Actually Go? > 🛠️ How it's built and checked",
-          "url": "https://github.com/BBSISK/degree-drift/blob/15d526c0bec7e87284cd0dd200018c12b1a50851/README.md#-how-its-built-and-checked",
-          "project": "Degree Drift",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "- **Front end:** React 19 + TypeScript + Vite, styled with Tailwind CSS v4. - **Continuous deployment:** a GitHub Actions workflow (`.github/workflows/deploy.yml`) builds the site on every push to `main` and publishes it to GitHub Pages.",
-          "kind": "application",
-          "first_committed": "2026-11-10"
-        },
         {
           "tier": 2,
           "repo": "react-challenges",
@@ -1917,6 +1903,19 @@
         },
         {
           "tier": 1,
+          "repo": "agent-quest-java",
+          "path": "web/README.md",
+          "heading": "React + TypeScript + Vite",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/web/README.md#react--typescript--vite",
+          "project": "agent-quest-java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.",
+          "kind": "practice",
+          "first_committed": "2026-11-14"
+        },
+        {
+          "tier": 1,
           "repo": "stove-inversion",
           "path": "README.md",
           "heading": "The 7:00 PM \"Stove Inversion\" (EPA Ireland Real-Time Air Quality) > 🛠️ Architecture & Tech Stack",
@@ -1930,6 +1929,19 @@
         },
         {
           "tier": 1,
+          "repo": "agent-quest-java",
+          "path": "web/README.md",
+          "heading": "React + TypeScript + Vite > Expanding the Oxlint configuration",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/web/README.md#expanding-the-oxlint-configuration",
+          "project": "agent-quest-java",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`",
+          "kind": "practice",
+          "first_committed": "2026-11-14"
+        },
+        {
+          "tier": 1,
           "repo": "CS385_Mobile_App",
           "path": "README.md",
           "heading": "CS385 Student Marketplace Oct 2026 > Tech stack",
@@ -1940,24 +1952,11 @@
           "quote": "App | React Native with **Expo**",
           "kind": "practice",
           "first_committed": "2026-10-13"
-        },
-        {
-          "tier": 1,
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > StoryCatcher: recorded family interviews",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#storycatcher-recorded-family-interviews",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "A second module lets family members record interviews with relatives in the browser",
-          "kind": "application",
-          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
         "projects_at_top": [],
-        "months": 2,
+        "months": 1,
         "third_party": false,
         "reached": false
       },
@@ -1996,7 +1995,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the [record contract]",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it...",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -2055,6 +2054,19 @@
         {
           "tier": 1,
           "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Way of working > Sprint log",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#sprint-log",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "records stream live from the producer on Fargate through Kinesis into a Lambda that validates them and lands raw data in S3",
+          "kind": "application",
+          "first_committed": "2026-10-11"
+        },
+        {
+          "tier": 1,
+          "repo": "SECOM_Pipeline",
           "path": "docs/replay-producer.md",
           "heading": "Replay producer",
           "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/2cf08140a37091d1a553355377f9db889f951a4b/docs/replay-producer.md#replay-producer",
@@ -2074,20 +2086,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract, stores clean runs and rejects in PostgreSQL,",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
-          "tier": 1,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Way of working > Sprint log",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#sprint-log",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "records stream live from the producer on Fargate through Kinesis into a Lambda that validates them and lands raw data in S3",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches",
           "kind": "application",
           "first_committed": "2026-10-11"
         }
