@@ -5,7 +5,7 @@
     "name": "Barry Sisk",
     "short_name": "Barry"
   },
-  "generated_at": "2026-11-20T11:51:10Z",
+  "generated_at": "2026-11-21T11:17:52Z",
   "sources": {
     "repos": [
       "BBSISK",
@@ -102,6 +102,19 @@
         },
         {
           "tier": 3,
+          "repo": "ask-barry",
+          "path": "README.md",
+          "heading": "Ask Barry > Run locally",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#run-locally",
+          "project": "Ask Barry",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "python -m pytest -v # run the tests flask --app wsgi run # open http://127.0.0.1:5000",
+          "kind": "application",
+          "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 3,
           "repo": "inmytime-showcase",
           "path": "README.md",
           "heading": "🌸 In My Time > Technical highlights > Architecture and engineering",
@@ -118,11 +131,11 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Architecture",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#architecture",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#architecture",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Flask app factory on Render (Frankfurt) ── gunicorn - **Backend:** Flask app factory, Flask-SQLAlchemy models (family, parent, kid, task, trip, passenger, promise, ledger entry, event), server-side fare calculation",
+          "quote": "Flask app factory on Render (Frankfurt) ── gunicorn - Backend: Flask app factory, Flask-SQLAlchemy models ... server-side fare calculation ...",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -144,11 +157,11 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Tech stack",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#tech-stack",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#tech-stack",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Python 3.12 · Flask 3 · Flask-SQLAlchemy / SQLAlchemy 2",
+          "quote": "Python 3.12 · Flask 3 · Flask-SQLAlchemy / SQLAlchemy 2 · PostgreSQL (Neon) · psycopg 3 · gunicorn · Render",
           "kind": "practice",
           "first_committed": "2026-11-01"
         },
@@ -170,26 +183,13 @@
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Run locally",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#run-locally",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#run-locally",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
           "quote": "flask --app app run --debug # http://127.0.0.1:5000 (SQLite file taxi.db)",
           "kind": "practice",
           "first_committed": "2026-11-01"
-        },
-        {
-          "tier": 1,
-          "repo": "my30words_showcase",
-          "path": "README.md",
-          "heading": "✍️ Brief > Tech stack",
-          "url": "https://github.com/BBSISK/my30words_showcase/blob/59ea4492dc89a13dd7b91003a74c24252bbeaedd/README.md#tech-stack",
-          "project": "Brief",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "| Backend | Python, Flask, scheduled jobs |",
-          "kind": "application",
-          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
@@ -234,23 +234,11 @@
           "SECOM Pipeline"
         ],
         "4": [
-          "Ask Barry"
+          "Ask Barry",
+          "SECOM Pipeline"
         ]
       },
       "evidence": [
-        {
-          "tier": 4,
-          "repo": "ask-barry",
-          "path": "docs/azure-setup.md",
-          "heading": "Stage 3: Azure setup > Step 7: Verify",
-          "url": "https://github.com/BBSISK/ask-barry/blob/9945cdc95432766ebb35365092c879f07a297f72/docs/azure-setup.md#step-7-verify",
-          "project": "Ask Barry",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "PASS Azure OpenAI embeddings: 1536-dimension vector PASS Azure OpenAI chat: model replied 'ready' PASS Azure AI Search: reachable, 0 index(es) so far",
-          "kind": "application",
-          "first_committed": "2026-09-27"
-        },
         {
           "tier": 4,
           "repo": "ask-barry",
@@ -260,9 +248,22 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Try it locally. In `.env` set `AZURE_AUTH_MODE=entra` and comment out both keys, then run `python -m scripts.check_azure`. New role assignments can take 5–10 minutes to apply; a `401`/`403` straight after `apply` usually just means wait.",
+          "quote": "Terraform creates the `ask-barry-github` app registration with a federated credential that Entra accepts only from this repo's `main` branch. In GitHub → Settings → Secrets and variables → Actions → Variables, set `AZURE_CLIENT_ID` (`terraform output -raw github_client_id`) and `AZURE_TENANT_ID`. Run",
           "kind": "application",
           "first_committed": "2026-09-27"
+        },
+        {
+          "tier": 4,
+          "repo": "SECOM_Pipeline",
+          "path": "README.md",
+          "heading": "SECOM Semiconductor Pipeline > Security",
+          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
+          "project": "SECOM Pipeline",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Ruff's Bandit (`S`) rules, pip-audit, a Trivy config scan of the Terraform and Dockerfile, Hadolint, and a Trivy image scan all run inside the required CI checks, so a finding blocks the merge.",
+          "kind": "application",
+          "first_committed": "2026-10-11"
         },
         {
           "tier": 3,
@@ -273,7 +274,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS",
+          "quote": "Ask Barry was built on Azure. Stage 10 runs the same answer evaluation through Amazon Bedrock on AWS, so the comparison measures the model and the cloud, not the plumbing.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -299,7 +300,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid - **Index:** `ask-barry-chunks`, one document per chunk...",
+          "quote": "create index, embed, upload python -m scripts.evaluate_retrieval --retriever all --save # BM25 vs Azure keyword / vector / hybrid ... Azure hybrid ... 0.80 ... 0.94 ... 1.00 ... 0.86",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -317,19 +318,6 @@
           "first_committed": "2026-10-11"
         },
         {
-          "tier": 3,
-          "repo": "SECOM_Pipeline",
-          "path": "README.md",
-          "heading": "SECOM Semiconductor Pipeline > Security",
-          "url": "https://github.com/BBSISK/SECOM_Pipeline/blob/df3999c92d652a213ef60392373e6a2bb2fd9db6/README.md#security",
-          "project": "SECOM Pipeline",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "GitHub Actions signs in to AWS with GitHub OIDC: each run swaps a short-lived GitHub token for a one-hour IAM role session.",
-          "kind": "application",
-          "first_committed": "2026-10-11"
-        },
-        {
           "tier": 2,
           "repo": "dice-roll-api",
           "path": "README.md",
@@ -341,11 +329,25 @@
           "quote": "AWS Lambda runs the handler... Amazon API Gateway gives the function a public HTTPS endpoint... SAM turns it into an AWS CloudFormation stack...",
           "kind": "practice",
           "first_committed": "2026-10-24"
+        },
+        {
+          "tier": 2,
+          "repo": "aws-ec2-web-server",
+          "path": "README.md",
+          "heading": "EC2 web server: manual build → User data → Terraform > 1. Manual build",
+          "url": "https://github.com/BBSISK/aws-ec2-web-server/blob/73626df31a85c4e76c3b521fae71a8dda3aa577c/README.md#1-manual-build",
+          "project": "aws-ec2-web-server",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "- IAM role `ec2-ssm-role` (AWS managed policy `AmazonSSMManagedInstanceCore`) attached as an instance profile. - `t3.micro`, Amazon Linux 2023, **no key pair**: shell access through **AWS Systems Manager Session Manager**, so no SSH keys to manage. - Security group allows **HTTP",
+          "kind": "practice",
+          "first_committed": "2026-11-01"
         }
       ],
       "depth": {
         "projects_at_top": [
-          "Ask Barry"
+          "Ask Barry",
+          "SECOM Pipeline"
         ],
         "months": 2,
         "third_party": false,
@@ -868,13 +870,13 @@
         {
           "tier": 4,
           "repo": "ask-barry",
-          "path": "docs/model-card.md",
-          "heading": "Ask Barry: model card > Evaluation",
-          "url": "https://github.com/BBSISK/ask-barry/blob/6cb92048d21d62ae7d8e508f4c9b1e570d686e1c/docs/model-card.md#evaluation",
+          "path": "README.md",
+          "heading": "Ask Barry > Two judges compared (Stage 9a)",
+          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Every answer is published in the report for human review.",
+          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -908,12 +910,12 @@
           "tier": 3,
           "repo": "ask-barry",
           "path": "README.md",
-          "heading": "Ask Barry > Two judges compared (Stage 9a)",
-          "url": "https://github.com/BBSISK/ask-barry/blob/67d20d4be05f965098458e13e722b5c0a2a179fd/README.md#two-judges-compared-stage-9a",
+          "heading": "Ask Barry > Architecture",
+          "url": "https://github.com/BBSISK/ask-barry/blob/2ded33495b4565c913446dd60aa3884119a90161/README.md#architecture",
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "My answer evaluation leans on an LLM judge from the same model family as the answering model. Stage 9a tests that judge, and a second judge of a different kind, against claims I labelled by hand.",
+          "quote": "Nightly GitHub Action... Embed new or changed sections... Azure AI Search index... Hybrid retrieval... gpt-4.1-mini... AI assistant",
           "kind": "application",
           "first_committed": "2026-09-27"
         }
@@ -998,7 +1000,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "**Status:** done. Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, [full report](docs/eval/2026-10-31-agent.md)).",
+          "quote": "Built, tested, and evaluated against the Agent Framework version on the same 10 ads (31 October 2026, full report)",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1037,7 +1039,7 @@
           "project": "Wall Inspector",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Run the 86 Automated Unit & Agent Tests python3 mcp_server.py --self-test",
+          "quote": "Run the 86 Automated Unit & Agent Tests python3 -m unittest discover -s . -p \"test_*.py\" -v python3 mcp_server.py --self-test",
           "kind": "application",
           "first_committed": "2026-09-25"
         },
@@ -1283,11 +1285,11 @@
           "repo": "agent-quest-java",
           "path": "README.md",
           "heading": "Agent Quest (Java) > Saving games in a cloud database (Amazon RDS)",
-          "url": "https://github.com/BBSISK/agent-quest-java/blob/37ec3dc67c047d51dc22f329e7cc971a95b21b0d/README.md#saving-games-in-a-cloud-database-amazon-rds",
+          "url": "https://github.com/BBSISK/agent-quest-java/blob/5705f830c3fd63c08a2513bcded5979ae562bac4/README.md#saving-games-in-a-cloud-database-amazon-rds",
           "project": "agent-quest-java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "repository and service tests run against an in-memory H2 database (MySQL mode) built from the same `schema.sql`... In production it would stay private, reached through the VPC.",
+          "quote": "Tests without AWS: repository and service tests run against an in-memory H2 database (MySQL mode) built from the same `schema.sql`... In production it would stay private, reached through the VPC.",
           "kind": "practice",
           "first_committed": "2026-11-09"
         },
@@ -1306,19 +1308,6 @@
         },
         {
           "tier": 1,
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > Technical highlights > The project by the numbers",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#the-project-by-the-numbers",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "dozens of database tables.",
-          "kind": "application",
-          "first_committed": "2026-09-25"
-        },
-        {
-          "tier": 1,
           "repo": "CS385_Mobile_App",
           "path": "README.md",
           "heading": "MintedMU: CS385 Student Marketplace > Data model (draft)",
@@ -1332,10 +1321,36 @@
         },
         {
           "tier": 1,
+          "repo": "inmytime-showcase",
+          "path": "README.md",
+          "heading": "🌸 In My Time > Technical highlights > The project by the numbers",
+          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#the-project-by-the-numbers",
+          "project": "In My Time",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "dozens of database tables.",
+          "kind": "application",
+          "first_committed": "2026-09-25"
+        },
+        {
+          "tier": 1,
+          "repo": "taxi-mum-dad",
+          "path": "README.md",
+          "heading": "🚕 Taxi of Mum & Dad > Testing",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#testing",
+          "project": "taxi-mum-dad",
+          "source_type": "github_readme",
+          "verified_by": "self",
+          "quote": "Both databases: the suite runs against SQLite with foreign keys enforced, and against real PostgreSQL via `TEST_DATABASE_URL`.",
+          "kind": "practice",
+          "first_committed": "2026-11-01"
+        },
+        {
+          "tier": 1,
           "repo": "taxi-mum-dad",
           "path": "README.md",
           "heading": "🚕 Taxi of Mum & Dad > Deployment",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#deployment",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#deployment",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
@@ -1347,12 +1362,12 @@
           "tier": 1,
           "repo": "taxi-mum-dad",
           "path": "README.md",
-          "heading": "🚕 Taxi of Mum & Dad > Testing",
-          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/b235df5aa648c2a62847c1d872c9523d5da4eed6/README.md#testing",
+          "heading": "🚕 Taxi of Mum & Dad > Tech stack",
+          "url": "https://github.com/BBSISK/taxi-mum-dad/blob/e4e250e166beb038d8794e9fd974dcb2c24f6d14/README.md#tech-stack",
           "project": "taxi-mum-dad",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Both databases: the suite runs against SQLite with foreign keys enforced, and against real PostgreSQL via `TEST_DATABASE_URL`.",
+          "quote": "Flask-SQLAlchemy / SQLAlchemy 2 · PostgreSQL (Neon) · psycopg 3",
           "kind": "practice",
           "first_committed": "2026-11-01"
         }
@@ -1565,7 +1580,7 @@
           "project": "Ask Barry",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Since 26 Oct 2026 (ASK-62) a ruleset on `main` makes this a rule rather than a habit: a pull request is required, the CI checks must pass before merging, force pushes and deletion are blocked",
+          "quote": "GitHub Actions CI runs on every pull request: the full pytest suite, `terraform fmt -check` and `terraform validate` for the infrastructure code, and the security checks below (dependencies, code, secrets, Terraform policy).",
           "kind": "application",
           "first_committed": "2026-09-27"
         },
@@ -1578,7 +1593,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "`main` is protected: changes arrive only through a pull request, and the required CI checks must pass before merge. One branch per Jira story, named `SECOM-<n>-short-name`. The PR title starts with the Jira key.",
+          "quote": "`main` is protected: changes arrive only through a pull request, and the required CI checks must pass before merge. Nobody pushes to `main` directly.",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -1783,7 +1798,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Solution | Time | Space | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) | [ContainsDuplicate.java](src/main/java/neetcode/arrayshashing/ContainsDuplicate.java) | O(n) | O(n)",
+          "quote": "| Solution | Time | Space | |---|---|---|---|---|---| | 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | Arrays & Hashing | [TwoSum.java](src/main/java/neetcode/arrayshashing/TwoSum.java) | O(n) | O(n) |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1822,7 +1837,7 @@
           "project": "LeetCode in Java",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "| Pattern | Solved | Total | |---|---|---| | Arrays & Hashing | 2 | 9 |",
+          "quote": "| Pattern | Solved | Total | ... | Arrays & Hashing | 2 | 9 | ... | **Total** | **2** | **150** |",
           "kind": "practice",
           "first_committed": "2026-10-11"
         }
@@ -1843,10 +1858,9 @@
       "id": "front-end-frameworks",
       "name": "Front-end frameworks",
       "tier": 2,
-      "first_evidence": "2026-09",
+      "first_evidence": "2026-10",
       "projects_by_tier": {
         "1": [
-          "In My Time",
           "React challenges",
           "agent-quest-java",
           "stove-inversion"
@@ -1865,7 +1879,7 @@
           "project": "React challenges",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "Tests come first. Each challenge comes with a Vitest + React Testing Library test file, and I work until it passes.",
+          "quote": "GitHub Actions runs the type-checker and the full test suite on every push.",
           "kind": "practice",
           "first_committed": "2026-10-11"
         },
@@ -1920,24 +1934,11 @@
           "quote": "If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`",
           "kind": "practice",
           "first_committed": "2026-11-14"
-        },
-        {
-          "tier": 1,
-          "repo": "inmytime-showcase",
-          "path": "README.md",
-          "heading": "🌸 In My Time > StoryCatcher: recorded family interviews",
-          "url": "https://github.com/BBSISK/inmytime-showcase/blob/20b4e236107423a2824fdb8d7083e73c8016e769/README.md#storycatcher-recorded-family-interviews",
-          "project": "In My Time",
-          "source_type": "github_readme",
-          "verified_by": "self",
-          "quote": "the storyteller can listen back from any browser with a PIN",
-          "kind": "application",
-          "first_committed": "2026-09-25"
         }
       ],
       "depth": {
         "projects_at_top": [],
-        "months": 2,
+        "months": 1,
         "third_party": false,
         "reached": false
       },
@@ -1989,7 +1990,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, ... Batches that keep failing go to an SQS dead-letter queue so they",
+          "quote": "The replay producer sends one record per production run to Kinesis. A Lambda processor reads the stream in batches, writes every record to the S3 raw zone, validates it against the record contract",
           "kind": "application",
           "first_committed": "2026-10-11"
         },
@@ -2002,7 +2003,7 @@
           "project": "SECOM Pipeline",
           "source_type": "github_readme",
           "verified_by": "self",
-          "quote": "The replay producer sends its runs one at a time, in their original order, at a set rate, as if they were coming off the line now. Code: `secom/producer.py` (standard library only). Container: `producer/Dockerfile`.",
+          "quote": "The replay producer sends its runs one at a time, in their original order, at a set rate, as if they were coming off the line now.",
           "kind": "application",
           "first_committed": "2026-10-12"
         },
